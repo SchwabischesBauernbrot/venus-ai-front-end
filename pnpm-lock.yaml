@@ -2,10 +2,12 @@ lockfileVersion: 5.4
 
 specifiers:
   '@supabase/supabase-js': ^2.8.0
+  '@syonfox/gpt-3-encoder': github:syonfox/GPT-3-Encoder
   '@types/react': ^18.0.27
   '@types/react-dom': ^18.0.10
   '@vitejs/plugin-react-swc': ^3.0.0
   appwrite: ^10.2.0
+  crc-32: ^1.2.2
   localforage: ^1.10.0
   match-sorter: ^6.3.1
   react: ^18.2.0
@@ -19,7 +21,9 @@ specifiers:
 
 dependencies:
   '@supabase/supabase-js': 2.8.0
+  '@syonfox/gpt-3-encoder': github.com/syonfox/GPT-3-Encoder/e2a3f7e402d200a2974e3caf06398c027d5d7aa9
   appwrite: 10.2.0
+  crc-32: 1.2.2
   localforage: 1.10.0
   match-sorter: 6.3.1
   react: 18.2.0
@@ -504,6 +508,12 @@ packages:
 
   /concat-map/0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    dev: false
+
+  /crc-32/1.2.2:
+    resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
+    engines: {node: '>=0.8'}
+    hasBin: true
     dev: false
 
   /cross-fetch/3.1.5:
@@ -1036,4 +1046,10 @@ packages:
   /yaeti/0.0.6:
     resolution: {integrity: sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug==}
     engines: {node: '>=0.10.32'}
+    dev: false
+
+  github.com/syonfox/GPT-3-Encoder/e2a3f7e402d200a2974e3caf06398c027d5d7aa9:
+    resolution: {tarball: https://codeload.github.com/syonfox/GPT-3-Encoder/tar.gz/e2a3f7e402d200a2974e3caf06398c027d5d7aa9}
+    name: '@syonfox/gpt-3-encoder'
+    version: 1.4.0-rc5
     dev: false
