@@ -9,6 +9,7 @@ import { supabase } from "./config";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile/Profile";
 import { Register } from "./pages/Register";
+import { BotForm } from "./pages/BotForm";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/create_bot",
+    element: <BotForm />,
   },
 ]);
 const queryClient = new QueryClient();
@@ -79,6 +84,9 @@ const MainApp = () => {
             ) : (
               <span>
                 <a href="/login">Login</a> or <a href="/register">Sign up</a>
+                <p>
+                  <a href="/create_bot">Create bot</a>
+                </p>
               </span>
             )}
           </nav>

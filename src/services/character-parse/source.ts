@@ -9,31 +9,11 @@ const JsonFormats = {
 };
 
 export class Source {
-  #file: File | null;
-  #json: CharacterJsonObject | null;
-  #image: HTMLImageElement | null;
-  #character: Character;
-  #formats: string[] = [];
-
-  get file() {
-    return this.#file;
-  }
-
-  get json() {
-    return this.#json;
-  }
-
-  get image() {
-    return this.#image;
-  }
-
-  get character() {
-    return this.#character;
-  }
-
-  get formats() {
-    return this.#formats;
-  }
+  file: File | null;
+  json: CharacterJsonObject | null;
+  image: HTMLImageElement | null;
+  character: Character;
+  formats: string[] = [];
 
   #detectFormats(json: CharacterJsonObject) {
     const checkProperties = (properties: string[], obj = json) =>
@@ -73,11 +53,11 @@ export class Source {
     json: CharacterJsonObject | null = null,
     image: HTMLImageElement | null = null
   ) {
-    if (file) this.#file = file;
-    if (json) this.#json = json;
-    if (image) this.#image = image;
+    if (file) this.file = file;
+    if (json) this.json = json;
+    if (image) this.image = image;
 
-    this.#character = new Character(this.json);
+    this.character = new Character(this.json);
 
     if (this.json) {
       this.#detectFormats(this.json);
@@ -85,7 +65,7 @@ export class Source {
       if (this.formats.length < 1)
         throw new JsonUnknownFormatError("Format not recognised", this.json);
 
-      if (this.image) this.#formats = ["Character Card"];
+      if (this.image) this.formats = ["Character Card"];
     }
   }
 }

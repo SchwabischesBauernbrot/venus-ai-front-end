@@ -31,12 +31,6 @@ export const Profile = () => {
       <h2>Your bots</h2>
 
       <a href="/bot-new">New bot</a>
-
-      <form>
-        <h3>Import TavernAI bot</h3>
-        <input type="file" />
-        <input type="submit" value="Import" />
-      </form>
     </div>
   );
 };
