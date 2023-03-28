@@ -46,20 +46,14 @@ export class Source {
 
     if (
       json.character &&
-      checkProperties(
-        ["name", "title", "description", "greeting", "definition"],
-        json.character
-      )
+      checkProperties(["name", "title", "description", "greeting", "definition"], json.character)
     )
       this.format = JsonFormat.CaiCharacter;
 
     if (
       json.info &&
       json.info.character &&
-      checkProperties(
-        ["name", "title", "description", "greeting"],
-        json.info.character
-      )
+      checkProperties(["name", "title", "description", "greeting"], json.info.character)
     )
       this.format = JsonFormat.CaiHistory;
   }
@@ -84,8 +78,7 @@ export class Source {
     if (this.json) {
       this.#detectFormats(this.json);
 
-      if (!this.format)
-        throw new JsonUnknownFormatError("Format not recognised", this.json);
+      if (!this.format) throw new JsonUnknownFormatError("Format not recognised", this.json);
 
       if (this.image) this.format = JsonFormat.CharacterCard;
     }
