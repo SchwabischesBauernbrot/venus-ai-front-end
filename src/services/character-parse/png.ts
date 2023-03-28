@@ -50,43 +50,6 @@ export class Png {
     };
   }
 
-  // Encode value to PNG tEXt chunk
-  static #encodeText(keyword: string, text: string) {
-    keyword = String(keyword);
-    text = String(text);
-
-    if (!/^[\x00-\xFF]+$/.test(keyword) || !/^[\x00-\xFF]+$/.test(text))
-      throw new PngDecodeError("Invalid character in PNG tEXt chunk");
-    if (keyword.length > 79)
-      throw new PngDecodeError(
-        'Keyword "' + keyword + '" is longer than the 79 character limit'
-      );
-
-    const data = new Uint8Array(keyword.length + text.length + 1);
-    let idx = 0;
-    let code;
-
-    for (let i = 0; i < keyword.length; i++) {
-      if (!(code = keyword.charCodeAt(i)))
-        throw new PngDecodeError(
-          "0x00 character is not permitted in tEXt keywords"
-        );
-      data[idx++] = code;
-    }
-
-    data[idx++] = 0;
-
-    for (let i = 0; i < text.length; i++) {
-      if (!(code = text.charCodeAt(i)))
-        throw new PngDecodeError(
-          "0x00 character is not permitted in tEXt text"
-        );
-      data[idx++] = code;
-    }
-
-    return data;
-  }
-
   // Read PNG format chunk
   static #readChunk(data: Uint8Array, idx: number) {
     // Read length field
@@ -164,54 +127,6 @@ export class Png {
     return chunks;
   }
 
-  // Write PNG file from chunks
-  static #encodeChunks(chunks: Chunk[]) {
-    const output = new Uint8Array(
-      chunks.reduce((a, c) => a + 4 + 4 + c.data.length + 4, 8)
-    ); // Signature + chunks (length, chunk type, chunk data, CRC)
-
-    // Signature
-    output[0] = 0x89;
-    output[1] = 0x50;
-    output[2] = 0x4e;
-    output[3] = 0x47;
-    output[4] = 0x0d;
-    output[5] = 0x0a;
-    output[6] = 0x1a;
-    output[7] = 0x0a;
-
-    let idx = 8; // After signature
-
-    chunks.forEach((c) => {
-      // Write length field
-      this.#uint32[0] = c.data.length;
-      output[idx++] = this.#uint8[3];
-      output[idx++] = this.#uint8[2];
-      output[idx++] = this.#uint8[1];
-      output[idx++] = this.#uint8[0];
-
-      // Write chunk type field
-      output[idx++] = c.type.charCodeAt(0);
-      output[idx++] = c.type.charCodeAt(1);
-      output[idx++] = c.type.charCodeAt(2);
-      output[idx++] = c.type.charCodeAt(3);
-
-      // Write chunk data field
-      for (let i = 0; i < c.data.length; ) {
-        output[idx++] = c.data[i++];
-      }
-
-      // Write CRC field
-      this.#int32[0] = c.crc || CRC32.buf(c.data, CRC32.str(c.type));
-      output[idx++] = this.#uint8[3];
-      output[idx++] = this.#uint8[2];
-      output[idx++] = this.#uint8[1];
-      output[idx++] = this.#uint8[0];
-    });
-
-    return output;
-  }
-
   // Parse PNG file and return decoded UTF8 "chara" base64 tEXt chunk value
   static Parse(arrayBuffer: ArrayBuffer) {
     const chunks = Png.#readChunks(new Uint8Array(arrayBuffer));
@@ -240,31 +155,5 @@ export class Png {
         }
       );
     }
-  }
-
-  // Parse PNG file, strip all tEXt chunks, add encoded UTF8 "chara" base64 tEXt chunk and return PNG file
-  static Generate(arrayBuffer: number[], text: string) {
-    // Read PNG and remove all tEXt chunks, as TavernAI does
-    // NOTE: TavernAI blindly reads first tEXt chunk, rather than searching for one named "chara"
-    const chunks = Png.#readChunks(new Uint8Array(arrayBuffer)).filter(
-      (c) => c.type !== "tEXt"
-    );
-
-    // Insert new "chara" tEXt chunk just before IEND chunk, as TavernAI does
-    // NOTE: Some programs won't see the tEXt chunk if its after any IDAT chunks
-    chunks.splice(-1, 0, {
-      type: "tEXt",
-      data: Png.#encodeText(
-        "chara",
-        btoa(
-          new TextEncoder()
-            .encode(text)
-            .reduce((a, c) => a + String.fromCharCode(c), "")
-        )
-      ),
-      crc: 0,
-    });
-
-    return Png.#encodeChunks(chunks);
   }
 }
