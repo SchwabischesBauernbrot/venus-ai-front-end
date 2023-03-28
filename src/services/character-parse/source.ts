@@ -2,18 +2,20 @@ import { Character, CharacterJsonObject } from "./character";
 import { JsonUnknownFormatError } from "./error";
 import { Loader } from "./loader";
 
-const JsonFormats = {
-  TextGenerationCharacter: "Text Generation Character",
-  TavernCharacter: "TavernAI Character",
-  KoboldCharacter: "KoboldAI Character",
-};
+enum JsonFormat {
+  TextGenerationCharacter = "Text Generation Character",
+  TavernCharacter = "TavernAI Character",
+  CaiCharacter = "CharacterAI Character",
+  CaiHistory = "CharacterAI History",
+  CharacterCard = "Character Card",
+}
 
 export class Source {
   file: File | null;
   json: CharacterJsonObject | null;
   image: HTMLImageElement | null;
   character: Character;
-  formats: string[] = [];
+  format: JsonFormat | undefined;
 
   #detectFormats(json: CharacterJsonObject) {
     const checkProperties = (properties: string[], obj = json) =>
@@ -28,7 +30,8 @@ export class Source {
         "example_dialogue",
       ])
     )
-      this.formats.push(JsonFormats.TextGenerationCharacter);
+      this.format = JsonFormat.TextGenerationCharacter;
+
     if (
       checkProperties([
         "name",
@@ -39,7 +42,26 @@ export class Source {
         "mes_example",
       ])
     )
-      this.formats.push(JsonFormats.TavernCharacter);
+      this.format = JsonFormat.TavernCharacter;
+
+    if (
+      json.character &&
+      checkProperties(
+        ["name", "title", "description", "greeting", "definition"],
+        json.character
+      )
+    )
+      this.format = JsonFormat.CaiCharacter;
+
+    if (
+      json.info &&
+      json.info.character &&
+      checkProperties(
+        ["name", "title", "description", "greeting"],
+        json.info.character
+      )
+    )
+      this.format = JsonFormat.CaiHistory;
   }
 
   static async fromFile(file: File) {
@@ -62,10 +84,10 @@ export class Source {
     if (this.json) {
       this.#detectFormats(this.json);
 
-      if (this.formats.length < 1)
+      if (!this.format)
         throw new JsonUnknownFormatError("Format not recognised", this.json);
 
-      if (this.image) this.formats = ["Character Card"];
+      if (this.image) this.format = JsonFormat.CharacterCard;
     }
   }
 }
