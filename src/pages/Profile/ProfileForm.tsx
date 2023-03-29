@@ -5,9 +5,9 @@ import { useQueryClient } from "react-query";
 interface FormValues {
   id: string;
   name: string;
-  avatar: string | null;
+  avatar: string;
   avatar_payload?: FileList;
-  about_me: string | null;
+  about_me: string;
 }
 
 export const ProfileForm = ({ values }: { values: FormValues }) => {
@@ -21,38 +21,34 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
 
   const avatarPayload = watch("avatar_payload");
 
-  const onSubmit = handleSubmit(
-    async ({ avatar_payload, name, avatar, about_me }: FormValues) => {
-      const avatarImg = avatar_payload?.[0];
-      let newAvatar = null;
-      if (avatarImg) {
-        const extension = avatarImg.name.substring(
-          avatarImg.name.lastIndexOf(".") + 1
-        );
+  const onSubmit = handleSubmit(async ({ avatar_payload, name, avatar, about_me }: FormValues) => {
+    const avatarImg = avatar_payload?.[0];
+    let newAvatar = null;
+    if (avatarImg) {
+      const extension = avatarImg.name.substring(avatarImg.name.lastIndexOf(".") + 1);
 
-        const result = await supabase.storage
-          .from("avatars")
-          .upload(`${values.id}.${extension}`, avatarImg, {
-            cacheControl: "3600",
-            upsert: true,
-          });
-        newAvatar = result.data && result.data.path;
-      }
-
-      const result = await supabase
-        .from("user_profiles")
-        .update({ name, avatar: newAvatar || avatar, about_me })
-        .eq("id", values.id);
-
-      if (result.error) {
-        console.log(result.error);
-      } else {
-        console.log("success");
-
-        location.reload(); // Reload to update avatar url lol
-      }
+      const result = await supabase.storage
+        .from("avatars")
+        .upload(`${values.id}.${extension}`, avatarImg, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+      newAvatar = result.data && result.data.path;
     }
-  );
+
+    const result = await supabase
+      .from("user_profiles")
+      .update({ name, avatar: newAvatar || avatar, about_me })
+      .eq("id", values.id);
+
+    if (result.error) {
+      console.log(result.error);
+    } else {
+      console.log("success");
+
+      location.reload(); // Reload to update avatar url lol
+    }
+  });
 
   return (
     <form onSubmit={onSubmit}>
@@ -62,12 +58,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
         <img src={`${SUPABASE_BUCKET_URL}/avatars/${values.avatar}` || ""} />
       )}
 
-      <input
-        {...register("avatar_payload")}
-        type="file"
-        accept="image/*"
-        placeholder="Avatar"
-      />
+      <input {...register("avatar_payload")} type="file" accept="image/*" placeholder="Avatar" />
 
       <input {...register("name")} placeholder="Name" />
 

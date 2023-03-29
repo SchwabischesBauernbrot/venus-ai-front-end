@@ -1,10 +1,5 @@
 import { Session } from "@supabase/supabase-js";
-import { Models } from "appwrite";
 import { createContext } from "react";
-
-interface AccountPreference {
-  avatar?: string;
-}
 
 interface AppContextType {
   session?: Session | null;

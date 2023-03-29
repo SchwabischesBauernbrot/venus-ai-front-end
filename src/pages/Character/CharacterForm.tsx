@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { parseCharacter } from "../services/character_parse";
+import { parseCharacter } from "../../services/character_parse";
 
 interface FormValues {
   import?: FileList;
 }
 
-export const BotForm = () => {
+export const CharacterForm = () => {
   const {
     register,
     // handleSubmit,
@@ -24,13 +24,7 @@ export const BotForm = () => {
 
         try {
           const source = await parseCharacter(file);
-          console.log(
-            source,
-            source.character,
-            source.image,
-            source.json,
-            source.character.tokens
-          );
+          console.log(source, source.character, source.image, source.json, source.character.tokens);
         } catch (ex) {
           console.error(ex);
         }

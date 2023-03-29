@@ -4,12 +4,13 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
+
 import { AppContext } from "./appContext";
-import { supabase } from "./config";
+import { axiosInstance, supabase } from "./config";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile/Profile";
 import { Register } from "./pages/Register";
-import { BotForm } from "./pages/BotForm";
+import { CharacterForm } from "./pages/Character/CharacterForm";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/create_bot",
-    element: <BotForm />,
+    element: <CharacterForm />,
   },
 ]);
 const queryClient = new QueryClient();
@@ -49,6 +50,12 @@ const MainApp = () => {
 
     run();
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      axiosInstance.defaults.headers.common = { Authorization: `Bearer ${session.access_token}` };
+    }
+  }, [session]);
 
   const logout = useCallback(async () => {
     await supabase.auth.signOut();
@@ -76,6 +83,9 @@ const MainApp = () => {
                   <a href="/profile">Profile</a>
                 </li>
                 <li>
+                  <a href="/create_bot">Create bot</a>
+                </li>
+                <li>
                   <a href="#" onClick={logout}>
                     Logout
                   </a>
@@ -84,9 +94,6 @@ const MainApp = () => {
             ) : (
               <span>
                 <a href="/login">Login</a> or <a href="/register">Sign up</a>
-                <p>
-                  <a href="/create_bot">Create bot</a>
-                </p>
               </span>
             )}
           </nav>
