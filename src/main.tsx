@@ -11,6 +11,7 @@ import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile/Profile";
 import { Register } from "./pages/Register";
 import { CharacterForm } from "./pages/Character/CharacterForm";
+import { CreateCharacter } from "./pages/Character/CreateCharacter";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +32,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/create_bot",
-    element: <CharacterForm />,
+    element: <CreateCharacter />,
   },
 ]);
 const queryClient = new QueryClient();

@@ -1,14 +1,12 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { axiosInstance, supabase } from "../../config";
+import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../config";
 import { parseCharacter } from "../../services/character_parse";
 
 interface FormValues {
   import?: FileList;
-
   avatar: string;
-
   name: string;
   description: string;
   personality: string;
@@ -18,9 +16,16 @@ interface FormValues {
 
   is_nsfw: boolean;
   is_public: boolean;
+  tag_ids: string[];
 }
 
-export const CharacterForm = () => {
+export interface CharacterFormProps {
+  id?: string;
+  values?: Partial<FormValues>;
+  mode: "create" | "edit";
+}
+
+export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values, mode }) => {
   const {
     register,
     watch,
@@ -31,9 +36,12 @@ export const CharacterForm = () => {
     defaultValues: {
       is_nsfw: false,
       is_public: true,
+      tag_ids: [],
+      ...values,
     },
   });
 
+  const [botAvatar, setBotAvatar] = useState<string | undefined>();
   const importFile = watch("import");
 
   useEffect(() => {
@@ -65,33 +73,54 @@ export const CharacterForm = () => {
 
   const onSubmit = handleSubmit(async (values: FormValues) => {
     const avatarImg = importFile?.[0];
-    let botAvatar = null;
-    if (avatarImg) {
-      const extension = avatarImg.name.substring(avatarImg.name.lastIndexOf(".") + 1);
 
-      const result = await supabase.storage
+    if (!avatarImg) {
+      // Require image
+      return;
+    }
+
+    const extension = avatarImg.name.substring(avatarImg.name.lastIndexOf(".") + 1);
+
+    let avatar = botAvatar;
+    if (!avatar) {
+      const uploadedAvatar = await supabase.storage
         .from("bot-avatars")
         .upload(`${crypto.randomUUID()}.${extension}`, avatarImg, {
           cacheControl: "3600",
           upsert: true,
         });
-      botAvatar = result.data && result.data.path;
+      if (uploadedAvatar?.data?.path) {
+        avatar = uploadedAvatar.data.path;
+        setBotAvatar(avatar);
+      }
     }
 
-    const result = await axiosInstance.post("/character", {
-      ...values,
-      avatar: botAvatar,
-    });
-
-    console.log(result.data);
+    if (mode === "create") {
+      const result = await axiosInstance.post("/character", {
+        ...values,
+        avatar,
+      });
+      console.log({ result });
+    } else if (mode === "edit" && id) {
+      const result = await axiosInstance.patch("/character/" + id, {
+        ...values,
+        avatar,
+      });
+      console.log({ result });
+    }
   });
 
   return (
     <div>
-      BotForm
+      <h2>{mode === "create" ? "New Bot" : "Edit Bot"}</h2>
+
       <form onSubmit={onSubmit}>
-        <h3>Import TavernAI bot</h3>
         <input {...register("import")} type="file" />
+        {botAvatar ? (
+          <img src={`${SUPABASE_BUCKET_URL}/bot_avatars/${botAvatar}` || ""} />
+        ) : (
+          <span>{importFile?.[0] && <img src={URL.createObjectURL(importFile[0])} />}</span>
+        )}
         <input {...register("name")} placeholder="Name" />
         <input {...register("description")} placeholder="description" />
         <input {...register("personality")} placeholder="personality" />
@@ -100,7 +129,9 @@ export const CharacterForm = () => {
         <textarea {...register("example_dialogs")} placeholder="example_dialogs" />
         <input {...register("is_nsfw")} type="checkbox" /> Is NSFW Bot
         <input {...register("is_public")} type="checkbox" /> Is Public Bot
-        <input type="submit" value="Import" />
+        <p>TAG NOT WORK YET</p>
+        <input {...register("tag_ids")} placeholder="tags" />
+        <input type="submit" value={mode === "create" ? "Create Bot" : "Update Bot"} />
       </form>
     </div>
   );
