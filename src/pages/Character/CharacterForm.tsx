@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
 import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../config";
 import { parseCharacter } from "../../services/character_parse";
 
@@ -16,7 +17,7 @@ interface FormValues {
 
   is_nsfw: boolean;
   is_public: boolean;
-  tag_ids: string[];
+  tag_ids: number[];
 }
 
 export interface CharacterFormProps {
@@ -43,6 +44,10 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values, mode }
 
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
   const importFile = watch("import");
+
+  // Refactor later lol
+  const { data } = useQuery("tags", async () => await supabase.from("tags").select());
+  const tags = data?.data;
 
   useEffect(() => {
     async function run() {
@@ -115,22 +120,45 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values, mode }
       <h2>{mode === "create" ? "New Bot" : "Edit Bot"}</h2>
 
       <form onSubmit={onSubmit}>
+        <p>Select bot avatar or just import Tavern</p>
         <input {...register("import")} type="file" />
         {botAvatar ? (
-          <img src={`${SUPABASE_BUCKET_URL}/bot_avatars/${botAvatar}` || ""} />
+          <img src={`${SUPABASE_BUCKET_URL}/bot-avatars/${botAvatar}` || ""} />
         ) : (
           <span>{importFile?.[0] && <img src={URL.createObjectURL(importFile[0])} />}</span>
         )}
-        <input {...register("name")} placeholder="Name" />
-        <input {...register("description")} placeholder="description" />
-        <input {...register("personality")} placeholder="personality" />
+        <p>Bot Introduction</p>
+        <input {...register("name")} placeholder="Name*" />
+        <input {...register("description")} placeholder="Description*" />
+        <p>Bot definition</p>
+        <input {...register("personality")} placeholder="Personality" />
         <input {...register("scenario")} placeholder="scenario" />
         <textarea {...register("first_message")} placeholder="first_message" />
         <textarea {...register("example_dialogs")} placeholder="example_dialogs" />
-        <input {...register("is_nsfw")} type="checkbox" /> Is NSFW Bot
+        <input {...register("is_nsfw")} type="checkbox" /> Is NSFW Bot <br />
         <input {...register("is_public")} type="checkbox" /> Is Public Bot
-        <p>TAG NOT WORK YET</p>
-        <input {...register("tag_ids")} placeholder="tags" />
+        <p>Tags</p>
+        {tags && (
+          <select
+            onChange={(e) => {
+              const options = e.target.options;
+              const values = [];
+              for (let i = 0; i < options.length; i++) {
+                if (options[i].selected) {
+                  values.push(Number(options[i].value));
+                }
+              }
+              setValue("tag_ids", values);
+            }}
+            multiple
+          >
+            {tags.map((tag) => (
+              <option key={tag.id} value={tag.id + ""}>
+                {tag.name}
+              </option>
+            ))}
+          </select>
+        )}
         <input type="submit" value={mode === "create" ? "Create Bot" : "Update Bot"} />
       </form>
     </div>
