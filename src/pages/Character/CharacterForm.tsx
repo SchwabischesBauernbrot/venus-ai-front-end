@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../config";
-import { parseCharacter } from "../../services/character_parse";
+import { parseCharacter } from "../../services/character-parse";
+import { compressImage } from "../../services/image-helper";
 
 interface FormValues {
   import?: FileList;
@@ -53,11 +54,9 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values, mode }
     async function run() {
       if (importFile?.[0]) {
         const file = importFile[0];
-        console.log({ file });
 
         try {
           const { character, json, image } = await parseCharacter(file);
-          console.log(character, image, json);
 
           if (character) {
             setValue("name", character.name);
@@ -84,13 +83,14 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values, mode }
       return;
     }
 
-    const extension = avatarImg.name.substring(avatarImg.name.lastIndexOf(".") + 1);
-
     let avatar = botAvatar;
     if (!avatar) {
+      const compressedImage = await compressImage(avatarImg);
+      const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
+
       const uploadedAvatar = await supabase.storage
         .from("bot-avatars")
-        .upload(`${crypto.randomUUID()}.${extension}`, avatarImg, {
+        .upload(`${crypto.randomUUID()}.${extension}`, compressedImage, {
           cacheControl: "3600",
           upsert: true,
         });

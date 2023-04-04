@@ -77,7 +77,6 @@ export class Character {
     if (this.#valid(json, "name")) this.name = this.#sanitize(json, "name");
     if (this.#valid(json, "personality")) this.description = this.#sanitize(json, "personality");
     if (this.#valid(json, "description")) this.personality = this.#sanitize(json, "description");
-    console.log({ ah: this });
 
     if (this.#valid(json, "scenario")) this.scenario = this.#sanitize(json, "scenario");
 

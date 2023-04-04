@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { supabase, SUPABASE_BUCKET_URL } from "../../config";
 import { useQueryClient } from "react-query";
+import { compressImage } from "../../services/image-helper";
 
 interface FormValues {
   id: string;
@@ -25,11 +26,12 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
     const avatarImg = avatar_payload?.[0];
     let newAvatar = null;
     if (avatarImg) {
-      const extension = avatarImg.name.substring(avatarImg.name.lastIndexOf(".") + 1);
+      const compressedImage = await compressImage(avatarImg);
+      const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
 
       const result = await supabase.storage
         .from("avatars")
-        .upload(`${values.id}.${extension}`, avatarImg, {
+        .upload(`${values.id}.${extension}`, compressedImage, {
           cacheControl: "3600",
           upsert: true,
         });
