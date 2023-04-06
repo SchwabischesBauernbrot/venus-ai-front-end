@@ -13,8 +13,10 @@
     "gen:types": "yarn gen:types-nest && yarn gen:types-supa"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@supabase/supabase-js": "^2.8.0",
     "@syonfox/gpt-3-encoder": "github:syonfox/GPT-3-Encoder",
+    "antd": "^5.4.0",
     "appwrite": "^10.2.0",
     "axios": "^1.3.4",
     "buffer": "^6.0.3",
