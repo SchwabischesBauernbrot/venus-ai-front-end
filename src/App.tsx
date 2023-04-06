@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { components } from "./types/backend";
 import { useQuery } from "react-query";
 import reactLogo from "./assets/react.svg";
-import { supabase } from "./config";
+import { axiosInstance, supabase } from "./config";
+import { CharacterView } from "./types/backend-alias";
 
 function App() {
   const { data } = useQuery(
     "main_page",
-    async () => await supabase.from("character_tags_view").select()
+    async () => await (await axiosInstance.get<CharacterView>("characters/home")).data
   );
 
   console.log({ data });
@@ -14,7 +16,7 @@ function App() {
   return (
     <div className="App">
       This is main page lol
-      {data?.data && <code>{JSON.stringify(data, null, 2)}</code>}
+      {data && <code>{JSON.stringify(data, null, 2)}</code>}
     </div>
   );
 }
