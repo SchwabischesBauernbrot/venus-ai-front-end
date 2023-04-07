@@ -1,14 +1,31 @@
-import { Account, ID } from "appwrite";
 import { useContext } from "react";
+import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../appContext";
 import { supabase } from "../config";
 
+import { Typography, Input, Button } from "antd";
+import {
+  LockOutlined,
+  MailOutlined,
+  GoogleOutlined,
+  GithubOutlined,
+  DisconnectOutlined,
+} from "@ant-design/icons";
+const { Title } = Typography;
+
 interface FormValues {
   email: string;
   password: string;
 }
+
+const LoginFormContainer = styled.div`
+  max-width: 440px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 1rem;
+`;
 
 export const Login = () => {
   const { setSession } = useContext(AppContext);
@@ -41,31 +58,41 @@ export const Login = () => {
   const loginWithProvider = (provider: string) => provider;
 
   return (
-    <div>
+    <LoginFormContainer>
       <form onSubmit={onSubmit}>
-        <h1>Login</h1>
+        <Title>Login</Title>
 
-        <input {...register("email")} placeholder="Email" />
+        <Input {...register("email")} prefix={<MailOutlined />} placeholder="Email" />
 
-        <input
+        <Input
+          className="my-4"
           {...register("password")}
+          prefix={<LockOutlined />}
           type="password"
           placeholder="Password"
         />
 
-        <input type="submit" value="Login" />
+        <Button type="primary" htmlType="submit" block>
+          Login
+        </Button>
       </form>
 
-      <button onClick={() => loginWithProvider("google")}>
-        Login with Gmail
-      </button>
+      <div className="py-4">
+        <p>
+          We recommend login using third party, as our email sending might not working properly lol
+        </p>
 
-      <button onClick={() => loginWithProvider("discord")}>
-        Login with Discord
-      </button>
-      <button onClick={() => loginWithProvider("github")}>
-        Login with Github
-      </button>
-    </div>
+        <Button icon={<GoogleOutlined />} onClick={() => loginWithProvider("google")} block>
+          Login with Google
+        </Button>
+
+        <Button icon={<DisconnectOutlined />} onClick={() => loginWithProvider("discord")} block>
+          Login with Discord
+        </Button>
+        <Button icon={<GithubOutlined />} onClick={() => loginWithProvider("github")} block>
+          Login with Github
+        </Button>
+      </div>
+    </LoginFormContainer>
   );
 };

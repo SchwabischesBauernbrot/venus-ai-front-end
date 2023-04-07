@@ -52,7 +52,7 @@ const App: React.FC = () => {
           <Menu theme="dark" mode="horizontal">
             <Menu.Item key="home">
               <Link to="/">
-                <Avatar shape="square" size="large" src="/public/logo.png" alt="logo" />
+                <Avatar shape="square" size="large" src="/logo.png" alt="logo" />
               </Link>
             </Menu.Item>
 
@@ -76,7 +76,7 @@ const App: React.FC = () => {
               </>
             ) : (
               <>
-                <Menu.Item key="login">
+                <Menu.Item style={{ marginLeft: "auto" }} key="login">
                   <Link to="/login">Login</Link>
                 </Menu.Item>
                 <Menu.Item key="register">
@@ -93,7 +93,19 @@ const App: React.FC = () => {
       </Content>
 
       <Footer style={{ textAlign: "center" }}>
-        <p>This is the unofficial version of ....</p>
+        <p>This is the unofficial Website of Pygmalion AI.</p>
+
+        <div>
+          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI/">
+            <img src="https://img.icons8.com/bubbles/50/null/reddit.png" />
+          </a>
+          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI/">
+            <img src="https://img.icons8.com/bubbles/50/null/discord-logo.png" />
+          </a>
+          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI/">
+            <img src="https://img.icons8.com/bubbles/50/null/github.png" />
+          </a>
+        </div>
       </Footer>
     </AppContext.Provider>
   );

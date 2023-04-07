@@ -1,15 +1,32 @@
-import { Account, ID } from "appwrite";
 import { useContext } from "react";
+import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../appContext";
 import { supabase } from "../config";
 
+import { Typography, Input, Button } from "antd";
+import {
+  LockOutlined,
+  MailOutlined,
+  GoogleOutlined,
+  GithubOutlined,
+  DisconnectOutlined,
+} from "@ant-design/icons";
+import { Provider } from "@supabase/supabase-js";
+const { Title } = Typography;
+
 interface FormValues {
   email: string;
   password: string;
-  name: string;
 }
+
+const RegisterFormContainer = styled.div`
+  max-width: 440px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 1rem;
+`;
 
 export const Register = () => {
   const { setSession } = useContext(AppContext);
@@ -21,13 +38,10 @@ export const Register = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit = handleSubmit(async ({ email, password, name }: FormValues) => {
+  const onSubmit = handleSubmit(async ({ email, password }: FormValues) => {
     const result = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { name },
-      },
     });
 
     if (result.error) {
@@ -45,28 +59,48 @@ export const Register = () => {
     }
   });
 
-  const loginWithProvider = (provider: string) => provider;
+  const registerWithProvider = (provider: Provider) => {
+    return supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
+  };
 
   return (
-    <div>
-      <button>Create test users (Create a lot of test user with password 123456)</button>
+    <RegisterFormContainer>
+      {/* <button>Create test users (Create a lot of test user with password 123456)</button> */}
 
       <form onSubmit={onSubmit}>
-        <h1>Register</h1>
+        <Title>Register</Title>
 
-        <input {...register("email")} placeholder="Email" />
+        <Input {...register("email")} prefix={<MailOutlined />} placeholder="Email" />
 
-        <input {...register("password")} type="password" placeholder="Password" />
+        <Input className="my-4" {...register("password")} type="password" placeholder="Password" />
 
-        <input {...register("name")} placeholder="Name" />
-
-        <input type="submit" value="Register" />
+        <Button type="primary" htmlType="submit" block>
+          Register
+        </Button>
       </form>
 
-      <button onClick={() => loginWithProvider("google")}>Register with Gmail</button>
+      <div className="py-4">
+        <p>
+          We recommend register using third party. Our email sending might not working properly lol
+          so you can't reset password.
+        </p>
 
-      <button onClick={() => loginWithProvider("discord")}>Register with Discord</button>
-      <button onClick={() => loginWithProvider("github")}>Register with Github</button>
-    </div>
+        <Button icon={<GoogleOutlined />} onClick={() => registerWithProvider("google")} block>
+          Register with Google
+        </Button>
+
+        <Button icon={<DisconnectOutlined />} onClick={() => registerWithProvider("discord")} block>
+          Register with Discord
+        </Button>
+        <Button icon={<GithubOutlined />} onClick={() => registerWithProvider("github")} block>
+          Register with Github
+        </Button>
+      </div>
+    </RegisterFormContainer>
   );
 };
