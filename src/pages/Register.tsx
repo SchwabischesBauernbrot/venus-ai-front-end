@@ -54,7 +54,7 @@ export const Register = () => {
           setSession(sessionData.data.session);
         }
 
-        navigate("/");
+        navigate("/profile");
       }
     }
   });
@@ -63,7 +63,7 @@ export const Register = () => {
     return supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: "http://localhost:5173",
+        redirectTo: "http://localhost:5173/profile",
       },
     });
   };
@@ -77,7 +77,13 @@ export const Register = () => {
 
         <Input {...register("email")} prefix={<MailOutlined />} placeholder="Email" />
 
-        <Input className="my-4" {...register("password")} type="password" placeholder="Password" />
+        <Input
+          className="my-4"
+          {...register("password")}
+          prefix={<LockOutlined />}
+          type="password"
+          placeholder="Password"
+        />
 
         <Button type="primary" htmlType="submit" block>
           Register
