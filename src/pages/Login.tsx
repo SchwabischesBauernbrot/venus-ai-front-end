@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../appContext";
@@ -27,25 +27,31 @@ const LoginFormContainer = styled.div`
 `;
 
 export const Login = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const { setSession } = useContext(AppContext);
 
-  const onFinish = async ({ email, password }: { email: string; password: string }) => {
-    const result = await supabase.auth.signInWithPassword({ email, password });
+  const onFinish = async ({ email, password }: FormValues) => {
+    setIsSubmitting(true);
 
-    if (result.error) {
-      console.log(result.error);
-    } else {
-      const { user, session } = result.data;
-      console.log({ user, session });
+    try {
+      const result = await supabase.auth.signInWithPassword({ email, password });
 
-      if (session) {
-        setSession(session);
-        navigate("/profile");
+      if (result.error) {
+        console.log(result.error);
+      } else {
+        const { user, session } = result.data;
+        console.log({ user, session });
+
+        if (session) {
+          setSession(session);
+          navigate("/profile");
+        }
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -55,7 +61,7 @@ export const Login = () => {
     <LoginFormContainer>
       <Title>Login</Title>
 
-      <Form onFinish={onFinish}>
+      <Form form={form} onFinish={onFinish}>
         <Form.Item name="email" rules={[{ required: true, message: "Please enter your email." }]}>
           <Input prefix={<MailOutlined />} placeholder="Email" />
         </Form.Item>
@@ -68,33 +74,13 @@ export const Login = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
+          <Button type="primary" htmlType="submit" block loading={isSubmitting}>
             Login
           </Button>
         </Form.Item>
       </Form>
 
-      {/* <Input
-        prefix={<MailOutlined />}
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <Input
-        className="my-4"
-        prefix={<LockOutlined />}
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <Button type="primary" onClick={onSubmit}>
-        Login
-      </Button> */}
-
-      <div className="py-4">
+      <div>
         <p>
           We recommend login using third party, as our email sending might not working properly lol
         </p>
