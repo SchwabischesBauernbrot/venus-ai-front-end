@@ -1,11 +1,10 @@
 import { useContext } from "react";
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../appContext";
 import { supabase } from "../config";
 
-import { Typography, Input, Button } from "antd";
+import { Typography, Input, Button, Form } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -28,18 +27,13 @@ const LoginFormContainer = styled.div`
 `;
 
 export const Login = () => {
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
   const { setSession } = useContext(AppContext);
 
-  const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm<FormValues>();
-
-  const onSubmit = handleSubmit(async ({ email, password }: FormValues) => {
+  const onFinish = async ({ email, password }: { email: string; password: string }) => {
     const result = await supabase.auth.signInWithPassword({ email, password });
 
     if (result.error) {
@@ -50,32 +44,55 @@ export const Login = () => {
 
       if (session) {
         setSession(session);
-        navigate("/");
+        navigate("/profile");
       }
     }
-  });
+  };
 
   const loginWithProvider = (provider: string) => provider;
 
   return (
     <LoginFormContainer>
-      <form onSubmit={onSubmit}>
-        <Title>Login</Title>
+      <Title>Login</Title>
 
-        <Input {...register("email")} prefix={<MailOutlined />} placeholder="Email" />
+      <Form onFinish={onFinish}>
+        <Form.Item name="email" rules={[{ required: true, message: "Please enter your email." }]}>
+          <Input prefix={<MailOutlined />} placeholder="Email" />
+        </Form.Item>
 
-        <Input
-          className="my-4"
-          {...register("password")}
-          prefix={<LockOutlined />}
-          type="password"
-          placeholder="Password"
-        />
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Please enter your password." }]}
+        >
+          <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+        </Form.Item>
 
-        <Button type="primary" htmlType="submit" block>
-          Login
-        </Button>
-      </form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Login
+          </Button>
+        </Form.Item>
+      </Form>
+
+      {/* <Input
+        prefix={<MailOutlined />}
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <Input
+        className="my-4"
+        prefix={<LockOutlined />}
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <Button type="primary" onClick={onSubmit}>
+        Login
+      </Button> */}
 
       <div className="py-4">
         <p>
