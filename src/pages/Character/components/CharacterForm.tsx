@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Form, Input, Upload, Select, Button, message, Typography, Radio } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-import { axiosInstance, supabase } from "../../config";
-import { parseCharacter } from "../../services/character-parse";
-import { compressImage } from "../../services/image-helper";
-import { useTags } from "../../hooks/useTags";
-import { getAvatarUrl } from "../../services/utils";
+import { axiosInstance, supabase } from "../../../config";
+import { parseCharacter } from "../../../services/character-parse";
+import { compressImage } from "../../../services/image-helper";
+import { useTags } from "../../../hooks/useTags";
+import { getBotAvatarUrl } from "../../../services/utils";
 
-import { FormContainer } from "../../components/shared.components";
+import { FormContainer } from "../../../components/shared.components";
 import { AxiosError } from "axios";
+import { useQueryClient } from "react-query";
 
 const { Title } = Typography;
 
@@ -34,6 +35,7 @@ export interface CharacterFormProps {
 }
 
 export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
+  const queryClient = useQueryClient();
   const [form] = Form.useForm<FormValues>();
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
 
@@ -41,17 +43,17 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
 
   const mode = id ? "edit" : "create";
 
-  const onFinish = async (values: FormValues) => {
+  const onFinish = async (formValues: FormValues) => {
     try {
       const avatarImg = values.avatar_payload?.file;
-
-      if (!avatarImg) {
+      if (mode === "create" && !avatarImg) {
         // Require image
+        message.error("Please set an avatar for your character");
         return;
       }
 
       let avatar = botAvatar;
-      if (!avatar) {
+      if (!avatar && avatarImg) {
         const compressedImage = await compressImage(avatarImg);
         const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
 
@@ -67,25 +69,27 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         }
       }
 
-      const { avatar_payload, ...postData } = values;
+      const { avatar_payload, ...postData } = formValues;
 
       if (mode === "create") {
         const result = await axiosInstance.post("/characters", {
           ...postData,
-          avatar,
+          avatar: avatar || values.avatar,
         });
         message.success("Character created succesfully!");
         console.log({ result });
-      } else if (mode === "edit" && id) {
+      } else if (mode === "edit") {
         const result = await axiosInstance.patch("/characters/" + id, {
           ...postData,
-          avatar,
+          avatar: avatar || values.avatar,
         });
+
         message.success("Character edited succesfully!");
         console.log({ result });
+        queryClient.invalidateQueries(["character", id]);
       }
     } catch (err) {
-      console.error("auth error", err);
+      console.error("error", err);
       const backEndError = (err as AxiosError).response?.data;
       message.error(JSON.stringify(backEndError, null, 2));
     }
@@ -105,7 +109,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
     if (values?.avatar) {
       return (
         <img
-          src={getAvatarUrl(values.avatar)}
+          src={getBotAvatarUrl(values.avatar)}
           style={{ maxWidth: "100%", alignSelf: "flex-start", maxHeight: "10rem" }}
         />
       );
@@ -141,7 +145,6 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           className="pb-6"
           label="Avatar"
           help="Select an image as bot avatar, or you can import Tavern PNG file"
-          rules={[{ required: true, message: "Please select an avatar for the bot." }]}
         >
           <Upload
             accept="image/*"

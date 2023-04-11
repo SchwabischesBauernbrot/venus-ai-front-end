@@ -83,7 +83,7 @@ const App: React.FC = () => {
             {session && profile ? (
               <>
                 <Menu.Item key="create">
-                  <Link to="/create_bot">Create bot</Link>
+                  <Link to="/create_char">Create bot</Link>
                 </Menu.Item>
 
                 <UserAvatar />

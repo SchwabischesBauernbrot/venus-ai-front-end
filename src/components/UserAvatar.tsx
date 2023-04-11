@@ -24,7 +24,7 @@ export const UserAvatar: React.FC = () => {
         menu={{
           items: [
             { key: "my_profile", label: "My Profile", onClick: () => navigate("/profile") },
-            { key: "my_bot", label: "My Bots", onClick: () => navigate("/my_bot") },
+            { key: "my_bot", label: "My Character", onClick: () => navigate("/my_characters") },
             { key: "logout", label: "Logout", onClick: () => logout() },
           ],
         }}

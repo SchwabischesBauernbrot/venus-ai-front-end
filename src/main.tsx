@@ -8,11 +8,13 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ConfigProvider, theme } from "antd";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { CreateCharacter } from "./pages/Character/CreateCharacter";
+import { CreateCharacter } from "./pages/Character/pages/CreateCharacter";
 import Home from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile/Profile";
 import { Register } from "./pages/Register";
+import { ViewCharacter } from "./pages/Character/pages/ViewCharacter";
+import { EditCharacter } from "./pages/Character/pages/EditCharacter";
 
 const queryClient = new QueryClient();
 
@@ -38,8 +40,16 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/create_bot",
+        path: "/create_char",
         element: <CreateCharacter />,
+      },
+      {
+        path: "/edit_char/:characterId",
+        element: <EditCharacter />,
+      },
+      {
+        path: "/character/:characterId",
+        element: <ViewCharacter />,
       },
     ],
   },

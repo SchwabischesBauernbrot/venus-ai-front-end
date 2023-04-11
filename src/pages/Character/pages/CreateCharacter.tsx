@@ -1,6 +1,6 @@
 import { Typography } from "antd";
-import { PageContainer } from "../../components/shared.components";
-import { CharacterForm } from "./CharacterForm";
+import { PageContainer } from "../../../components/shared.components";
+import { CharacterForm } from "../components/CharacterForm";
 
 const { Title } = Typography;
 
