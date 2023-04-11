@@ -3,6 +3,7 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/test-profile": {
     get: operations["AppController_getProfile"];
@@ -10,23 +11,29 @@ export interface paths {
   "/test-profile-jwt": {
     get: operations["AppController_getProfileJwt"];
   };
-  "/character/home": {
+  "/characters/home": {
     get: operations["CharacterController_getCharactersForHome"];
   };
-  "/character": {
+  "/characters": {
     post: operations["CharacterController_createCharacter"];
   };
-  "/character/{id}": {
+  "/characters/{id}": {
     patch: operations["CharacterController_updateCharacter"];
   };
-  "/profile/{id}": {
+  "/profiles/{id}": {
     get: operations["ProfileController_getProfile"];
   };
-  "/profile/{id}/characters": {
+  "/profiles/{id}/characters": {
     get: operations["ProfileController_getProfileCharacters"];
   };
-  "/profile/{mine}": {
-    post: operations["ProfileController_updateProfile"];
+  "/profiles/mine": {
+    patch: operations["ProfileController_updateProfile"];
+  };
+  "/chat": {
+    post: operations["ChatController_create"];
+  };
+  "/chat/{id}": {
+    patch: operations["ChatController_update"];
   };
 }
 
@@ -50,7 +57,7 @@ export interface components {
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
-      tags: components["schemas"]["Tag"];
+      tags?: components["schemas"]["Tag"];
     };
     CharacterDto: {
       avatar: string;
@@ -62,6 +69,7 @@ export interface components {
       first_message: string;
       is_nsfw: boolean;
       is_public: boolean;
+      tag_ids: (number)[];
     };
     ProfileResponse: {
       id: string;
@@ -78,6 +86,12 @@ export interface components {
       profile: string;
       user_name: string;
     };
+    CreateChatDto: {
+      character_id: string;
+    };
+    UpdateChatDto: {
+      is_public: boolean;
+    };
   };
   responses: never;
   parameters: never;
@@ -89,21 +103,31 @@ export interface components {
 export type external = Record<string, never>;
 
 export interface operations {
+
   AppController_getProfile: {
     responses: {
-      200: never;
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
     };
   };
   AppController_getProfileJwt: {
     responses: {
-      200: never;
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
     };
   };
   CharacterController_getCharactersForHome: {
     responses: {
+      200: never;
       default: {
         content: {
-          "application/json": components["schemas"]["CharacterView"];
+          "application/json": (components["schemas"]["CharacterView"])[];
         };
       };
     };
@@ -115,7 +139,11 @@ export interface operations {
       };
     };
     responses: {
-      201: never;
+      201: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
     };
   };
   CharacterController_updateCharacter: {
@@ -130,7 +158,11 @@ export interface operations {
       };
     };
     responses: {
-      200: never;
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
     };
   };
   ProfileController_getProfile: {
@@ -140,6 +172,11 @@ export interface operations {
       };
     };
     responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
       default: {
         content: {
           "application/json": components["schemas"]["ProfileResponse"];
@@ -154,9 +191,10 @@ export interface operations {
       };
     };
     responses: {
+      200: never;
       default: {
         content: {
-          "application/json": components["schemas"]["CharacterView"];
+          "application/json": (components["schemas"]["CharacterView"])[];
         };
       };
     };
@@ -168,7 +206,44 @@ export interface operations {
       };
     };
     responses: {
-      201: never;
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+    };
+  };
+  ChatController_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateChatDto"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+    };
+  };
+  ChatController_update: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateChatDto"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
     };
   };
 }

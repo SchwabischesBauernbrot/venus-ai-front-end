@@ -1,3 +1,6 @@
+import { Typography } from "antd";
+import { PageContainer } from "../../components/shared.components";
+const { Title } = Typography;
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../config";
@@ -17,10 +20,9 @@ export const EditCharacter: React.FC = () => {
   );
 
   return (
-    <div>
-      {data && data.data !== null && (
-        <CharacterForm id={data.data.id} values={data.data} mode="edit" />
-      )}
-    </div>
+    <PageContainer>
+      <Title>Edit Character</Title>
+      {data && data.data !== null && <CharacterForm id={data.data.id} values={data.data} />}
+    </PageContainer>
   );
 };

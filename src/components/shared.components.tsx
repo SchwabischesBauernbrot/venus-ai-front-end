@@ -5,5 +5,5 @@ export const PageContainer = styled.div`
 `;
 
 export const FormContainer = styled.div`
-  max-width: 40rem;
+  max-width: 45rem;
 `;

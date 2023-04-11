@@ -1,13 +1,20 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../config";
+import { Form, Input, Upload, Select, Button, message, Typography, Radio } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+
+import { axiosInstance, supabase } from "../../config";
 import { parseCharacter } from "../../services/character-parse";
 import { compressImage } from "../../services/image-helper";
+import { useTags } from "../../hooks/useTags";
+import { getAvatarUrl } from "../../services/utils";
+
+import { FormContainer } from "../../components/shared.components";
+import { AxiosError } from "axios";
+
+const { Title } = Typography;
 
 interface FormValues {
-  import?: FileList;
+  avatar_payload?: { file: File };
   avatar: string;
   name: string;
   description: string;
@@ -23,144 +30,226 @@ interface FormValues {
 
 export interface CharacterFormProps {
   id?: string;
-  values?: Partial<FormValues>;
-  mode: "create" | "edit";
+  values: Partial<FormValues>;
 }
 
-export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values, mode }) => {
-  const {
-    register,
-    watch,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues: {
-      is_nsfw: false,
-      is_public: true,
-      tag_ids: [],
-      ...values,
-    },
-  });
-
+export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
+  const [form] = Form.useForm<FormValues>();
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
-  const importFile = watch("import");
 
-  // Refactor later lol
-  const { data } = useQuery("tags", async () => await supabase.from("tags").select());
-  const tags = data?.data;
+  const tags = useTags();
 
-  useEffect(() => {
-    async function run() {
-      if (importFile?.[0]) {
-        const file = importFile[0];
+  const mode = id ? "edit" : "create";
 
-        try {
-          const { character, json, image } = await parseCharacter(file);
+  const onFinish = async (values: FormValues) => {
+    try {
+      const avatarImg = values.avatar_payload?.file;
 
-          if (character) {
-            setValue("name", character.name);
-            setValue("description", character.description);
-            setValue("personality", character.personality);
-            setValue("first_message", character.first_message);
-            setValue("example_dialogs", character.example_dialogs);
-            setValue("scenario", character.scenario);
-          }
-        } catch (ex) {
-          console.error(ex);
+      if (!avatarImg) {
+        // Require image
+        return;
+      }
+
+      let avatar = botAvatar;
+      if (!avatar) {
+        const compressedImage = await compressImage(avatarImg);
+        const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
+
+        const uploadedAvatar = await supabase.storage
+          .from("bot-avatars")
+          .upload(`${crypto.randomUUID()}.${extension}`, compressedImage, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+        if (uploadedAvatar?.data?.path) {
+          avatar = uploadedAvatar.data.path;
+          setBotAvatar(avatar);
         }
       }
-    }
 
-    run();
-  }, [importFile]);
+      const { avatar_payload, ...postData } = values;
 
-  const onSubmit = handleSubmit(async (values: FormValues) => {
-    const avatarImg = importFile?.[0];
-
-    if (!avatarImg) {
-      // Require image
-      return;
-    }
-
-    let avatar = botAvatar;
-    if (!avatar) {
-      const compressedImage = await compressImage(avatarImg);
-      const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
-
-      const uploadedAvatar = await supabase.storage
-        .from("bot-avatars")
-        .upload(`${crypto.randomUUID()}.${extension}`, compressedImage, {
-          cacheControl: "3600",
-          upsert: true,
+      if (mode === "create") {
+        const result = await axiosInstance.post("/characters", {
+          ...postData,
+          avatar,
         });
-      if (uploadedAvatar?.data?.path) {
-        avatar = uploadedAvatar.data.path;
-        setBotAvatar(avatar);
+        message.success("Character created succesfully!");
+        console.log({ result });
+      } else if (mode === "edit" && id) {
+        const result = await axiosInstance.patch("/characters/" + id, {
+          ...postData,
+          avatar,
+        });
+        message.success("Character edited succesfully!");
+        console.log({ result });
       }
+    } catch (err) {
+      console.error("auth error", err);
+      const backEndError = (err as AxiosError).response?.data;
+      message.error(JSON.stringify(backEndError, null, 2));
+    }
+  };
+
+  const avatarSection = () => {
+    const avatarPayload = form.getFieldValue("avatar_payload")?.file as File | undefined;
+    if (avatarPayload) {
+      return (
+        <img
+          src={URL.createObjectURL(avatarPayload)}
+          style={{ maxWidth: "100%", alignSelf: "flex-start", maxHeight: "10rem" }}
+        />
+      );
     }
 
-    if (mode === "create") {
-      const result = await axiosInstance.post("/character", {
-        ...values,
-        avatar,
-      });
-      console.log({ result });
-    } else if (mode === "edit" && id) {
-      const result = await axiosInstance.patch("/character/" + id, {
-        ...values,
-        avatar,
-      });
-      console.log({ result });
+    if (values?.avatar) {
+      return (
+        <img
+          src={getAvatarUrl(values.avatar)}
+          style={{ maxWidth: "100%", alignSelf: "flex-start", maxHeight: "10rem" }}
+        />
+      );
     }
-  });
+
+    return (
+      <div>
+        <UploadOutlined /> Upload
+      </div>
+    );
+  };
 
   return (
-    <div>
-      <h2>{mode === "create" ? "New Bot" : "Edit Bot"}</h2>
+    <FormContainer>
+      <Form
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        form={form}
+        onFinish={onFinish}
+        initialValues={values}
+      >
+        <Title level={4}>Character Info (How will your chracter be displayed and searched)</Title>
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[{ required: true, message: "Please enter a name." }]}
+        >
+          <Input placeholder="Name" />
+        </Form.Item>
 
-      <form onSubmit={onSubmit}>
-        <p>Select bot avatar or just import Tavern</p>
-        <input {...register("import")} type="file" />
-        {botAvatar ? (
-          <img src={`${SUPABASE_BUCKET_URL}/bot-avatars/${botAvatar}` || ""} />
-        ) : (
-          <span>{importFile?.[0] && <img src={URL.createObjectURL(importFile[0])} />}</span>
-        )}
-        <p>Bot Introduction</p>
-        <input {...register("name")} placeholder="Name*" />
-        <input {...register("description")} placeholder="Description*" />
-        <p>Bot definition</p>
-        <input {...register("personality")} placeholder="Personality" />
-        <input {...register("scenario")} placeholder="scenario" />
-        <textarea {...register("first_message")} placeholder="first_message" />
-        <textarea {...register("example_dialogs")} placeholder="example_dialogs" />
-        <input {...register("is_nsfw")} type="checkbox" /> Is NSFW Bot <br />
-        <input {...register("is_public")} type="checkbox" /> Is Public Bot
-        <p>Tags</p>
-        {tags && (
-          <select
-            onChange={(e) => {
-              const options = e.target.options;
-              const values = [];
-              for (let i = 0; i < options.length; i++) {
-                if (options[i].selected) {
-                  values.push(Number(options[i].value));
+        <Form.Item
+          name="avatar_payload"
+          className="pb-6"
+          label="Avatar"
+          help="Select an image as bot avatar, or you can import Tavern PNG file"
+          rules={[{ required: true, message: "Please select an avatar for the bot." }]}
+        >
+          <Upload
+            accept="image/*"
+            listType="picture-card"
+            showUploadList={false}
+            beforeUpload={async (file) => {
+              form.setFieldValue("avatar_payload", file);
+
+              try {
+                const { character } = await parseCharacter(file);
+
+                if (character && character.name) {
+                  form.setFieldsValue({
+                    name: character.name,
+                    description: character.description,
+                    personality: character.personality,
+                    first_message: character.first_message,
+                    example_dialogs: character.example_dialogs,
+                    scenario: character.scenario,
+                  });
                 }
+              } catch (ex) {
+                message.error(JSON.stringify(ex, null, 2));
               }
-              setValue("tag_ids", values);
+
+              return false;
             }}
-            multiple
           >
-            {tags.map((tag) => (
-              <option key={tag.id} value={tag.id + ""}>
-                {tag.name}
-              </option>
-            ))}
-          </select>
-        )}
-        <input type="submit" value={mode === "create" ? "Create Bot" : "Update Bot"} />
-      </form>
-    </div>
+            {avatarSection()}
+          </Upload>
+        </Form.Item>
+
+        <Form.Item
+          name="description"
+          className="pb-4"
+          label="Introduction"
+          help="This will be displayed in your character detail, not including in prompt or influence your character."
+        >
+          <Input.TextArea rows={3} placeholder="Short introduction about your character" />
+        </Form.Item>
+
+        <Form.Item label="Tags" name="tag_ids">
+          <Select mode="tags" placeholder="Tags your character">
+            {tags &&
+              tags.map((tag) => (
+                <Select.Option key={tag.id} value={tag.id}>
+                  {tag.name}
+                </Select.Option>
+              ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Type" name="is_public" className="mb-2">
+          <Radio.Group>
+            <Radio value={true}>🌟 Public Bot </Radio>
+            <Radio value={false}>🔒 Private Bot (only you can see it)</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item label="Rating" name="is_nsfw" className="mb-4">
+          <Radio.Group>
+            <Radio value={false}>👪 SFW </Radio>
+            <Radio value={true}>🔞 NSFW</Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        <Title level={4}>Character Definition (How your character will act)</Title>
+
+        <Form.Item
+          className="pb-5"
+          label="Personality"
+          name="personality"
+          rules={[{ required: true, message: "Define the personality for your character." }]}
+          help="Describe the character's persona here. Think of this as CharacterAI's description + definitions in one box."
+        >
+          <Input.TextArea rows={4} autoSize placeholder="Personality" />
+        </Form.Item>
+        <Form.Item
+          className="pb-5"
+          name="first_message"
+          label="Initial message"
+          rules={[{ required: true, message: "Please enter character's initial message." }]}
+          help="First message from your character. Provide a lengthy first message to encourage the character to give longer responses."
+        >
+          <Input.TextArea rows={4} autoSize placeholder="First message" />
+        </Form.Item>
+        <Form.Item
+          className="pb-5"
+          label="Scenario"
+          name="scenario"
+          help="The current circumstances and context of the conversation and the characters."
+        >
+          <Input.TextArea rows={2} autoSize placeholder="Scenario" />
+        </Form.Item>
+
+        <Form.Item
+          name="example_dialogs"
+          label="Example dialogs"
+          help="Example chat between you and the character. This section is very important for teaching your character should speak."
+        >
+          <Input.TextArea rows={4} autoSize placeholder="Example dialogs" />
+        </Form.Item>
+
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }} className="pt-4">
+          <Button type="primary" htmlType="submit" block>
+            {mode === "create" ? "Create New Character" : "Update Character"}
+          </Button>
+        </Form.Item>
+      </Form>
+    </FormContainer>
   );
 };
