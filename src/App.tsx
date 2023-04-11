@@ -8,12 +8,15 @@ import { AppContext } from "./appContext";
 import { axiosInstance, supabase } from "./config";
 
 import { Layout, Dropdown, Avatar, Menu } from "antd";
+import { useQuery } from "react-query";
+import { Profile } from "./types/profile";
+import { UserAvatar } from "./components/UserAvatar";
 
 const { Header, Content, Footer } = Layout;
 
 const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
-  const navigate = useNavigate();
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     async function run() {
@@ -33,18 +36,39 @@ const App: React.FC = () => {
     }
   }, [session]);
 
-  const logout = useCallback(async () => {
-    await supabase.auth.signOut();
-    setSession(null);
+  // Maybe just replace this with usePromise lol
+  const { data } = useQuery(
+    "profile",
+    async () => {
+      return await supabase
+        .from("user_profiles")
+        .select("*")
+        .eq("id", session?.user.id)
+        .limit(1)
+        .single();
+    },
+    {
+      enabled: !!session,
+      onSuccess: (result) => {
+        setProfile(result.data);
+      },
+    }
+  );
 
-    navigate("/");
-  }, []);
+  // const logout = useCallback(async () => {
+  //   await supabase.auth.signOut();
+  //   setSession(null);
+
+  //   navigate("/");
+  // }, []);
 
   return (
     <AppContext.Provider
       value={{
         session,
         setSession,
+        profile,
+        setProfile,
       }}
     >
       <Layout className="layout">
@@ -56,23 +80,13 @@ const App: React.FC = () => {
               </Link>
             </Menu.Item>
 
-            {session ? (
+            {session && profile ? (
               <>
                 <Menu.Item key="create">
                   <Link to="/create_bot">Create bot</Link>
                 </Menu.Item>
-                <Menu.Item key="profile" style={{ marginLeft: "auto" }}>
-                  <Dropdown
-                    menu={{
-                      items: [
-                        { key: "profile", label: "Profile", onClick: () => navigate("/profile") },
-                        { key: "logout", label: "Logout", onClick: () => logout() },
-                      ],
-                    }}
-                  >
-                    <Avatar size="large" icon={<UserOutlined />} />
-                  </Dropdown>
-                </Menu.Item>
+
+                <UserAvatar />
               </>
             ) : (
               <>

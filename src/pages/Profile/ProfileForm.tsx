@@ -1,103 +1,165 @@
-import { useForm } from "react-hook-form";
 import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../config";
-import { useQueryClient } from "react-query";
-import { Typography, Input, Button, Upload } from "antd";
+import { message, Input, Button, Upload, Form } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 
 import { compressImage } from "../../services/image-helper";
 import { AxiosError } from "axios";
+import { FormContainer } from "../../components/shared.components";
+import { useQueryClient } from "react-query";
+import { getAvatarUrl, randomID } from "../../services/utils";
 
 interface FormValues {
   id: string;
   name: string;
   avatar: string;
-  avatar_payload?: FileList;
+  avatar_payload?: { file: File };
   about_me: string;
   profile: string;
-  user_name: string;
+  user_name: string | null;
 }
 
 export const ProfileForm = ({ values }: { values: FormValues }) => {
   const queryClient = useQueryClient();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>({ defaultValues: values });
+  const [form] = Form.useForm<FormValues>();
 
-  const avatarPayload = watch("avatar_payload");
+  const onFinish = async ({ avatar_payload, name, user_name, profile, about_me }: FormValues) => {
+    try {
+      const avatarImg = avatar_payload?.file;
+      let newAvatar = null;
+      if (avatarImg) {
+        const compressedImage = await compressImage(avatarImg);
+        const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
 
-  const onSubmit = handleSubmit(
-    async ({ avatar_payload, name, user_name, profile, avatar, about_me }: FormValues) => {
-      try {
-        const avatarImg = avatar_payload?.[0];
-        let newAvatar = null;
-        if (avatarImg) {
-          const compressedImage = await compressImage(avatarImg);
-          const extension = compressedImage.name.substring(avatarImg.name.lastIndexOf(".") + 1);
-
-          const result = await supabase.storage
-            .from("avatars")
-            .upload(`${values.id}.${extension}`, compressedImage, {
-              cacheControl: "3600",
-              upsert: true,
-            });
-          newAvatar = result.data && result.data.path;
-        }
-
-        const response = await axiosInstance.patch("/profiles/mine", {
-          about_me,
-          avatar: avatarImg ? newAvatar : avatar,
-          name,
-          profile,
-          user_name,
-        });
-        const result = response.data;
-
-        if (result.error) {
-          console.log(result.error);
-        } else {
-          console.log("success");
-
-          location.reload(); // Reload to update avatar url lol
-        }
-      } catch (err) {
-        console.error("cauth error", err);
-        const backEndErro = (err as AxiosError).response?.data;
-        console.error({ backEndErro });
+        const result = await supabase.storage
+          .from("avatars")
+          .upload(`${values.id}_${randomID()}.${extension}`, compressedImage, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+        newAvatar = result.data && result.data.path;
       }
+
+      const response = await axiosInstance.patch("/profiles/mine", {
+        about_me,
+        avatar: avatarImg ? newAvatar : values.avatar,
+        name,
+        profile,
+        user_name,
+      });
+      const result = response.data;
+
+      if (result.error) {
+        console.log(result.error);
+      } else {
+        message.success("Profile updated!");
+        queryClient.invalidateQueries("profile");
+      }
+    } catch (err) {
+      console.error("auth error", err);
+      const backEndError = (err as AxiosError).response?.data;
+      message.error(JSON.stringify(backEndError, null, 2));
     }
-  );
+  };
+
+  const avatarSection = () => {
+    const avatarPayload = form.getFieldValue("avatar_payload")?.file as File | undefined;
+    if (avatarPayload) {
+      return (
+        <img
+          src={URL.createObjectURL(avatarPayload)}
+          style={{ maxWidth: "100%", alignSelf: "flex-start", maxHeight: "10rem" }}
+        />
+      );
+    }
+
+    if (values.avatar) {
+      return (
+        <img
+          src={getAvatarUrl(values.avatar)}
+          style={{ maxWidth: "100%", alignSelf: "flex-start", maxHeight: "10rem" }}
+        />
+      );
+    }
+
+    return (
+      <div>
+        <UploadOutlined /> Upload
+      </div>
+    );
+  };
 
   return (
-    <form onSubmit={onSubmit}>
-      {avatarPayload && avatarPayload[0] ? (
-        <img src={URL.createObjectURL(avatarPayload[0])} />
-      ) : (
-        values.avatar && <img src={`${SUPABASE_BUCKET_URL}/avatars/${values.avatar}` || ""} />
-      )}
-      {/*
-      <Upload name="avatar_payload" listType="picture-circle" showUploadList={false}>
+    <FormContainer>
+      <Form
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        onFinish={onFinish}
+        initialValues={values}
+        form={form}
+      >
+        <Form.Item
+          className="pb-4"
+          name="name"
+          label="Name"
+          rules={[{ required: true, message: "Please enter your name!" }]}
+          help="This will be used in your conversation with bot"
+        >
+          <Input placeholder="Name" />
+        </Form.Item>
 
-      </Upload> */}
+        <Form.Item label="Avatar (Click to upload)" className="pb-6">
+          <Form.Item name="avatar_payload" noStyle>
+            <Upload
+              accept="image/*"
+              listType="picture-card"
+              showUploadList={false}
+              beforeUpload={(file) => {
+                form.setFieldValue("avatar_payload", file);
+                return false;
+              }}
+            >
+              {avatarSection()}
+            </Upload>
+          </Form.Item>
+        </Form.Item>
 
-      <input {...register("avatar_payload")} type="file" accept="image/*" placeholder="Avatar" />
+        <Form.Item
+          className="pb-4"
+          name="user_name"
+          label="Username"
+          help="This can only be set once and can't be changed"
+          rules={[{ required: true, message: "Please enter a Username!" }]}
+        >
+          {values.user_name ? (
+            <strong>{values.user_name}</strong>
+          ) : (
+            <Input placeholder="Username" disabled={!!values.user_name} />
+          )}
+        </Form.Item>
 
-      <input
-        {...register("user_name")}
-        placeholder="Username (Can only set once)"
-        disabled={!!values.user_name}
-      />
+        <Form.Item
+          className="pb-4"
+          name="about_me"
+          label="About me"
+          help="This will be displayed in your profile. You can put link to your site or Discord..."
+        >
+          <Input.TextArea rows={4} />
+        </Form.Item>
 
-      <input {...register("name")} placeholder="Name" />
+        <Form.Item
+          name="profile"
+          label="User profile"
+          help="This will be included in the prompt to let the bot know about you"
+        >
+          <Input.TextArea rows={4} placeholder='name("Harry") age("29") gender("male")' />
+        </Form.Item>
 
-      <input {...register("about_me")} placeholder="All about you" />
-
-      <input {...register("profile")} placeholder="Name=Harry, Age=18, Sex=Female" />
-
-      <Button type="primary" htmlType="submit" block>
-        Update Profile
-      </Button>
-    </form>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }} className="pt-4">
+          <Button type="primary" htmlType="submit" block>
+            Update Profile
+          </Button>
+        </Form.Item>
+      </Form>
+    </FormContainer>
   );
 };

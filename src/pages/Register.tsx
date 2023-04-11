@@ -1,11 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../appContext";
-import { supabase } from "../config";
-
-import { Typography, Input, Button } from "antd";
+import { Typography, Input, Button, Form, message } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -14,6 +10,9 @@ import {
   DisconnectOutlined,
 } from "@ant-design/icons";
 import { Provider } from "@supabase/supabase-js";
+import { AppContext } from "../appContext";
+import { supabase } from "../config";
+
 const { Title } = Typography;
 
 interface FormValues {
@@ -30,15 +29,11 @@ const RegisterFormContainer = styled.div`
 
 export const Register = () => {
   const { setSession } = useContext(AppContext);
-
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
 
-  const onSubmit = handleSubmit(async ({ email, password }: FormValues) => {
+  const [form] = Form.useForm<FormValues>();
+
+  const onSubmit = async ({ email, password }: FormValues) => {
     const result = await supabase.auth.signUp({
       email,
       password,
@@ -54,10 +49,11 @@ export const Register = () => {
           setSession(sessionData.data.session);
         }
 
+        message.success("Account created successfully. Please set your username.");
         navigate("/profile");
       }
     }
-  });
+  };
 
   const registerWithProvider = (provider: Provider) => {
     return supabase.auth.signInWithOAuth({
@@ -72,25 +68,28 @@ export const Register = () => {
     <RegisterFormContainer>
       {/* <button>Create test users (Create a lot of test user with password 123456)</button> */}
 
-      <form onSubmit={onSubmit}>
+      <Form form={form} onFinish={onSubmit}>
         <Title>Register</Title>
 
-        <Input {...register("email")} prefix={<MailOutlined />} placeholder="Email" />
+        <Form.Item name="email" rules={[{ required: true, message: "Please enter your email." }]}>
+          <Input prefix={<MailOutlined />} placeholder="Email" />
+        </Form.Item>
 
-        <Input
-          className="my-4"
-          {...register("password")}
-          prefix={<LockOutlined />}
-          type="password"
-          placeholder="Password"
-        />
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Please enter your password." }]}
+        >
+          <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+        </Form.Item>
 
-        <Button type="primary" htmlType="submit" block>
-          Register
-        </Button>
-      </form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Register
+          </Button>
+        </Form.Item>
+      </Form>
 
-      <div className="py-4">
+      <div>
         <p>
           We recommend register using third party. Our email sending might not working properly lol
           so you can't reset password.
@@ -103,6 +102,7 @@ export const Register = () => {
         <Button icon={<DisconnectOutlined />} onClick={() => registerWithProvider("discord")} block>
           Register with Discord
         </Button>
+
         <Button icon={<GithubOutlined />} onClick={() => registerWithProvider("github")} block>
           Register with Github
         </Button>

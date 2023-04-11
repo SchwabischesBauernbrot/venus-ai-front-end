@@ -1,10 +1,8 @@
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../appContext";
-import { supabase } from "../config";
 
-import { Typography, Input, Button, Form } from "antd";
+import { Typography, Input, Button, Form, message } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -12,6 +10,10 @@ import {
   GithubOutlined,
   DisconnectOutlined,
 } from "@ant-design/icons";
+import { AppContext } from "../appContext";
+import { supabase } from "../config";
+import { Provider } from "@supabase/supabase-js";
+
 const { Title } = Typography;
 
 interface FormValues {
@@ -40,11 +42,9 @@ export const Login = () => {
       const result = await supabase.auth.signInWithPassword({ email, password });
 
       if (result.error) {
-        console.log(result.error);
+        message.error(JSON.stringify(result.error, null, 2));
       } else {
-        const { user, session } = result.data;
-        console.log({ user, session });
-
+        const { session } = result.data;
         if (session) {
           setSession(session);
           navigate("/profile");
@@ -55,7 +55,14 @@ export const Login = () => {
     }
   };
 
-  const loginWithProvider = (provider: string) => provider;
+  const loginWithProvider = (provider: Provider) => {
+    return supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: "http://localhost:5173/profile",
+      },
+    });
+  };
 
   return (
     <LoginFormContainer>
