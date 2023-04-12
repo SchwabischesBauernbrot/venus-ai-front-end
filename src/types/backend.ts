@@ -57,7 +57,7 @@ export interface components {
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
-      tags?: components["schemas"]["Tag"];
+      tags?: (components["schemas"]["Tag"])[];
     };
     CharacterDto: {
       avatar: string;

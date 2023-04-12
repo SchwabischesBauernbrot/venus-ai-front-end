@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, UserAddOutlined } from "@ant-design/icons";
 
 import { Session } from "@supabase/supabase-js";
 
@@ -55,13 +55,6 @@ const App: React.FC = () => {
     }
   );
 
-  // const logout = useCallback(async () => {
-  //   await supabase.auth.signOut();
-  //   setSession(null);
-
-  //   navigate("/");
-  // }, []);
-
   return (
     <AppContext.Provider
       value={{
@@ -83,7 +76,9 @@ const App: React.FC = () => {
             {session && profile ? (
               <>
                 <Menu.Item key="create">
-                  <Link to="/create_char">Create bot</Link>
+                  <Link to="/create_character">
+                    <UserAddOutlined /> Create Character
+                  </Link>
                 </Menu.Item>
 
                 <UserAvatar />

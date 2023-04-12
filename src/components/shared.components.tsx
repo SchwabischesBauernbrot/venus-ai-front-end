@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const PageContainer = styled.div`
   text-align: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
 `;
 
 export const FormContainer = styled.div`

@@ -18,7 +18,7 @@ export interface Database {
         Insert: {
           character_id: string
           created_at?: string | null
-          tag_id?: number
+          tag_id: number
         }
         Update: {
           character_id?: string

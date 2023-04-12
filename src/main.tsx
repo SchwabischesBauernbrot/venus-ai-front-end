@@ -4,6 +4,7 @@ import App from "./App";
 
 import "antd/dist/reset.css";
 import "antd-css-utilities/utility.min.css";
+import "./global.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ConfigProvider, theme } from "antd";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -43,21 +44,21 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/profile/:profileId",
+        path: "/profiles/:profileId",
         element: <PublicProfile />,
       },
 
       // Characters
       {
-        path: "/create_char",
+        path: "/create_character",
         element: <CreateCharacter />,
       },
       {
-        path: "/edit_char/:characterId",
+        path: "/edit_character/:characterId",
         element: <EditCharacter />,
       },
       {
-        path: "/character/:characterId",
+        path: "/characters/:characterId",
         element: <ViewCharacter />,
       },
     ],
