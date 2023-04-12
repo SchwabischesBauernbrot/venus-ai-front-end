@@ -18,15 +18,9 @@ export const ViewCharacter: React.FC = () => {
     { enabled: !!characterId }
   );
 
-  console.log(data);
-  useEffect(() => {
-    if (data?.error) {
-      message.error("Can not find this character");
-    }
-  }, [data?.error]);
-
   return (
     <PageContainer>
+      {data && data.error && <p>Can not view this character. It might be deleted or private.</p>}
       {data && data.data !== null && <code>{JSON.stringify(data, null, 2)}</code>}
     </PageContainer>
   );

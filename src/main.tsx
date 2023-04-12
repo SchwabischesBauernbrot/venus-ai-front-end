@@ -15,6 +15,7 @@ import { Profile } from "./pages/Profile/Profile";
 import { Register } from "./pages/Register";
 import { ViewCharacter } from "./pages/Character/pages/ViewCharacter";
 import { EditCharacter } from "./pages/Character/pages/EditCharacter";
+import { PublicProfile } from "./pages/Profile/PublicProfile";
 
 const queryClient = new QueryClient();
 
@@ -35,10 +36,18 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login />,
       },
+
+      // Profile and Public Profile
       {
         path: "/profile",
         element: <Profile />,
       },
+      {
+        path: "/profile/:profileId",
+        element: <PublicProfile />,
+      },
+
+      // Characters
       {
         path: "/create_char",
         element: <CreateCharacter />,

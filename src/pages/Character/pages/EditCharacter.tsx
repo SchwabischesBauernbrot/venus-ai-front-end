@@ -18,7 +18,7 @@ export const EditCharacter: React.FC = () => {
     async () => {
       const result = await supabase
         .from("characters")
-        .select("*, tags(*)")
+        .select("*, tags(id)")
         .eq("id", characterId)
         .limit(1)
         .single();
@@ -30,7 +30,7 @@ export const EditCharacter: React.FC = () => {
 
   const editData = useMemo(() => {
     if (data?.data) {
-      const tags: Tag[] = data.data.tags || [];
+      const tags = Array.isArray(data.data.tags) ? data.data.tags : [];
       const copy = { ...data.data, tag_ids: tags.map((tag) => tag.id) };
       return copy;
     }
@@ -41,7 +41,7 @@ export const EditCharacter: React.FC = () => {
   return (
     <PageContainer>
       <Title>
-        Edit Character <Link to={`/character/${characterId}`}>(View)</Link>{" "}
+        Edit Character <Link to={`/character/${characterId}`}>(View Character)</Link>
       </Title>
       {editData && <CharacterForm id={editData.id} values={editData} />}
     </PageContainer>
