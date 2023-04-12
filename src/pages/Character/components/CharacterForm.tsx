@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Form, Input, Upload, Select, Button, message, Typography, Radio } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
@@ -8,9 +8,12 @@ import { compressImage } from "../../../services/image-helper";
 import { useTags } from "../../../hooks/useTags";
 import { getBotAvatarUrl } from "../../../services/utils";
 
-import { FormContainer } from "../../../components/shared.components";
+import { FormContainer } from "../../../components/shared";
 import { AxiosError } from "axios";
 import { useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { SupaCharacter } from "../../../types/backend-alias";
+import { AppContext } from "../../../appContext";
 
 const { Title } = Typography;
 
@@ -35,7 +38,9 @@ export interface CharacterFormProps {
 }
 
 export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
+  const { profile } = useContext(AppContext);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [form] = Form.useForm<FormValues>();
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
 
@@ -45,7 +50,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
 
   const onFinish = async (formValues: FormValues) => {
     try {
-      const avatarImg = values.avatar_payload?.file;
+      const avatarImg = formValues.avatar_payload?.file;
       if (mode === "create" && !avatarImg) {
         // Require image
         message.error("Please set an avatar for your character");
@@ -72,21 +77,24 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
       const { avatar_payload, ...postData } = formValues;
 
       if (mode === "create") {
-        const result = await axiosInstance.post("/characters", {
+        const result = await axiosInstance.post<SupaCharacter>("/characters", {
           ...postData,
           avatar: avatar || values.avatar,
         });
-        message.success("Character created succesfully!");
-        console.log({ result });
+        message.success("Character created successfully!");
+        queryClient.invalidateQueries(["characters", profile?.id]);
+
+        navigate(`/characters/${result.data.id}`);
       } else if (mode === "edit") {
-        const result = await axiosInstance.patch("/characters/" + id, {
+        const result = await axiosInstance.patch<SupaCharacter>("/characters/" + id, {
           ...postData,
           avatar: avatar || values.avatar,
         });
 
-        message.success("Character edited succesfully!");
-        console.log({ result });
+        message.success("Character edited successfully!");
+
         queryClient.invalidateQueries(["character", id]);
+        queryClient.invalidateQueries(["characters", profile?.id]);
       }
     } catch (err) {
       console.error("error", err);
@@ -125,13 +133,13 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
   return (
     <FormContainer>
       <Form
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
         form={form}
         onFinish={onFinish}
         initialValues={values}
       >
-        <Title level={4}>Character Info (How will your chracter be displayed and searched)</Title>
+        <Title level={4}>Character Info (How will your character be displayed and searched)</Title>
         <Form.Item
           label="Name"
           name="name"
@@ -140,12 +148,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           <Input placeholder="Name" />
         </Form.Item>
 
-        <Form.Item
-          name="avatar_payload"
-          className="pb-6"
-          label="Avatar"
-          help="Select an image as bot avatar, or you can import Tavern PNG file"
-        >
+        <Form.Item name="avatar_payload" label="Avatar" className="mb-12">
           <Upload
             accept="image/*"
             listType="picture-card"
@@ -177,6 +180,19 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           </Upload>
         </Form.Item>
 
+        {mode === "create" && (
+          <Form.Item wrapperCol={{ offset: 6, span: 18 }}>
+            <p>Select an image as bot avatar, or you can import Tavern PNG file.</p>
+            <span>
+              If you want to import CAI character, go to{" "}
+              <a href="https://zoltanai.github.io/character-editor/" target="_blank">
+                ZoltanAI Character Editor
+              </a>{" "}
+              and <strong>Download as Character Card</strong>
+            </span>
+          </Form.Item>
+        )}
+
         <Form.Item
           name="description"
           className="pb-4"
@@ -186,12 +202,26 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           <Input.TextArea rows={3} placeholder="Short introduction about your character" />
         </Form.Item>
 
-        <Form.Item label="Tags" name="tag_ids">
-          <Select mode="tags" placeholder="Tags your character">
+        <Form.Item
+          label="Tags"
+          name="tag_ids"
+          help="Tag your character, maximum 5 tags only"
+          className="pb-4"
+        >
+          <Select
+            mode="multiple"
+            placeholder="Select gender/type/ of your character"
+            optionLabelProp="label"
+            filterOption={(input, option) =>
+              String(option?.label ?? "")
+                .toLocaleLowerCase()
+                .includes(input.toLocaleLowerCase())
+            }
+          >
             {tags &&
               tags.map((tag) => (
-                <Select.Option key={tag.id} value={tag.id}>
-                  {tag.name}
+                <Select.Option key={tag.id} value={tag.id} label={tag.name}>
+                  {tag.name} ({tag.description})
                 </Select.Option>
               ))}
           </Select>
@@ -247,7 +277,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           <Input.TextArea rows={4} autoSize placeholder="Example dialogs" />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} className="pt-4">
+        <Form.Item wrapperCol={{ offset: 6, span: 18 }} className="pt-4">
           <Button type="primary" htmlType="submit" block>
             {mode === "create" ? "Create New Character" : "Update Character"}
           </Button>

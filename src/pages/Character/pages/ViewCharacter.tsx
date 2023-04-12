@@ -1,5 +1,5 @@
 import { Typography, message } from "antd";
-import { PageContainer } from "../../../components/shared.components";
+import { PageContainer } from "../../../components/shared";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../config";

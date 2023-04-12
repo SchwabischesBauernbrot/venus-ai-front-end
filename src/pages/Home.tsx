@@ -1,18 +1,25 @@
 import { useQuery } from "react-query";
+import { Typography, Spin } from "antd";
+
+import { PageContainer } from "../components/shared";
 import { axiosInstance } from "../config";
 import { CharacterView } from "../types/backend-alias";
+import { CharacterList } from "../components/CharacterList";
+
+const { Title } = Typography;
 
 function Home() {
-  const { data } = useQuery(
-    "main_page",
-    async () => await (await axiosInstance.get<CharacterView>("characters/home")).data
-  );
+  const { data, isLoading } = useQuery("main_page", async () => {
+    const response = await axiosInstance.get<CharacterView[]>("characters/home");
+    return response.data;
+  });
 
   return (
-    <div className="App">
-      This is main page lol
-      {data && <code>{JSON.stringify(data, null, 2)}</code>}
-    </div>
+    <PageContainer align="left">
+      <Title level={2}>Latest characters</Title>
+      {isLoading && <Spin />}
+      {data && <CharacterList size="small" characters={data} />}
+    </PageContainer>
   );
 }
 

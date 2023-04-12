@@ -1,5 +1,5 @@
 import { Typography } from "antd";
-import { PageContainer } from "../../../components/shared.components";
+import { PageContainer } from "../../../components/shared";
 import { CharacterForm } from "../components/CharacterForm";
 
 const { Title } = Typography;
@@ -7,7 +7,7 @@ const { Title } = Typography;
 export const CreateCharacter: React.FC = () => {
   return (
     <PageContainer>
-      <Title>Create Character</Title>
+      <Title level={2}>Create Character</Title>
 
       <CharacterForm
         values={{

@@ -1,31 +1,15 @@
-import { useEffect } from "react";
-import styled from "styled-components";
-import { Typography, message, Spin, Col, Row, Avatar, Card, Space, Tag, Tooltip } from "antd";
+import { Typography, Spin, Col, Row, Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import { axiosInstance, supabase } from "../../config";
+import { axiosInstance } from "../../config";
 import { CharacterView, ProfileRes } from "../../types/backend-alias";
-import { PageContainer } from "../../components/shared.components";
-import { getAvatarUrl, getBotAvatarUrl } from "../../services/utils";
+import { PageContainer } from "../../components/shared";
+import { getAvatarUrl } from "../../services/utils";
 import { CharacterList } from "../../components/CharacterList";
 
-const { Meta } = Card;
 const { Title } = Typography;
-
-const CharacterContainer = styled.div`
-  margin-top: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  flex-wrap: wrap;
-`;
-
-const CharacterImage = styled.img`
-  aspect-ratio: 1/1;
-  object-fit: cover;
-`;
 
 export const PublicProfile: React.FC = () => {
   const { profileId } = useParams();

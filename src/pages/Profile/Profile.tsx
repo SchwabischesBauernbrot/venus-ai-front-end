@@ -3,7 +3,7 @@ import { Typography, Spin } from "antd";
 
 import { AppContext } from "../../appContext";
 import { ProfileForm } from "./ProfileForm";
-import { PageContainer } from "../../components/shared.components";
+import { PageContainer } from "../../components/shared";
 const { Title } = Typography;
 
 export const Profile = () => {
@@ -11,7 +11,7 @@ export const Profile = () => {
 
   return (
     <PageContainer>
-      <Title>My Profile</Title>
+      <Title level={2}>My Profile</Title>
 
       {profile ? <ProfileForm values={profile} /> : <Spin />}
     </PageContainer>

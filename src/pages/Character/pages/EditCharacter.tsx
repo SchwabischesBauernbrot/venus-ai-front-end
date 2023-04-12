@@ -1,19 +1,19 @@
-import { Typography } from "antd";
 import { useMemo } from "react";
-import { PageContainer } from "../../../components/shared.components";
-const { Title } = Typography;
+import { Spin, Typography } from "antd";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
+
 import { supabase } from "../../../config";
-import { Tag } from "../../../types/backend-alias";
+import { PageContainer } from "../../../components/shared";
 import { CharacterForm } from "../components/CharacterForm";
 
+const { Title } = Typography;
+
 export const EditCharacter: React.FC = () => {
-  // Get ID from here somehow
   const { characterId } = useParams();
 
   // Get character
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ["character", characterId],
     async () => {
       const result = await supabase
@@ -40,9 +40,10 @@ export const EditCharacter: React.FC = () => {
 
   return (
     <PageContainer>
-      <Title>
-        Edit Character <Link to={`/character/${characterId}`}>(View Character)</Link>
+      <Title level={2}>
+        Edit Character <Link to={`/characters/${characterId}`}>(View Character)</Link>
       </Title>
+      {isLoading && <Spin />}
       {editData && <CharacterForm id={editData.id} values={editData} />}
     </PageContainer>
   );

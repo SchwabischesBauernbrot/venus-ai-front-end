@@ -4,7 +4,7 @@ import { UploadOutlined } from "@ant-design/icons";
 
 import { compressImage } from "../../services/image-helper";
 import { AxiosError } from "axios";
-import { FormContainer } from "../../components/shared.components";
+import { FormContainer } from "../../components/shared";
 import { useQueryClient } from "react-query";
 import { getAvatarUrl, randomID } from "../../services/utils";
 
