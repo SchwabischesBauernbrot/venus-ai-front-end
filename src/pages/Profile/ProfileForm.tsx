@@ -156,7 +156,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }} className="pt-4">
           <Button type="primary" htmlType="submit" block>
-            Update Profile
+            Update profile
           </Button>
         </Form.Item>
       </Form>

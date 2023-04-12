@@ -13,3 +13,5 @@ stats.html
 .eslintcache
 
 .yarn
+
+.DS_Store

@@ -26,6 +26,7 @@ const LoginFormContainer = styled.div`
   text-align: center;
   margin: 0 auto;
   padding: 1rem;
+  padding-bottom: 2rem;
 `;
 
 export const Login = () => {

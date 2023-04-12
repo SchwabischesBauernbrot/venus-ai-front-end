@@ -107,19 +107,32 @@ const App: React.FC = () => {
       </Content>
 
       <Footer style={{ textAlign: "center" }}>
-        <p>This is the unofficial Website of Pygmalion AI.</p>
+        <p>This is the unofficial website of Pygmalion AI. Uncensored, No Ad, Forever Free.</p>
 
-        <div>
-          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI/">
+        <p>
+          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI">
             <img src="https://img.icons8.com/bubbles/50/null/reddit.png" />
           </a>
-          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI/">
+          <a target="_blank" href="https://discord.gg/ZHXEa3yywq">
             <img src="https://img.icons8.com/bubbles/50/null/discord-logo.png" />
           </a>
-          <a target="_blank" href="https://www.reddit.com/r/PygmalionAI/">
+          <a target="_blank" href="https://github.com/pyg-ai-unonfficial">
             <img src="https://img.icons8.com/bubbles/50/null/github.png" />
           </a>
-        </div>
+        </p>
+
+        <span>
+          <a href="https://github.com/pyg-ai-unonfficial/front-end/issues" target="_blank">
+            🐛 Bug Report
+          </a>
+          <span> - </span>
+          <a
+            href="https://github.com/orgs/pyg-ai-unonfficial/discussions/categories/ideas"
+            target="_blank"
+          >
+            💡Feedback & Idea
+          </a>
+        </span>
       </Footer>
     </AppContext.Provider>
   );
