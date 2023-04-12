@@ -18,6 +18,7 @@ export interface paths {
     post: operations["CharacterController_createCharacter"];
   };
   "/characters/{id}": {
+    get: operations["CharacterController_getCharacter"];
     patch: operations["CharacterController_updateCharacter"];
   };
   "/profiles/{id}": {
@@ -29,11 +30,11 @@ export interface paths {
   "/profiles/mine": {
     patch: operations["ProfileController_updateProfile"];
   };
-  "/chat": {
+  "/chats": {
     post: operations["ChatController_create"];
   };
-  "/chat/{id}": {
-    patch: operations["ChatController_update"];
+  "/chats/{id}": {
+    patch: operations["ChatController_get"];
   };
 }
 
@@ -54,6 +55,7 @@ export interface components {
       avatar: string;
       description: string;
       created_at: string;
+      is_public: boolean;
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
@@ -70,6 +72,37 @@ export interface components {
       is_nsfw: boolean;
       is_public: boolean;
       tag_ids: (number)[];
+    };
+    CharacterEntity: {
+      id: string;
+      avatar: string;
+      created_at: string;
+      creator_id: string;
+      description: string;
+      example_dialogs: string;
+      first_message: string;
+      is_nsfw: boolean;
+      is_public: boolean;
+      name: string;
+      personality: string;
+      scenario: string;
+      updated_at: string;
+    };
+    FullChracterView: {
+      id: string;
+      name: string;
+      avatar: string;
+      description: string;
+      created_at: string;
+      is_public: boolean;
+      is_nsfw: boolean;
+      creator_id: string;
+      creator_name: string;
+      tags?: (components["schemas"]["Tag"])[];
+      example_dialogs: string;
+      first_message: string;
+      personality: string;
+      scenario: string;
     };
     ProfileResponse: {
       id: string;
@@ -89,8 +122,39 @@ export interface components {
     CreateChatDto: {
       character_id: string;
     };
+    ChatEntity: {
+      id: number;
+      character_id: string;
+      user_id: string;
+      created_at: string;
+      is_public: boolean;
+    };
     UpdateChatDto: {
       is_public: boolean;
+    };
+    ChatEntityWithCharacter: {
+      id: number;
+      character_id: string;
+      user_id: string;
+      created_at: string;
+      is_public: boolean;
+      characters: {
+        name?: string;
+        description?: string;
+        avatar?: string;
+      };
+    };
+    ChatMessageEntity: {
+      chat_id: number;
+      created_at: string;
+      id: number;
+      is_bot: boolean;
+      is_main: boolean;
+      message: string;
+    };
+    ChatResponse: {
+      chat: components["schemas"]["ChatEntityWithCharacter"];
+      chatMessages: (components["schemas"]["ChatMessageEntity"])[];
     };
   };
   responses: never;
@@ -144,6 +208,26 @@ export interface operations {
           "application/json": Record<string, never>;
         };
       };
+      default: {
+        content: {
+          "application/json": components["schemas"]["CharacterEntity"];
+        };
+      };
+    };
+  };
+  CharacterController_getCharacter: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      200: never;
+      default: {
+        content: {
+          "application/json": components["schemas"]["FullChracterView"];
+        };
+      };
     };
   };
   CharacterController_updateCharacter: {
@@ -161,6 +245,11 @@ export interface operations {
       200: {
         content: {
           "application/json": Record<string, never>;
+        };
+      };
+      default: {
+        content: {
+          "application/json": components["schemas"]["CharacterEntity"];
         };
       };
     };
@@ -225,23 +314,24 @@ export interface operations {
           "application/json": Record<string, never>;
         };
       };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ChatEntity"];
+        };
+      };
     };
   };
-  ChatController_update: {
+  ChatController_get: {
     parameters: {
       path: {
         id: string;
       };
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpdateChatDto"];
-      };
-    };
     responses: {
-      200: {
+      200: never;
+      default: {
         content: {
-          "application/json": Record<string, never>;
+          "application/json": components["schemas"]["ChatResponse"];
         };
       };
     };

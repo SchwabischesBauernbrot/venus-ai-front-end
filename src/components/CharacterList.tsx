@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { getBotAvatarUrl } from "../services/utils";
 import { CharacterView } from "../types/backend-alias";
+import { PrivateIndicator } from "./PrivateIndicator";
 
 interface CharacterListProps {
   characters: CharacterView[];
@@ -41,18 +42,17 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   return (
     <CharacterContainer size={size}>
       {characters.map((character) => (
-        <Link
-          key={character.id}
-          to={`/characters/${character.id}`}
-          target="_blank"
-          className="mb-4"
-        >
+        <Link key={character.id} to={`/characters/${character.id}`} className="mb-4">
           <Card
             hoverable
             size="small"
             style={{ maxWidth: "16rem", height: "100%" }}
             key={character.id}
-            title={`${character.is_public === false ? "🔒" : ""} ${character.name}`}
+            title={
+              <span>
+                <PrivateIndicator isPublic={character.is_public} /> {character.name}
+              </span>
+            }
             // Add bot statistics in cover here
             cover={<CharacterImage alt={character.name} src={getBotAvatarUrl(character.avatar)} />}
             actions={
@@ -66,22 +66,20 @@ export const CharacterList: React.FC<CharacterListProps> = ({
             }
           >
             {!editable && (
-              <Link target="_blank" to={`/profiles/${character.creator_id}`}>
+              <Link to={`/profiles/${character.creator_id}`}>
                 <p>@{character.creator_name}</p>
               </Link>
             )}
             <Meta description={character.description} />
 
-            {character.tags && (
-              <Space className="mt-4" size={[0, 8]} wrap>
-                {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-                {character.tags.map((tag) => (
-                  <Tooltip key={tag.id} title={tag.description}>
-                    <Tag>{tag.name}</Tag>
-                  </Tooltip>
-                ))}
-              </Space>
-            )}
+            <Space className="mt-4" size={[0, 8]} wrap>
+              {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
+              {character.tags?.map((tag) => (
+                <Tooltip key={tag.id} title={tag.description}>
+                  <Tag>{tag.name}</Tag>
+                </Tooltip>
+              ))}
+            </Space>
           </Card>
         </Link>
       ))}

@@ -25,6 +25,7 @@ export const UserAvatar: React.FC = () => {
           items: [
             { key: "my_profile", label: "My Profile", onClick: () => navigate("/profile") },
             { key: "my_bot", label: "My Characters", onClick: () => navigate("/my_characters") },
+            { key: "my_chat", label: "My Chats", onClick: () => navigate("/my_chats") },
             { key: "logout", label: "Logout", onClick: () => logout() },
           ],
         }}

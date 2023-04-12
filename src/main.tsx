@@ -6,7 +6,7 @@ import "antd/dist/reset.css";
 import "antd-css-utilities/utility.min.css";
 import "./global.css";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ConfigProvider, theme } from "antd";
+import { ConfigProvider, App as AntdApp, theme } from "antd";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { CreateCharacter } from "./pages/Character/pages/CreateCharacter";
@@ -18,6 +18,8 @@ import { ViewCharacter } from "./pages/Character/pages/ViewCharacter";
 import { EditCharacter } from "./pages/Character/pages/EditCharacter";
 import { PublicProfile } from "./pages/Profile/PublicProfile";
 import { MyCharacters } from "./pages/Character/pages/MyCharacters";
+import { ChatView } from "./pages/Chat/pages/ChatView";
+import { MyChats } from "./pages/Chat/pages/MyChats";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +68,16 @@ const router = createBrowserRouter([
         path: "/characters/:characterId",
         element: <ViewCharacter />,
       },
+
+      // Chat related
+      {
+        path: "/my_chats",
+        element: <MyChats />,
+      },
+      {
+        path: "/chats/:chatId",
+        element: <ChatView />,
+      },
     ],
   },
 ]);
@@ -74,7 +86,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <ConfigProvider>
-        <RouterProvider router={router} />
+        <AntdApp>
+          <RouterProvider router={router} />
+        </AntdApp>
       </ConfigProvider>
     </QueryClientProvider>
   </React.StrictMode>
