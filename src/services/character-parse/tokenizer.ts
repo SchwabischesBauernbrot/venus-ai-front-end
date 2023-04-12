@@ -5,7 +5,12 @@ import { Buffer } from "buffer";
 window.Buffer = Buffer;
 
 export class Tokenizer {
-  static count(str: string) {
-    return countTokens(str || "");
+  static count(input: string) {
+    return countTokens(input || "");
+  }
+
+  static tokenCountFormat(input?: string) {
+    if (!input) return "0 character, 0 token";
+    return `${input.length} characters, ${Tokenizer.count(input)} tokens`;
   }
 }

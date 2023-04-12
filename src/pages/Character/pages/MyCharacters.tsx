@@ -4,7 +4,12 @@ import { useQuery } from "react-query";
 import { supabase } from "../../../config";
 import { useContext } from "react";
 import { AppContext } from "../../../appContext";
-import { CharacterView, Tag, SupaUserProfile } from "../../../types/backend-alias";
+import {
+  CharacterView,
+  Tag,
+  SupaUserProfile,
+  CharacterWithProfileAndTag,
+} from "../../../types/backend-alias";
 import { CharacterList } from "../../../components/CharacterList";
 
 const { Title } = Typography;
@@ -19,17 +24,22 @@ export const MyCharacters: React.FC = () => {
       const responses = await supabase
         .from("characters")
         .select("*, tags(*), user_profiles(*)")
-        .eq("creator_id", profile?.id);
+        .eq("creator_id", profile?.id)
+        .returns<CharacterWithProfileAndTag[]>();
 
-      const characters = Array.isArray(responses.data) ? responses.data : [];
+      const characters = responses.data;
+
+      if (!characters) {
+        return [];
+      }
 
       const convertedCharacters: CharacterView[] = characters.map((character) => {
-        const userProfile: SupaUserProfile = character.user_profiles as any;
-        const tags: Tag[] = character.tags as any;
+        const { user_profiles, tags } = character;
+
         return {
           ...character,
-          creator_id: userProfile.id,
-          creator_name: userProfile.user_name || userProfile.name,
+          creator_id: user_profiles.id,
+          creator_name: user_profiles.user_name || user_profiles.name,
           tags,
         };
       });
@@ -41,7 +51,15 @@ export const MyCharacters: React.FC = () => {
 
   return (
     <PageContainer align="left">
-      <Title level={2}>My Characters</Title>
+      <Title level={2}>
+        My Characters{" "}
+        {data && (
+          <span>
+            (Total: {data.filter((c) => c.is_public).length} public,{" "}
+            {data.filter((c) => !c.is_public).length} private)
+          </span>
+        )}
+      </Title>
 
       {isLoading && <Spin />}
       {data && <CharacterList characters={data} editable />}

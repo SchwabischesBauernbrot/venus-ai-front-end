@@ -7,3 +7,8 @@ export type ProfileRes = components["schemas"]["ProfileResponse"];
 
 export type SupaUserProfile = Database["public"]["Tables"]["user_profiles"]["Row"];
 export type SupaCharacter = Database["public"]["Tables"]["characters"]["Row"];
+export type SupaTag = Database["public"]["Tables"]["tags"]["Row"];
+
+export type CharacterWithProfileAndTag = SupaCharacter & { user_profiles: SupaUserProfile } & {
+  tags: SupaTag[];
+};

@@ -51,7 +51,7 @@ export const PublicProfile: React.FC = () => {
 
           <Col span={20} className="text-left">
             <Title level={3} className="my-2">
-              Public characters
+              Public characters (Total: {data.characters.length} characters)
             </Title>
 
             <CharacterList characters={data.characters} />

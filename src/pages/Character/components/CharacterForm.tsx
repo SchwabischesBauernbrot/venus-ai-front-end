@@ -1,6 +1,8 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Form, Input, Upload, Select, Button, message, Typography, Radio } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { countTokens } from "gptoken";
 
 import { axiosInstance, supabase } from "../../../config";
 import { parseCharacter } from "../../../services/character-parse";
@@ -14,6 +16,7 @@ import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { SupaCharacter } from "../../../types/backend-alias";
 import { AppContext } from "../../../appContext";
+import { Tokenizer } from "../../../services/character-parse/tokenizer";
 
 const { Title } = Typography;
 
@@ -38,18 +41,29 @@ export interface CharacterFormProps {
 }
 
 export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
-  const { profile } = useContext(AppContext);
   const queryClient = useQueryClient();
+  const { profile } = useContext(AppContext);
   const navigate = useNavigate();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form] = Form.useForm<FormValues>();
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
+
+  const personalityWatch = Form.useWatch<string>("personality", form);
+  const scenarioWatch = Form.useWatch<string>("scenario", form);
+  const exampleDialogWatch = Form.useWatch<string>("example_dialogs", form);
+  const firstMessageWatch = Form.useWatch<string>("first_message", form);
 
   const tags = useTags();
 
   const mode = id ? "edit" : "create";
 
+  const countToken = useCallback((input?: string) => Tokenizer.tokenCountFormat(input), []);
+
   const onFinish = async (formValues: FormValues) => {
     try {
+      setIsSubmitting(true);
+
       const avatarImg = formValues.avatar_payload?.file;
       if (mode === "create" && !avatarImg) {
         // Require image
@@ -91,7 +105,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           avatar: avatar || values.avatar,
         });
 
-        message.success("Character edited successfully!");
+        message.success("Character updated successfully!");
 
         queryClient.invalidateQueries(["character", id]);
         queryClient.invalidateQueries(["characters", profile?.id]);
@@ -100,6 +114,8 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
       console.error("error", err);
       const backEndError = (err as AxiosError).response?.data;
       message.error(JSON.stringify(backEndError, null, 2));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -148,7 +164,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           <Input placeholder="Name" />
         </Form.Item>
 
-        <Form.Item name="avatar_payload" label="Avatar" className="mb-12">
+        <Form.Item name="avatar_payload" label="Avatar" className="mb-16">
           <Upload
             accept="image/*"
             listType="picture-card"
@@ -246,6 +262,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           className="pb-5"
           label="Personality"
           name="personality"
+          extra={countToken(personalityWatch)}
           rules={[{ required: true, message: "Define the personality for your character." }]}
           help="Describe the character's persona here. Think of this as CharacterAI's description + definitions in one box."
         >
@@ -253,8 +270,9 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         </Form.Item>
         <Form.Item
           className="pb-5"
-          name="first_message"
           label="Initial message"
+          name="first_message"
+          extra={countToken(firstMessageWatch)}
           rules={[{ required: true, message: "Please enter character's initial message." }]}
           help="First message from your character. Provide a lengthy first message to encourage the character to give longer responses."
         >
@@ -264,6 +282,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           className="pb-5"
           label="Scenario"
           name="scenario"
+          extra={countToken(scenarioWatch)}
           help="The current circumstances and context of the conversation and the characters."
         >
           <Input.TextArea rows={2} autoSize placeholder="Scenario" />
@@ -272,14 +291,19 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         <Form.Item
           name="example_dialogs"
           label="Example dialogs"
+          extra={countToken(exampleDialogWatch)}
           help="Example chat between you and the character. This section is very important for teaching your character should speak."
         >
           <Input.TextArea rows={4} autoSize placeholder="Example dialogs" />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 6, span: 18 }} className="pt-4">
-          <Button type="primary" htmlType="submit" block>
-            {mode === "create" ? "Create New Character" : "Update Character"}
+          <p>
+            Total:{" "}
+            {countToken(personalityWatch + firstMessageWatch + scenarioWatch + exampleDialogWatch)}
+          </p>
+          <Button type="primary" htmlType="submit" block loading={isSubmitting}>
+            {mode === "create" ? "Create Character" : "Update Character"}
           </Button>
         </Form.Item>
       </Form>

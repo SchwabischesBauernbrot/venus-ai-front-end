@@ -48,7 +48,7 @@ export const Login = () => {
         const { session } = result.data;
         if (session) {
           setSession(session);
-          navigate("/profile");
+          navigate("/");
         }
       }
     } finally {
@@ -60,7 +60,7 @@ export const Login = () => {
     return supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: "http://localhost:5173/profile",
+        redirectTo: "http://localhost:5173",
       },
     });
   };

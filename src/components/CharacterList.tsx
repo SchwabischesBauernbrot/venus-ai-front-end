@@ -41,7 +41,12 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   return (
     <CharacterContainer size={size}>
       {characters.map((character) => (
-        <Link to={`/characters/${character.id}`} target="_blank" className="mb-4">
+        <Link
+          key={character.id}
+          to={`/characters/${character.id}`}
+          target="_blank"
+          className="mb-4"
+        >
           <Card
             hoverable
             size="small"
