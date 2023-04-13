@@ -19,7 +19,7 @@ export const UserAvatar: React.FC = () => {
   }, []);
 
   return (
-    <Menu.Item key="profile" style={{ marginLeft: "auto" }}>
+    <Menu.Item key="profile">
       <Dropdown
         menu={{
           items: [

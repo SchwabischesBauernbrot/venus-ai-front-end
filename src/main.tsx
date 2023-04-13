@@ -6,7 +6,6 @@ import "antd/dist/reset.css";
 import "antd-css-utilities/utility.min.css";
 import "./global.css";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ConfigProvider, App as AntdApp, theme } from "antd";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { CreateCharacter } from "./pages/Character/pages/CreateCharacter";
@@ -105,11 +104,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider>
-        <AntdApp>
-          <RouterProvider router={router} />
-        </AntdApp>
-      </ConfigProvider>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </React.StrictMode>
 );
