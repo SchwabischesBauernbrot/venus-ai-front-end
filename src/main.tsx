@@ -20,8 +20,18 @@ import { PublicProfile } from "./pages/Profile/PublicProfile";
 import { MyCharacters } from "./pages/Character/pages/MyCharacters";
 import { ChatView } from "./pages/Chat/pages/ChatView";
 import { MyChats } from "./pages/Chat/pages/MyChats";
+import { TermOfUse } from "./pages/ToC/TermOfUse";
+import { PrivatePolicy } from "./pages/ToC/PrivatePolicy";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Reduce server load lol
+      refetchInterval: false,
+      refetchOnReconnect: false,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -77,6 +87,16 @@ const router = createBrowserRouter([
       {
         path: "/chats/:chatId",
         element: <ChatView />,
+      },
+
+      // Toc
+      {
+        path: "/term",
+        element: <TermOfUse />,
+      },
+      {
+        path: "/policy",
+        element: <PrivatePolicy />,
       },
     ],
   },

@@ -7,7 +7,7 @@ import { useContext } from "react";
 import { AppContext } from "../../../appContext";
 import {
   CharacterView,
-  Tag,
+  TagEntity,
   SupaUserProfile,
   CharacterWithProfileAndTag,
   ChatEntityWithCharacter,

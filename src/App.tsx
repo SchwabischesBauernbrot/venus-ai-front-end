@@ -127,6 +127,14 @@ const App: React.FC = () => {
           >
             💡Feedback & Idea
           </a>
+          <span> - </span>
+          <a href="/policy" target="_blank">
+            📜 Content & Private Policy
+          </a>
+          <span> - </span>
+          <a href="/term" target="_blank">
+            🤝 Term of Use
+          </a>
         </span>
       </Footer>
     </AppContext.Provider>

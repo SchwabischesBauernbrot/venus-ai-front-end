@@ -1,4 +1,4 @@
-import { Typography, Spin } from "antd";
+import { Typography, Spin, Button } from "antd";
 import { PageContainer } from "../../../components/shared";
 import { useQuery } from "react-query";
 import { supabase } from "../../../config";
@@ -6,11 +6,13 @@ import { useContext } from "react";
 import { AppContext } from "../../../appContext";
 import {
   CharacterView,
-  Tag,
+  TagEntity,
   SupaUserProfile,
   CharacterWithProfileAndTag,
 } from "../../../types/backend-alias";
 import { CharacterList } from "../../../components/CharacterList";
+import { Link } from "react-router-dom";
+import { UserAddOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -60,6 +62,12 @@ export const MyCharacters: React.FC = () => {
           </span>
         )}
       </Title>
+
+      <Link to="/create_character">
+        <Button type="primary" size="large">
+          <UserAddOutlined /> Create Character
+        </Button>
+      </Link>
 
       {isLoading && <Spin />}
       {data && <CharacterList characters={data} editable />}

@@ -1,11 +1,9 @@
 import { useQuery } from "react-query";
-import { supabase } from "../config";
+import { axiosInstance, supabase } from "../config";
+import { TagEntity } from "../types/backend-alias";
 
 export const useTags = () => {
-  const { data } = useQuery(
-    "tags",
-    async () => await supabase.from("tags").select().order("id", { ascending: true })
-  );
+  const { data } = useQuery("tags", async () => await axiosInstance.get<TagEntity[]>("/tags"));
   const tags = data?.data;
 
   return tags;

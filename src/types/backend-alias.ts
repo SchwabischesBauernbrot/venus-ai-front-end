@@ -2,10 +2,10 @@ import { components } from "./backend";
 import { Database } from "./supabase";
 
 export type CharacterView = components["schemas"]["CharacterView"];
-export type FullCharacterView = components["schemas"]["FullChracterView"];
-export type Tag = components["schemas"]["Tag"];
+export type FullCharacterView = components["schemas"]["FullCharacterView"];
 export type ProfileRes = components["schemas"]["ProfileResponse"];
 export type ChatEntity = components["schemas"]["ChatEntity"];
+export type TagEntity = components["schemas"]["TagEntity"];
 export type ChatEntityWithCharacter = components["schemas"]["ChatEntityWithCharacter"];
 
 export type ChatResponse = components["schemas"]["ChatResponse"];

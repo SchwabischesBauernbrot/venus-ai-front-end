@@ -199,12 +199,19 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         {mode === "create" && (
           <Form.Item wrapperCol={{ offset: 6, span: 18 }}>
             <p>Select an image as bot avatar, or you can import Tavern PNG file.</p>
-            <span>
+            <p>
               If you want to import CAI character, go to{" "}
               <a href="https://zoltanai.github.io/character-editor/" target="_blank">
                 ZoltanAI Character Editor
               </a>{" "}
               and <strong>Download as Character Card</strong>
+            </p>
+            <span>
+              Please make sure your image/character does not violate our{" "}
+              <a href="/policy" target="_blank">
+                content policy
+              </a>
+              . Otherwise we will be forced to remove it.
             </span>
           </Form.Item>
         )}
@@ -257,6 +264,18 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         </Form.Item>
 
         <Title level={4}>Character Definition (How your character will act)</Title>
+
+        <p>
+          Read{" "}
+          <a href="https://rentry.co/chai-pygmalion-tips" target="_blank">
+            this guide
+          </a>{" "}
+          and{" "}
+          <a href="https://rentry.co/create-a-character-for-fucking-idiots" target="_blank">
+            this guide
+          </a>{" "}
+          for help on creating better character.
+        </p>
 
         <Form.Item
           className="pb-5"

@@ -34,7 +34,11 @@ export interface paths {
     post: operations["ChatController_create"];
   };
   "/chats/{id}": {
-    patch: operations["ChatController_get"];
+    get: operations["ChatController_get"];
+    patch: operations["ChatController_update"];
+  };
+  "/tags": {
+    get: operations["TagController_findAll"];
   };
 }
 
@@ -42,10 +46,10 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
-    Tag: {
+    TagEntity: {
       id: number;
-      name: string;
       description: string;
+      name: string;
       slug: string;
       created_at: string;
     };
@@ -59,7 +63,7 @@ export interface components {
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
-      tags?: (components["schemas"]["Tag"])[];
+      tags?: (components["schemas"]["TagEntity"])[];
     };
     CharacterDto: {
       avatar: string;
@@ -88,7 +92,7 @@ export interface components {
       scenario: string;
       updated_at: string;
     };
-    FullChracterView: {
+    FullCharacterView: {
       id: string;
       name: string;
       avatar: string;
@@ -98,7 +102,7 @@ export interface components {
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
-      tags?: (components["schemas"]["Tag"])[];
+      tags?: (components["schemas"]["TagEntity"])[];
       example_dialogs: string;
       first_message: string;
       personality: string;
@@ -225,7 +229,7 @@ export interface operations {
       200: never;
       default: {
         content: {
-          "application/json": components["schemas"]["FullChracterView"];
+          "application/json": components["schemas"]["FullCharacterView"];
         };
       };
     };
@@ -332,6 +336,44 @@ export interface operations {
       default: {
         content: {
           "application/json": components["schemas"]["ChatResponse"];
+        };
+      };
+    };
+  };
+  ChatController_update: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateChatDto"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ChatEntity"];
+        };
+      };
+    };
+  };
+  TagController_findAll: {
+    responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+      default: {
+        content: {
+          "application/json": (components["schemas"]["TagEntity"])[];
         };
       };
     };
