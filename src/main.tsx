@@ -6,6 +6,7 @@ import "antd/dist/reset.css";
 import "antd-css-utilities/utility.min.css";
 import "./global.css";
 import { QueryClient, QueryClientProvider } from "react-query";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { CreateCharacter } from "./pages/Character/pages/CreateCharacter";
