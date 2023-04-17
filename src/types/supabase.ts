@@ -218,6 +218,12 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      refresh_materialized_view: {
+        Args: {
+          view_name: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -37,6 +37,13 @@ export interface paths {
     get: operations["ChatController_get"];
     patch: operations["ChatController_update"];
   };
+  "/chats/{id}/messages": {
+    post: operations["ChatController_createMessage"];
+    delete: operations["ChatController_deleteMessages"];
+  };
+  "/chats/{id}/messages/{messageId}": {
+    patch: operations["ChatController_updateMessage"];
+  };
   "/tags": {
     get: operations["TagController_findAll"];
   };
@@ -149,9 +156,9 @@ export interface components {
       };
     };
     ChatMessageEntity: {
+      id: number;
       chat_id: number;
       created_at: string;
-      id: number;
       is_bot: boolean;
       is_main: boolean;
       message: string;
@@ -159,6 +166,14 @@ export interface components {
     ChatResponse: {
       chat: components["schemas"]["ChatEntityWithCharacter"];
       chatMessages: (components["schemas"]["ChatMessageEntity"])[];
+    };
+    CreateChatMessageDto: {
+      message: string;
+      is_bot: boolean;
+      is_main: boolean;
+    };
+    DeleteChatMessageDto: {
+      message_ids: (number)[];
     };
   };
   responses: never;
@@ -360,6 +375,75 @@ export interface operations {
       default: {
         content: {
           "application/json": components["schemas"]["ChatEntity"];
+        };
+      };
+    };
+  };
+  ChatController_createMessage: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateChatMessageDto"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ChatMessageEntity"];
+        };
+      };
+    };
+  };
+  ChatController_deleteMessages: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DeleteChatMessageDto"];
+      };
+    };
+    responses: {
+      200: never;
+      default: {
+        content: {
+          "application/json": (components["schemas"]["ChatMessageEntity"])[];
+        };
+      };
+    };
+  };
+  ChatController_updateMessage: {
+    parameters: {
+      path: {
+        id: string;
+        messageId: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateChatMessageDto"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ChatMessageEntity"];
         };
       };
     };
