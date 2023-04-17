@@ -69,7 +69,8 @@ export const ChatPage: React.FC = () => {
   useEffect(() => {
     refetch().then((data) => {
       const messages = data.data?.chatMessages || [];
-      setChatMessages(messages.reverse());
+      messages.sort((a, b) => a.id - b.id);
+      setChatMessages([...messages]);
     });
   }, [profile]);
 
