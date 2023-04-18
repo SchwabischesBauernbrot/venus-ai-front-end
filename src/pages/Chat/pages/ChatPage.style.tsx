@@ -3,12 +3,12 @@ import styled from "styled-components";
 export const ChatInputContainer = styled.div`
   position: fixed;
   bottom: 1rem;
-  width: 98%;
+  width: 100%;
 `;
 
 export const ChatContainer = styled.div`
-  height: calc(100vh - 13rem);
-  padding-right: 1rem;
+  height: calc(100vh - 12rem);
+
   overflow-y: scroll;
 `;
 
@@ -19,19 +19,16 @@ export const BotChoicesContainer = styled.div<{ index: number }>`
 
   transition: 0.5s;
   transform: ${(props) => `translateX(-${props.index * 100}%);`}
-
-  /* overflow-x: hidden; */
   scroll-snap-type: x mandatory;
 
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 
   .ant-list-item {
-	flex: 0 0 100%;
-	width: 100%;
-	width: 100%;
-	list-style-type: none;
-	display: flex;
+	  flex: 0 0 100%;
+	  width: 100%;
+	  list-style-type: none;
+	  display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 0;
@@ -46,7 +43,12 @@ export const BotChoicesContainer = styled.div<{ index: number }>`
   }
 
   .ant-list-item-meta-avatar {
-    margin-inline-end: 0.5rem;
+    margin-inline-end: 1rem;
+  }
+
+  .ant-list-item-meta-content {
+    flex: 1 0;
+    width: 0;
   }
 `;
 

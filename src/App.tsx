@@ -156,7 +156,7 @@ const App: React.FC = () => {
         theme={{
           algorithm: [
             localData.theme === "light" ? theme.defaultAlgorithm : theme.darkAlgorithm,
-            theme.compactAlgorithm,
+            // theme.compactAlgorithm,
           ],
         }}
       >

@@ -137,16 +137,19 @@ export interface components {
       id: number;
       character_id: string;
       user_id: string;
+      summary: string;
       created_at: string;
       is_public: boolean;
     };
     UpdateChatDto: {
       is_public: boolean;
+      summary?: string;
     };
     ChatEntityWithCharacter: {
       id: number;
       character_id: string;
       user_id: string;
+      summary: string;
       created_at: string;
       is_public: boolean;
       characters: {

@@ -1,4 +1,4 @@
-export const Multiline: React.FC<{ children: string }> = ({ children }) => {
+export const MultiLine: React.FC<{ children: string }> = ({ children }) => {
   return (
     <div>
       {children.split("\n").map((text, index) => (

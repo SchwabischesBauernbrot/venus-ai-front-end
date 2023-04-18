@@ -1,15 +1,39 @@
-import { Button, Col, Row, Spin, Typography, Input, Layout, InputRef, List, message } from "antd";
+import {
+  Button,
+  Col,
+  Row,
+  Spin,
+  Typography,
+  Input,
+  Layout,
+  InputRef,
+  List,
+  message,
+  Dropdown,
+  Divider,
+  Tag,
+  Avatar,
+  Switch,
+  Tooltip,
+} from "antd";
+import {
+  LeftCircleFilled,
+  LeftOutlined,
+  LinkOutlined,
+  MenuOutlined,
+  RightOutlined,
+  SaveOutlined,
+  SendOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { useQuery } from "react-query";
-
 import { Link, useParams } from "react-router-dom";
-import { LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
+import * as _ from "lodash-es";
 
-import { PageContainer } from "../../../components/shared";
 import { ChatMessageEntity, SupaChatMessage } from "../../../types/backend-alias";
 import { useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { generate } from "../../../services/generate/mock-generate";
-import * as _ from "lodash-es";
 import { chatService } from "../../../services/chat/chat-service";
 import {
   ChatContainer,
@@ -18,7 +42,7 @@ import {
   ChatInputContainer,
 } from "./ChatPage.style";
 import { MessageDisplay } from "../components/MessageDisplay";
-const { Title } = Typography;
+import { formatTime, getBotAvatarUrl } from "../../../services/utils";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -76,15 +100,13 @@ export const ChatPage: React.FC = () => {
   const inputRef = useRef<InputRef>(null);
   const messageDivRef = useRef<HTMLDivElement>(null);
 
-  const [message, setMessage] = useState<string>("");
+  const [inputMessage, setInputMessage] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const [chatState, dispatch] = useReducer(dispatchFunction, initialChatState);
-  const mainMessages = chatState.messagesToDisplay.filter((message) => message.is_main);
-  const botChoices = chatState.messagesToDisplay.filter(
-    (message) => message.is_bot && !message.is_main
-  );
-  const choiceIndex = chatState.choiceIndex;
+  const { choiceIndex, messagesToDisplay } = chatState;
+  const mainMessages = messagesToDisplay.filter((message) => message.is_main);
+  const botChoices = messagesToDisplay.filter((message) => message.is_bot && !message.is_main);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -184,6 +206,7 @@ export const ChatPage: React.FC = () => {
   const sendChat = async () => {
     try {
       setIsGenerating(true);
+      setInputMessage("");
 
       const localUserMessage: ChatMessageEntity = {
         id: -2,
@@ -191,7 +214,7 @@ export const ChatPage: React.FC = () => {
         created_at: "",
         is_bot: false,
         is_main: true,
-        message: message,
+        message: inputMessage.trimEnd(),
       };
       const localBotMessage: ChatMessageEntity = {
         id: -1,
@@ -258,31 +281,102 @@ export const ChatPage: React.FC = () => {
 
       console.log("this is called??");
       dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
-      setMessage("");
+    } catch (error) {
+      message.error(JSON.stringify(error, null, 2));
     } finally {
       setIsGenerating(false);
     }
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout
+      style={{ minHeight: "100vh" }}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowLeft") {
+          swipe("left");
+        } else if (event.key === "ArrowRight") {
+          swipe("right");
+        }
+      }}
+    >
       <Layout.Content>
-        <PageContainer>
-          {isLoading && <Spin />}
+        <div className="pt-4">
+          {isLoading && (
+            <div className="text-center">
+              <Spin />
+            </div>
+          )}
 
           {data && (
             <>
               <Row>
-                <Col span={12} offset={6}>
+                <Col span={12} offset={6} className="d-flex justify-space-between align-center">
                   <Link to="/">
-                    <Button>Back</Button>
+                    <Button type="text" size="large">
+                      <LeftCircleFilled /> Back
+                    </Button>
                   </Link>
-                  <Title level={5}>Chat with {data.chat.characters.name}</Title>
 
-                  <span>Settings</span>
-                  <Button>Share Chat</Button>
+                  <span style={{ marginLeft: "auto" }}>
+                    {/* <Tag color="green">green</Tag> */}
+                    <Tag color="red">API not ready!</Tag>
+                  </span>
+
+                  <Dropdown
+                    trigger={["click"]}
+                    menu={{
+                      selectable: false,
+                      items: [
+                        {
+                          key: "my_profile",
+                          label: "API Settings",
+                          icon: <SettingOutlined />,
+                          onClick: (e) => e.domEvent.stopPropagation(),
+                        },
+                        {
+                          key: "my_bot",
+                          label: "Chat Summary",
+                          icon: <SaveOutlined />,
+                        },
+                        {
+                          key: "share",
+                          label: "Share Chat",
+                          icon: <LinkOutlined />,
+                        },
+                        {
+                          key: "immer",
+                          label: (
+                            <Tooltip title="Disable message edit/delete to make it more immersive">
+                              <span>
+                                Immerisive Mode <Switch defaultChecked />
+                              </span>
+                            </Tooltip>
+                          ),
+
+                          onClick: (e) => {
+                            e.domEvent.stopPropagation();
+                            console.log(e.domEvent);
+                          },
+                        },
+                      ],
+                    }}
+                  >
+                    <Button type="text" size="large">
+                      <MenuOutlined />
+                    </Button>
+                  </Dropdown>
                 </Col>
               </Row>
+
+              <Divider className="mt-2">
+                <Avatar
+                  size={25}
+                  src={getBotAvatarUrl(data.chat.characters.avatar)}
+                  className="mr-2"
+                />
+                Chat with {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)}
+                )
+              </Divider>
 
               <Row>
                 <Col span={12} offset={6}>
@@ -316,7 +410,13 @@ export const ChatPage: React.FC = () => {
                     />
 
                     {botChoices.length > 0 && (
-                      <div style={{ overflowX: "hidden", position: "relative" }}>
+                      <div
+                        style={{
+                          overflowX: "hidden",
+                          position: "relative",
+                          borderBlockStart: "1px solid rgba(253, 253, 253, 0.12)",
+                        }}
+                      >
                         <BotMessageControl>
                           {choiceIndex > 0 && (
                             <Button
@@ -367,26 +467,36 @@ export const ChatPage: React.FC = () => {
             <Row>
               {/* TODO: Disable this when not set API */}
               <Col span={12} offset={6}>
-                <div className="d-flex align-center">
-                  <Input.TextArea
-                    value={message}
-                    rows={3}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onPressEnter={sendChat}
-                    ref={inputRef}
-                  />
-                  <Button
-                    loading={isGenerating}
-                    disabled={isGenerating}
-                    icon={<SendOutlined />}
-                    type="primary"
-                    onClick={sendChat}
-                  />
-                </div>
+                <form onSubmit={sendChat}>
+                  <div className="d-flex align-center">
+                    <Input.TextArea
+                      rows={3}
+                      placeholder="Enter your chat"
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onPressEnter={(event) => {
+                        if (event.key === "Enter" && !event.shiftKey) {
+                          event.preventDefault(); // prevent the default line break behavior
+                          sendChat();
+                        }
+                      }}
+                      ref={inputRef}
+                    />
+                    <Button
+                      loading={isGenerating}
+                      disabled={inputMessage.length === 0 || isGenerating}
+                      icon={<SendOutlined />}
+                      type="text"
+                      size="large"
+                      style={{ color: "#3498db" }}
+                      onClick={sendChat}
+                    />
+                  </div>
+                </form>
               </Col>
             </Row>
           </ChatInputContainer>
-        </PageContainer>
+        </div>
       </Layout.Content>
     </Layout>
   );

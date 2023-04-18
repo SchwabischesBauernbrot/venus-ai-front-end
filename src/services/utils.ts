@@ -1,4 +1,4 @@
-import { formatDistance, parseISO } from "date-fns";
+import { formatDistance, parseISO, format } from "date-fns";
 
 import { SUPABASE_BUCKET_URL } from "../config";
 
@@ -14,4 +14,9 @@ export const getTimeAgo = (dateStr: string) => {
   const dateObj = parseISO(dateStr);
   const timeAgo = formatDistance(dateObj, new Date());
   return timeAgo;
+};
+
+export const formatTime = (dateTimeString: string) => {
+  const formattedDateTimeString = format(new Date(dateTimeString), "dd MMM yyyy, h:mm a"); // 19 Oct 2021, 12:34 PM
+  return formattedDateTimeString;
 };

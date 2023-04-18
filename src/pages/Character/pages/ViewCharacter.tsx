@@ -22,7 +22,7 @@ import { axiosInstance, supabase } from "../../../config";
 import { getBotAvatarUrl } from "../../../services/utils";
 import { ChatEntity, FullCharacterView } from "../../../types/backend-alias";
 import { Tokenizer } from "../../../services/character-parse/tokenizer";
-import { Multiline } from "../../../components/MultiLine";
+import { MultiLine } from "../../../components/MultiLine";
 import { useCallback, useContext, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../components/PrivateIndicator";
@@ -142,25 +142,25 @@ export const ViewCharacter: React.FC = () => {
                     label={`Personality (${Tokenizer.tokenCountFormat(data.personality)})`}
                     span={3}
                   >
-                    <Multiline>{data.personality}</Multiline>
+                    <MultiLine>{data.personality}</MultiLine>
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={`First Message (${Tokenizer.tokenCountFormat(data.first_message)})`}
                     span={3}
                   >
-                    <Multiline>{data.first_message}</Multiline>
+                    <MultiLine>{data.first_message}</MultiLine>
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={`Scenario (${Tokenizer.tokenCountFormat(data.scenario)})`}
                     span={3}
                   >
-                    <Multiline>{data.scenario}</Multiline>
+                    <MultiLine>{data.scenario}</MultiLine>
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={`Example Dialogs (${Tokenizer.tokenCountFormat(data.example_dialogs)})`}
                     span={3}
                   >
-                    <Multiline>{data.example_dialogs}</Multiline>
+                    <MultiLine>{data.example_dialogs}</MultiLine>
                   </Descriptions.Item>
                 </Descriptions>
               </Collapse.Panel>

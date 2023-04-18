@@ -1,15 +1,10 @@
-import { Avatar, Button, Input, List, Popconfirm } from "antd";
+import { Avatar, Button, Input, InputRef, List, Popconfirm } from "antd";
 import styled from "styled-components";
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
-import { MultilineMarkdown } from "../../../components/MultiLineMarkdown";
+import { CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { MultiLineMarkdown } from "../../../components/MultiLineMarkdown";
 import { getAvatarUrl, getBotAvatarUrl } from "../../../services/utils";
 import { SupaChatMessage } from "../../../types/backend-alias";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface MessageDisplayProps {
   message: SupaChatMessage;
@@ -25,16 +20,20 @@ interface MessageDisplayProps {
 // Some logic to replace {{bot}} and {{user}} on client side
 const format = (inputMessage: string, user = "", characterName = "") => {
   return inputMessage
+    .replace(/{{char}}:/gi, "")
+
     .replace(/{{user}}/gi, user)
     .replace(/<user>/gi, user)
     .replace(/{{bot}}/gi, characterName)
+    .replace(/{{char}}/gi, characterName)
     .replace(/<bot>/gi, characterName);
 };
 
 export const ChatControl = styled.div`
+  opacity: 0.75;
   position: absolute;
-  right: -1rem;
-  top: 0.5rem;
+  right: 0;
+  top: 0.1rem;
 `;
 
 export const MessageDisplay: React.FC<MessageDisplayProps> = ({
@@ -46,6 +45,7 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const inputRef = useRef<InputRef>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editMessage, setEditMessage] = useState(message.message);
 
@@ -55,37 +55,8 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
       key={message.id}
       extra={
         <ChatControl>
-          {isEditing ? (
-            <>
-              <Button
-                type="text"
-                shape="circle"
-                onClick={() => {
-                  setIsEditing(false);
-                  onEdit?.(message.id, editMessage);
-                }}
-              >
-                <CheckCircleOutlined />
-              </Button>
-              <Button
-                type="text"
-                shape="circle"
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditMessage(message.message);
-                }}
-              >
-                <CloseCircleOutlined />
-              </Button>
-            </>
-          ) : (
-            <Button type="text" shape="circle" onClick={() => setIsEditing(true)}>
-              <EditOutlined />
-            </Button>
-          )}
-
           {!message.is_bot && (
-            <Button type="text" shape="circle">
+            <Button type="text" size="large" shape="circle">
               <Popconfirm
                 title="Delete chat"
                 description="This will delete all messages after this too?"
@@ -95,6 +66,50 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
               >
                 <DeleteOutlined />
               </Popconfirm>
+            </Button>
+          )}
+
+          {isEditing ? (
+            <>
+              <Button
+                type="text"
+                shape="circle"
+                size="large"
+                onClick={() => {
+                  setIsEditing(false);
+                  onEdit?.(message.id, editMessage);
+                }}
+              >
+                <CheckOutlined style={{ color: "#2ecc71" }} />
+              </Button>
+              <Button
+                type="text"
+                shape="circle"
+                size="large"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditMessage(message.message);
+                }}
+              >
+                <CloseOutlined style={{ color: "#e74c3c", fontSize: "1.1rem" }} />
+              </Button>
+            </>
+          ) : (
+            <Button
+              type="text"
+              size="large"
+              shape="circle"
+              onClick={() => {
+                setIsEditing(true);
+
+                setTimeout(() => {
+                  inputRef?.current?.focus({
+                    cursor: "start",
+                  });
+                }, 100);
+              }}
+            >
+              <EditOutlined />
             </Button>
           )}
         </ChatControl>
@@ -111,12 +126,15 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
         description={
           isEditing ? (
             <Input.TextArea
+              ref={inputRef}
               autoSize
+              bordered={false}
+              className="mt-3"
               value={editMessage}
               onChange={(e) => setEditMessage(e.target.value)}
             />
           ) : (
-            <MultilineMarkdown>{format(message.message, user, characterName)}</MultilineMarkdown>
+            <MultiLineMarkdown>{format(message.message, user, characterName)}</MultiLineMarkdown>
           )
         }
       />
