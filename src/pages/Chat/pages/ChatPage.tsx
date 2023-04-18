@@ -45,7 +45,7 @@ const ChatControl = styled.div`
   top: 0.5rem;
 `;
 
-const BotMessageCarousellContainer = styled.div<{ index: number }>`
+const BotChoicesContainer = styled.div<{ index: number }>`
   text-align: left;
   display: flex;
   min-height: 5rem;
@@ -63,6 +63,13 @@ const BotMessageCarousellContainer = styled.div<{ index: number }>`
     flex: 0 0 100%;
     width: 100%;
     width: 100%;
+  }
+
+  .ant-list-item .ant-list-item-meta {
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
+    max-width: 100%;
   }
 `;
 
@@ -87,6 +94,14 @@ export const ChatPage: React.FC = () => {
   const botChoices = chatMessages.filter((message) => message.is_bot && !message.is_main);
   const [choiceIndex, setChoiceIndex] = useState(0);
 
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      if (messageDivRef.current) {
+        messageDivRef.current.scrollTop = messageDivRef.current?.scrollHeight;
+      }
+    }, 200);
+  }, [messageDivRef.current]);
+
   // Replace this with axios call instead, for better control
   const { data, refetch, isLoading } = useQuery(
     ["chat", chatId],
@@ -96,12 +111,7 @@ export const ChatPage: React.FC = () => {
       onSuccess: () => {
         inputRef.current?.focus();
 
-        // Hack to wait for div to render
-        setTimeout(() => {
-          if (messageDivRef.current) {
-            messageDivRef.current.scrollTop = messageDivRef.current?.scrollHeight;
-          }
-        }, 500);
+        scrollToBottom();
       },
     }
   );
@@ -114,19 +124,13 @@ export const ChatPage: React.FC = () => {
     });
   }, [profile]);
 
-  const scrollToBottom = useCallback(() => {
-    if (messageDivRef.current) {
-      messageDivRef.current.scrollTop = messageDivRef.current?.scrollHeight;
-    }
-  }, [messageDivRef.current]);
-
   // Some logic to replace {{bot}} and {{user}} on client side
   const format = (inputMessage: string) => {
     return inputMessage
-      .replace(/{{user}}/g, profile?.name || "")
-      .replace(/<user>/g, profile?.name || "")
-      .replace(/{{bot}}/g, data?.chat.characters.name || "")
-      .replace(/<bot>/g, data?.chat.characters.name || "");
+      .replace(/{{user}}/gi, profile?.name || "")
+      .replace(/<user>/gi, profile?.name || "")
+      .replace(/{{bot}}/gi, data?.chat.characters.name || "")
+      .replace(/<bot>/gi, data?.chat.characters.name || "");
   };
 
   const deleteChat = async (messageId: number) => {
@@ -219,16 +223,14 @@ export const ChatPage: React.FC = () => {
         is_main: false,
         message: "",
       };
-      setChatMessages([...chatMessagesCopy, fakeLocalMessage, fakeBotMessage]);
-      setChoiceIndex(0);
-      scrollToBottom();
 
       // Remove non is_main message
       const choiceToKeep = botChoices[choiceIndex];
       if (choiceToKeep) {
         choiceToKeep.is_main = true;
 
-        await chatService.updateMassage(chatId, {
+        // No await, lol
+        chatService.updateMassage(chatId, {
           message_id: choiceToKeep.id,
           message: choiceToKeep.message,
           is_main: true,
@@ -236,12 +238,15 @@ export const ChatPage: React.FC = () => {
       }
       const choicesToDelete = botChoices.filter((v, i) => i !== choiceIndex);
       if (choicesToDelete.length > 0) {
-        await chatService.deleteMessages(
+        chatService.deleteMessages(
           chatId,
           choicesToDelete.map((message) => message.id)
         );
       }
       chatMessagesCopy = chatMessagesCopy.filter((message) => message.is_main);
+      setChatMessages([...chatMessagesCopy, fakeLocalMessage, fakeBotMessage]);
+      setChoiceIndex(0);
+      scrollToBottom();
 
       const newChatMessage = await chatService.createMessage(chatId, fakeLocalMessage);
       setChatMessages([...chatMessagesCopy, newChatMessage, fakeBotMessage]);
@@ -257,7 +262,9 @@ export const ChatPage: React.FC = () => {
         message: combined,
       };
 
-      const prompt = _.findLast(chatMessages, (m) => !m.is_bot)?.message || "";
+      const chatMessagesWithew = [...chatMessagesCopy, newChatMessage];
+      const prompt = _.findLast(chatMessagesWithew, (m) => !m.is_bot)?.message || "";
+
       const botMessages = await generate(prompt);
       for await (const message of botMessages) {
         combined = combined += message;
@@ -310,15 +317,17 @@ export const ChatPage: React.FC = () => {
                             <ChatControl>
                               <Button type="text">
                                 <EditOutlined />
-                                <Popconfirm
-                                  title="Delete chat"
-                                  description="This will delete all messages after this too?"
-                                  onConfirm={() => deleteChat(item.id)}
-                                  okText="Yes"
-                                  cancelText="No"
-                                >
-                                  <DeleteOutlined />
-                                </Popconfirm>
+                                {!item.is_bot && (
+                                  <Popconfirm
+                                    title="Delete chat"
+                                    description="This will delete all messages after this too?"
+                                    onConfirm={() => deleteChat(item.id)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                  >
+                                    <DeleteOutlined />
+                                  </Popconfirm>
+                                )}
                               </Button>
                             </ChatControl>
                           }
@@ -350,7 +359,7 @@ export const ChatPage: React.FC = () => {
                           <Button onClick={() => swipe("right")}>Right</Button>
                         </BotMessageControl>
 
-                        <BotMessageCarousellContainer index={choiceIndex}>
+                        <BotChoicesContainer index={choiceIndex}>
                           {botChoices.map((item) => (
                             <List.Item
                               style={{ position: "relative" }}
@@ -383,7 +392,7 @@ export const ChatPage: React.FC = () => {
                               />
                             </List.Item>
                           ))}
-                        </BotMessageCarousellContainer>
+                        </BotChoicesContainer>
                       </div>
                     )}
                   </ChatContainer>
