@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import { Typography, Spin } from "antd";
 
-import { AppContext } from "../../appContext";
-import { ProfileForm } from "./ProfileForm";
-import { PageContainer } from "../../components/shared";
+import { AppContext } from "../../../appContext";
+import { ProfileForm } from "../components/ProfileForm";
+import { PageContainer } from "../../../components/shared";
 const { Title } = Typography;
 
 export const Profile = () => {

@@ -17,7 +17,6 @@ import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, SendOutlined } from "@ant-design/icons";
 
 import { PageContainer } from "../../../components/shared";
-import { axiosInstance, supabase } from "../../../config";
 import { getAvatarUrl, getBotAvatarUrl } from "../../../services/utils";
 import { ChatMessageEntity, ChatResponse, SupaChatMessage } from "../../../types/backend-alias";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -25,6 +24,7 @@ import { AppContext } from "../../../appContext";
 import { generate } from "../../../services/generate/mock-generate";
 import { MultilineMarkdown } from "../../../components/MultiLineMarkdown";
 import * as _ from "lodash-es";
+import { chatService } from "../../../services/chat/chat-service";
 const { Title } = Typography;
 
 const ChatInputContainer = styled.div`
@@ -84,17 +84,13 @@ export const ChatPage: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<SupaChatMessage[]>([]);
 
   const mainMessages = chatMessages.filter((message) => message.is_main);
-  const botMessagesCarousell = chatMessages.filter((message) => message.is_bot && !message.is_main);
-  const [botMessageIndex, setBotMessageIndex] = useState(0);
+  const botChoices = chatMessages.filter((message) => message.is_bot && !message.is_main);
+  const [choiceIndex, setChoiceIndex] = useState(0);
 
   // Replace this with axios call instead, for better control
   const { data, refetch, isLoading } = useQuery(
     ["chat", chatId],
-    async () => {
-      const chatResponse = await axiosInstance.get<ChatResponse>(`/chats/${chatId}`);
-
-      return chatResponse.data;
-    },
+    async () => chatService.getChatById(chatId),
     {
       enabled: false,
       onSuccess: () => {
@@ -135,11 +131,10 @@ export const ChatPage: React.FC = () => {
 
   const deleteChat = async (messageId: number) => {
     const messageToDeletes = chatMessages.filter((message) => message.id >= messageId);
-    await axiosInstance.delete(`/chats/${chatId}/messages`, {
-      data: {
-        message_ids: messageToDeletes.map((message) => message.id),
-      },
-    });
+    await chatService.deleteMessages(
+      chatId,
+      messageToDeletes.map((message) => message.id)
+    );
 
     refetch().then((data) => {
       const messages = data.data?.chatMessages || [];
@@ -150,11 +145,11 @@ export const ChatPage: React.FC = () => {
 
   const swipe = async (direction: "left" | "right") => {
     // If message already have, just slide
-    const newIndex = botMessageIndex + (direction === "left" ? -1 : 1);
+    const newIndex = choiceIndex + (direction === "left" ? -1 : 1);
     if (newIndex < 0) {
       return;
-    } else if (newIndex < botMessagesCarousell.length) {
-      setBotMessageIndex(newIndex);
+    } else if (newIndex < botChoices.length) {
+      setChoiceIndex(newIndex);
       return;
     }
 
@@ -170,7 +165,7 @@ export const ChatPage: React.FC = () => {
         message: "",
       };
       setChatMessages([...chatMessages, fakeBotMessage]);
-      setBotMessageIndex(newIndex);
+      setChoiceIndex(newIndex);
 
       let combined = "";
       // try get prompt somehow
@@ -190,15 +185,12 @@ export const ChatPage: React.FC = () => {
         scrollToBottom();
       }
 
-      const responseAgain = await axiosInstance.post<ChatMessageEntity>(
-        `/chats/${chatId}/messages`,
-        {
-          message: combined,
-          is_bot: true,
-          is_main: false,
-        }
-      );
-      const finalBotMessage = responseAgain.data;
+      const finalBotMessage = await chatService.createMessage(chatId, {
+        message: combined,
+        is_bot: true,
+        is_main: false,
+      });
+
       setChatMessages([...chatMessages, finalBotMessage]);
     } finally {
       setIsGenerating(false);
@@ -228,36 +220,30 @@ export const ChatPage: React.FC = () => {
         message: "",
       };
       setChatMessages([...chatMessagesCopy, fakeLocalMessage, fakeBotMessage]);
+      setChoiceIndex(0);
       scrollToBottom();
 
       // Remove non is_main message
-      const mainMessage = botMessagesCarousell[botMessageIndex];
-      if (mainMessage) {
-        mainMessage.is_main = true;
+      const choiceToKeep = botChoices[choiceIndex];
+      if (choiceToKeep) {
+        choiceToKeep.is_main = true;
 
-        await axiosInstance.patch<ChatMessageEntity>(
-          `/chats/${chatId}/messages/${mainMessage?.id}`,
-          {
-            message: mainMessage.message,
-            is_main: true,
-          }
-        );
-      }
-      const unmainMessages = botMessagesCarousell.filter((v, i) => i !== botMessageIndex);
-      if (unmainMessages.length > 0) {
-        await axiosInstance.delete(`/chats/${chatId}/messages`, {
-          data: {
-            message_ids: unmainMessages.map((message) => message.id),
-          },
+        await chatService.updateMassage(chatId, {
+          message_id: choiceToKeep.id,
+          message: choiceToKeep.message,
+          is_main: true,
         });
+      }
+      const choicesToDelete = botChoices.filter((v, i) => i !== choiceIndex);
+      if (choicesToDelete.length > 0) {
+        await chatService.deleteMessages(
+          chatId,
+          choicesToDelete.map((message) => message.id)
+        );
       }
       chatMessagesCopy = chatMessagesCopy.filter((message) => message.is_main);
 
-      const response = await axiosInstance.post<ChatMessageEntity>(
-        `/chats/${chatId}/messages`,
-        fakeLocalMessage
-      );
-      const newChatMessage = response.data;
+      const newChatMessage = await chatService.createMessage(chatId, fakeLocalMessage);
       setChatMessages([...chatMessagesCopy, newChatMessage, fakeBotMessage]);
 
       // Call back-end to get generated message
@@ -272,7 +258,7 @@ export const ChatPage: React.FC = () => {
       };
 
       const prompt = _.findLast(chatMessages, (m) => !m.is_bot)?.message || "";
-      const botMessages = await generate(message);
+      const botMessages = await generate(prompt);
       for await (const message of botMessages) {
         combined = combined += message;
         newBotMessage.message = combined;
@@ -280,12 +266,7 @@ export const ChatPage: React.FC = () => {
         scrollToBottom();
       }
 
-      const responseAgain = await axiosInstance.post<ChatMessageEntity>(
-        `/chats/${chatId}/messages`,
-        newBotMessage
-      );
-      const finalBotMessage = responseAgain.data;
-      setBotMessageIndex(0);
+      const finalBotMessage = await chatService.createMessage(chatId, newBotMessage);
 
       setChatMessages([...chatMessagesCopy, newChatMessage, finalBotMessage]);
       setMessage("");
@@ -362,17 +343,15 @@ export const ChatPage: React.FC = () => {
                       )}
                     />
 
-                    {botMessagesCarousell.length > 0 && (
+                    {botChoices.length > 0 && (
                       <div style={{ overflowX: "hidden", position: "relative" }}>
                         <BotMessageControl>
-                          {botMessageIndex > 0 && (
-                            <Button onClick={() => swipe("left")}>Left</Button>
-                          )}
+                          {choiceIndex > 0 && <Button onClick={() => swipe("left")}>Left</Button>}
                           <Button onClick={() => swipe("right")}>Right</Button>
                         </BotMessageControl>
 
-                        <BotMessageCarousellContainer index={botMessageIndex}>
-                          {botMessagesCarousell.map((item) => (
+                        <BotMessageCarousellContainer index={choiceIndex}>
+                          {botChoices.map((item) => (
                             <List.Item
                               style={{ position: "relative" }}
                               key={item.id}

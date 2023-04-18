@@ -10,8 +10,8 @@ import {
   GithubOutlined,
   DisconnectOutlined,
 } from "@ant-design/icons";
-import { AppContext } from "../appContext";
-import { supabase } from "../config";
+import { AppContext } from "../../../appContext";
+import { supabase } from "../../../config";
 import { Provider } from "@supabase/supabase-js";
 
 const { Title } = Typography;

@@ -3,11 +3,11 @@ import { UserOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { axiosInstance } from "../../config";
-import { CharacterView, ProfileRes } from "../../types/backend-alias";
-import { PageContainer } from "../../components/shared";
-import { getAvatarUrl } from "../../services/utils";
-import { CharacterList } from "../../components/CharacterList";
+import { axiosInstance } from "../../../config";
+import { CharacterView, ProfileRes } from "../../../types/backend-alias";
+import { PageContainer } from "../../../components/shared";
+import { getAvatarUrl } from "../../../services/utils";
+import { CharacterList } from "../../../components/CharacterList";
 
 const { Title } = Typography;
 

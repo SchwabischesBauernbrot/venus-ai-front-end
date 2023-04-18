@@ -1,12 +1,12 @@
-import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../config";
+import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../../config";
 import { message, Input, Button, Upload, Form } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-import { compressImage } from "../../services/image-helper";
+import { compressImage } from "../../../services/image-helper";
 import { AxiosError } from "axios";
-import { FormContainer } from "../../components/shared";
+import { FormContainer } from "../../../components/shared";
 import { useQueryClient } from "react-query";
-import { getAvatarUrl, randomID } from "../../services/utils";
+import { getAvatarUrl, randomID } from "../../../services/utils";
 
 interface FormValues {
   id: string;

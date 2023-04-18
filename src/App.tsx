@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ConfigProvider, App as AntdApp, theme, Layout } from "antd";
+import { ConfigProvider, App as AntdApp, theme } from "antd";
+import loadable from "@loadable/component";
 
 import { Session } from "@supabase/supabase-js";
 
@@ -11,22 +12,11 @@ import { useQuery } from "react-query";
 import { Profile } from "./types/profile";
 import { getLocalData, LocalData, saveLocalData } from "./services/local-data";
 import { MainLayout } from "./MainLayout";
-
-import { ChatPage } from "./pages/Chat/pages/ChatPage";
-import { MyChats } from "./pages/Chat/pages/MyChats";
-import Home from "./pages/Home";
-import { Login } from "./pages/Login";
-import { Profile as ProfilePage } from "./pages/Profile/Profile";
-import { PublicProfile } from "./pages/Profile/PublicProfile";
-import { Register } from "./pages/Register";
-import { PrivatePolicy } from "./pages/ToC/PrivatePolicy";
-import { TermOfUse } from "./pages/ToC/TermOfUse";
-import {
-  CreateCharacter,
-  EditCharacter,
-  MyCharacters,
-  ViewCharacter,
-} from "./pages/Character/pages";
+import { CreateCharacter, EditCharacter, MyCharacters, ViewCharacter } from "./pages/Character";
+import { MyChats, ChatPage } from "./pages/Chat";
+import { Home } from "./pages/Home";
+import { Register, Login, PublicProfile, Profile as ProfilePage } from "./pages/Profile";
+import { TermOfUse, PrivatePolicy } from "./pages/ToC";
 
 const router = createBrowserRouter([
   {

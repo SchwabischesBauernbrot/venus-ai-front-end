@@ -8,7 +8,7 @@ import { CharacterList } from "../components/CharacterList";
 
 const { Title } = Typography;
 
-function Home() {
+export const Home: React.FC = () => {
   const { data, isLoading } = useQuery("main_page", async () => {
     const response = await axiosInstance.get<CharacterView[]>("characters/home");
     return response.data;
@@ -21,6 +21,4 @@ function Home() {
       {data && <CharacterList size="small" characters={data} />}
     </PageContainer>
   );
-}
-
-export default Home;
+};
