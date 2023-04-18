@@ -153,6 +153,10 @@ export interface components {
         name?: string;
         description?: string;
         avatar?: string;
+        example_dialogs?: string;
+        first_message?: string;
+        personality?: string;
+        scenario?: string;
       };
     };
     ChatMessageEntity: {
@@ -170,6 +174,10 @@ export interface components {
     CreateChatMessageDto: {
       message: string;
       is_bot: boolean;
+      is_main: boolean;
+    };
+    UpdateChatMessageDto: {
+      message: string;
       is_main: boolean;
     };
     DeleteChatMessageDto: {
@@ -432,7 +440,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CreateChatMessageDto"];
+        "application/json": components["schemas"]["UpdateChatMessageDto"];
       };
     };
     responses: {

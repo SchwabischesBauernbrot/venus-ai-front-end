@@ -99,10 +99,9 @@ export const ChatPage: React.FC = () => {
       if (messageDivRef.current) {
         messageDivRef.current.scrollTop = messageDivRef.current?.scrollHeight;
       }
-    }, 200);
+    }, 50);
   }, [messageDivRef.current]);
 
-  // Replace this with axios call instead, for better control
   const { data, refetch, isLoading } = useQuery(
     ["chat", chatId],
     async () => chatService.getChatById(chatId),

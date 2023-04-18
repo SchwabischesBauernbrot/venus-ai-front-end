@@ -105,6 +105,7 @@ export interface Database {
           created_at: string
           id: number
           is_public: boolean
+          summary: string
           user_id: string
         }
         Insert: {
@@ -112,6 +113,7 @@ export interface Database {
           created_at?: string
           id?: number
           is_public?: boolean
+          summary?: string
           user_id: string
         }
         Update: {
@@ -119,6 +121,7 @@ export interface Database {
           created_at?: string
           id?: number
           is_public?: boolean
+          summary?: string
           user_id?: string
         }
       }
