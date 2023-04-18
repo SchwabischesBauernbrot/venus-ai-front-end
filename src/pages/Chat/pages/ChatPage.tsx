@@ -332,13 +332,11 @@ export const ChatPage: React.FC = () => {
                           key: "my_profile",
                           label: "API Settings",
                           icon: <SettingOutlined />,
-                          onClick: (e) => e.domEvent.stopPropagation(),
                         },
                         {
                           key: "generation",
                           label: "Generation Settings",
                           icon: <SlidersOutlined />,
-                          onClick: (e) => e.domEvent.stopPropagation(),
                         },
                         // {
                         //   key: "my_bot",
@@ -354,16 +352,11 @@ export const ChatPage: React.FC = () => {
                           key: "immer",
                           label: (
                             <Tooltip title="Disable message edit/delete to make it more immersive">
-                              <span>
-                                Immerisive Mode <Switch defaultChecked />
+                              <span onClick={(e) => e.stopPropagation()}>
+                                Immerisive Mode <Switch className="ml-2" defaultChecked={false} />
                               </span>
                             </Tooltip>
                           ),
-
-                          onClick: (e) => {
-                            e.domEvent.stopPropagation();
-                            console.log(e.domEvent);
-                          },
                         },
                       ],
                     }}
