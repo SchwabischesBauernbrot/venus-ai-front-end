@@ -25,6 +25,7 @@ import {
   SaveOutlined,
   SendOutlined,
   SettingOutlined,
+  SlidersOutlined,
 } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
@@ -334,10 +335,16 @@ export const ChatPage: React.FC = () => {
                           onClick: (e) => e.domEvent.stopPropagation(),
                         },
                         {
-                          key: "my_bot",
-                          label: "Chat Summary",
-                          icon: <SaveOutlined />,
+                          key: "generation",
+                          label: "Generation Settings",
+                          icon: <SlidersOutlined />,
+                          onClick: (e) => e.domEvent.stopPropagation(),
                         },
+                        // {
+                        //   key: "my_bot",
+                        //   label: "Chat Summary",
+                        //   icon: <SaveOutlined />,
+                        // },
                         {
                           key: "share",
                           label: "Share Chat",
