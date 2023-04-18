@@ -45,7 +45,7 @@ const updateMassage = async (
     `/chats/${chatId}/messages/${message_id}`,
     {
       message: message,
-      is_main: true,
+      is_main,
     }
   );
   return messageResponse.data;

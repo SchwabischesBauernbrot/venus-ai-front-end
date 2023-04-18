@@ -1,83 +1,74 @@
-import {
-  Avatar,
-  Button,
-  Col,
-  Row,
-  Spin,
-  Typography,
-  Input,
-  Layout,
-  InputRef,
-  List,
-  Popconfirm,
-} from "antd";
+import { Button, Col, Row, Spin, Typography, Input, Layout, InputRef, List, message } from "antd";
 import { useQuery } from "react-query";
-import styled from "styled-components";
+
 import { Link, useParams } from "react-router-dom";
-import { DeleteOutlined, EditOutlined, SendOutlined } from "@ant-design/icons";
+import { LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
 
 import { PageContainer } from "../../../components/shared";
-import { getAvatarUrl, getBotAvatarUrl } from "../../../services/utils";
-import { ChatMessageEntity, ChatResponse, SupaChatMessage } from "../../../types/backend-alias";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { ChatMessageEntity, SupaChatMessage } from "../../../types/backend-alias";
+import { useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { generate } from "../../../services/generate/mock-generate";
-import { MultilineMarkdown } from "../../../components/MultiLineMarkdown";
 import * as _ from "lodash-es";
 import { chatService } from "../../../services/chat/chat-service";
+import {
+  ChatContainer,
+  BotMessageControl,
+  BotChoicesContainer,
+  ChatInputContainer,
+} from "./ChatPage.style";
+import { MessageDisplay } from "../components/MessageDisplay";
 const { Title } = Typography;
 
-const ChatInputContainer = styled.div`
-  position: fixed;
-  bottom: 1rem;
-  width: 98%;
-`;
+interface ChatState {
+  messages: SupaChatMessage[]; // All server-side messages
+  messagesToDisplay: SupaChatMessage[]; // For displaying: service-side messages + client-side messages
+  choiceIndex: number;
+}
 
-const ChatContainer = styled.div`
-  height: calc(100vh - 13rem);
-  padding-right: 1rem;
-  overflow-y: scroll;
-`;
+const initialChatState: ChatState = {
+  messages: [],
+  messagesToDisplay: [],
+  choiceIndex: 0,
+};
 
-const ChatControl = styled.div`
-  position: absolute;
-  right: -1rem;
-  top: 0.5rem;
-`;
+type Action =
+  | { type: "set_messages"; messages: SupaChatMessage[] }
+  | { type: "set_index"; newIndex: number }
+  | { type: "delete_message"; messageId: number }
+  | { type: "new_client_messages"; messages: SupaChatMessage[] }
+  | { type: "new_server_messages"; messages: SupaChatMessage[] }
+  | { type: "message_edited"; message: SupaChatMessage };
 
-const BotChoicesContainer = styled.div<{ index: number }>`
-  text-align: left;
-  display: flex;
-  min-height: 5rem;
+const dispatchFunction = (state: ChatState, action: Action): ChatState => {
+  switch (action.type) {
+    case "set_messages":
+      return { ...state, messages: [...action.messages], messagesToDisplay: [...action.messages] };
 
-  transition: 0.5s;
-  transform: ${(props) => `translateX(-${props.index * 100}%);`}
+    case "set_index":
+      return { ...state, choiceIndex: action.newIndex };
 
-  /* overflow-x: hidden; */
-  scroll-snap-type: x mandatory;
+    case "new_client_messages":
+      return { ...state, messagesToDisplay: [...state.messages, ...action.messages] };
 
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+    case "new_server_messages":
+      return {
+        ...state,
+        messages: [...state.messages, ...action.messages],
+        messagesToDisplay: [...state.messages, ...action.messages],
+      };
 
-  .ant-list-item {
-    flex: 0 0 100%;
-    width: 100%;
-    width: 100%;
+    case "message_edited":
+      const editIndex = state.messages.findIndex((m) => m.id === action.message.id);
+      const newMessages = state.messages.map((content, i) =>
+        i === editIndex ? action.message : content
+      );
+      return dispatchFunction(state, { type: "set_messages", messages: newMessages });
+
+    default:
+      return state;
   }
-
-  .ant-list-item .ant-list-item-meta {
-    display: flex;
-    flex: 1;
-    align-items: flex-start;
-    max-width: 100%;
-  }
-`;
-
-const BotMessageControl = styled.div`
-  position: absolute;
-  top: 0;
-  z-index: 1;
-`;
+};
 
 export const ChatPage: React.FC = () => {
   const { profile } = useContext(AppContext);
@@ -87,12 +78,13 @@ export const ChatPage: React.FC = () => {
 
   const [message, setMessage] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
-  // Refactor this instead of just use set?
-  const [chatMessages, setChatMessages] = useState<SupaChatMessage[]>([]);
 
-  const mainMessages = chatMessages.filter((message) => message.is_main);
-  const botChoices = chatMessages.filter((message) => message.is_bot && !message.is_main);
-  const [choiceIndex, setChoiceIndex] = useState(0);
+  const [chatState, dispatch] = useReducer(dispatchFunction, initialChatState);
+  const mainMessages = chatState.messagesToDisplay.filter((message) => message.is_main);
+  const botChoices = chatState.messagesToDisplay.filter(
+    (message) => message.is_bot && !message.is_main
+  );
+  const choiceIndex = chatState.choiceIndex;
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -115,35 +107,25 @@ export const ChatPage: React.FC = () => {
     }
   );
 
-  useEffect(() => {
-    refetch().then((data) => {
-      const messages = data.data?.chatMessages || [];
-      messages.sort((a, b) => a.id - b.id);
-      setChatMessages([...messages]);
-    });
-  }, [profile]);
-
-  // Some logic to replace {{bot}} and {{user}} on client side
-  const format = (inputMessage: string) => {
-    return inputMessage
-      .replace(/{{user}}/gi, profile?.name || "")
-      .replace(/<user>/gi, profile?.name || "")
-      .replace(/{{bot}}/gi, data?.chat.characters.name || "")
-      .replace(/<bot>/gi, data?.chat.characters.name || "");
+  const refreshChats = async () => {
+    const data = await refetch();
+    const messages = data.data?.chatMessages || [];
+    messages.sort((a, b) => a.id - b.id);
+    dispatch({ type: "set_messages", messages });
   };
 
-  const deleteChat = async (messageId: number) => {
-    const messageToDeletes = chatMessages.filter((message) => message.id >= messageId);
+  useEffect(() => {
+    refreshChats();
+  }, [profile]);
+
+  const deleteMessage = async (messageId: number) => {
+    const messageToDeletes = chatState.messages.filter((message) => message.id >= messageId);
     await chatService.deleteMessages(
       chatId,
       messageToDeletes.map((message) => message.id)
     );
 
-    refetch().then((data) => {
-      const messages = data.data?.chatMessages || [];
-      messages.sort((a, b) => a.id - b.id);
-      setChatMessages([...messages]);
-    });
+    refreshChats();
   };
 
   const swipe = async (direction: "left" | "right") => {
@@ -152,11 +134,11 @@ export const ChatPage: React.FC = () => {
     if (newIndex < 0) {
       return;
     } else if (newIndex < botChoices.length) {
-      setChoiceIndex(newIndex);
+      dispatch({ type: "set_index", newIndex });
       return;
     }
 
-    // Other wise, generate
+    // Otherwise, generate
     setIsGenerating(true);
     try {
       const fakeBotMessage: ChatMessageEntity = {
@@ -167,12 +149,12 @@ export const ChatPage: React.FC = () => {
         is_main: false,
         message: "",
       };
-      setChatMessages([...chatMessages, fakeBotMessage]);
-      setChoiceIndex(newIndex);
+      dispatch({ type: "set_index", newIndex });
+      dispatch({ type: "new_client_messages", messages: [fakeBotMessage] });
 
       let combined = "";
       // try get prompt somehow
-      const prompt = _.findLast(chatMessages, (m) => !m.is_bot)?.message || "";
+      const prompt = _.findLast(chatState.messages, (m) => !m.is_bot)?.message || "";
       const botMessages = await generate(prompt);
       for await (const message of botMessages) {
         combined = combined += message;
@@ -184,17 +166,16 @@ export const ChatPage: React.FC = () => {
           is_main: false,
           message: combined,
         };
-        setChatMessages([...chatMessages, newBotMessage]);
+        dispatch({ type: "new_client_messages", messages: [newBotMessage] });
         scrollToBottom();
       }
 
-      const finalBotMessage = await chatService.createMessage(chatId, {
+      const botMessage = await chatService.createMessage(chatId, {
         message: combined,
         is_bot: true,
         is_main: false,
       });
-
-      setChatMessages([...chatMessages, finalBotMessage]);
+      dispatch({ type: "new_server_messages", messages: [botMessage] });
     } finally {
       setIsGenerating(false);
     }
@@ -204,9 +185,7 @@ export const ChatPage: React.FC = () => {
     try {
       setIsGenerating(true);
 
-      let chatMessagesCopy = [...chatMessages];
-
-      const fakeLocalMessage: ChatMessageEntity = {
+      const localUserMessage: ChatMessageEntity = {
         id: -2,
         chat_id: 0,
         created_at: "",
@@ -214,7 +193,7 @@ export const ChatPage: React.FC = () => {
         is_main: true,
         message: message,
       };
-      const fakeBotMessage: ChatMessageEntity = {
+      const localBotMessage: ChatMessageEntity = {
         id: -1,
         chat_id: 0,
         created_at: "",
@@ -242,39 +221,43 @@ export const ChatPage: React.FC = () => {
           choicesToDelete.map((message) => message.id)
         );
       }
-      chatMessagesCopy = chatMessagesCopy.filter((message) => message.is_main);
-      setChatMessages([...chatMessagesCopy, fakeLocalMessage, fakeBotMessage]);
-      setChoiceIndex(0);
+
+      // Assume deleting always success lol
+      dispatch({
+        type: "set_messages",
+        messages: [...chatState.messages.filter((message) => message.is_main)],
+      });
+      dispatch({
+        type: "new_client_messages",
+        messages: [localUserMessage, localBotMessage],
+      });
+      dispatch({ type: "set_index", newIndex: 0 });
       scrollToBottom();
 
-      const newChatMessage = await chatService.createMessage(chatId, fakeLocalMessage);
-      setChatMessages([...chatMessagesCopy, newChatMessage, fakeBotMessage]);
+      // Generate prompt back-end to get generated message
+      const chatHistory = [...chatState.messages, localUserMessage];
+      const prompt = _.findLast(chatHistory, (m) => !m.is_bot)?.message || "";
+      const generatedTexts = await generate(prompt);
 
-      // Call back-end to get generated message
-      let combined = "";
-      let newBotMessage: ChatMessageEntity = {
-        id: -1,
-        chat_id: 0,
-        created_at: "",
-        is_bot: true,
-        is_main: false,
-        message: combined,
-      };
+      let streamingText = "";
+      for await (const text of generatedTexts) {
+        streamingText += text;
+        localBotMessage.message = streamingText;
+        dispatch({
+          type: "new_client_messages",
+          messages: [localUserMessage, localBotMessage],
+        });
 
-      const chatMessagesWithew = [...chatMessagesCopy, newChatMessage];
-      const prompt = _.findLast(chatMessagesWithew, (m) => !m.is_bot)?.message || "";
-
-      const botMessages = await generate(prompt);
-      for await (const message of botMessages) {
-        combined = combined += message;
-        newBotMessage.message = combined;
-        setChatMessages([...chatMessagesCopy, newChatMessage, newBotMessage]);
         scrollToBottom();
       }
 
-      const finalBotMessage = await chatService.createMessage(chatId, newBotMessage);
+      // Don't do in parallel, make sure user message is created first
+      // Create both of them, if failed to create bot message, no need to save
+      const serverUserMassage = await chatService.createMessage(chatId, localUserMessage);
+      const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
 
-      setChatMessages([...chatMessagesCopy, newChatMessage, finalBotMessage]);
+      console.log("this is called??");
+      dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
       setMessage("");
     } finally {
       setIsGenerating(false);
@@ -309,87 +292,67 @@ export const ChatPage: React.FC = () => {
                       itemLayout="horizontal"
                       dataSource={mainMessages}
                       renderItem={(item) => (
-                        <List.Item
-                          style={{ position: "relative" }}
+                        <MessageDisplay
                           key={item.id}
-                          extra={
-                            <ChatControl>
-                              <Button type="text">
-                                <EditOutlined />
-                                {!item.is_bot && (
-                                  <Popconfirm
-                                    title="Delete chat"
-                                    description="This will delete all messages after this too?"
-                                    onConfirm={() => deleteChat(item.id)}
-                                    okText="Yes"
-                                    cancelText="No"
-                                  >
-                                    <DeleteOutlined />
-                                  </Popconfirm>
-                                )}
-                              </Button>
-                            </ChatControl>
-                          }
-                        >
-                          <List.Item.Meta
-                            avatar={
-                              <Avatar
-                                size={60}
-                                src={
-                                  item.is_bot
-                                    ? getBotAvatarUrl(data.chat.characters.avatar)
-                                    : getAvatarUrl(profile?.avatar)
-                                }
-                              />
-                            }
-                            title={item.is_bot ? data.chat.characters.name : profile?.name || "You"}
-                            description={
-                              <MultilineMarkdown>{format(item.message)}</MultilineMarkdown>
-                            }
-                          />
-                        </List.Item>
+                          message={item}
+                          user={profile?.name}
+                          userAvatar={profile?.avatar}
+                          characterName={data.chat.characters.name}
+                          characterAvatar={data.chat.characters.avatar}
+                          onDelete={deleteMessage}
+                          onEdit={async (messageId, newMessage) => {
+                            item.message = newMessage; // Local edit
+
+                            // Server edit
+                            const editedMessage = await chatService.updateMassage(chatId, {
+                              message_id: messageId,
+                              message: newMessage,
+                              is_main: item.is_main,
+                            });
+                            dispatch({ type: "message_edited", message: editedMessage });
+                          }}
+                        />
                       )}
                     />
 
                     {botChoices.length > 0 && (
                       <div style={{ overflowX: "hidden", position: "relative" }}>
                         <BotMessageControl>
-                          {choiceIndex > 0 && <Button onClick={() => swipe("left")}>Left</Button>}
-                          <Button onClick={() => swipe("right")}>Right</Button>
+                          {choiceIndex > 0 && (
+                            <Button
+                              type="text"
+                              shape="circle"
+                              size="large"
+                              onClick={() => swipe("left")}
+                            >
+                              <LeftOutlined />
+                            </Button>
+                          )}
+                          <Button
+                            style={{ marginLeft: "auto" }}
+                            type="text"
+                            shape="circle"
+                            size="large"
+                            onClick={() => swipe("right")}
+                          >
+                            <RightOutlined />
+                          </Button>
                         </BotMessageControl>
 
                         <BotChoicesContainer index={choiceIndex}>
                           {botChoices.map((item) => (
-                            <List.Item
-                              style={{ position: "relative" }}
+                            <MessageDisplay
                               key={item.id}
-                              extra={
-                                <ChatControl>
-                                  <Button type="text">
-                                    <EditOutlined />
-                                  </Button>
-                                </ChatControl>
-                              }
-                            >
-                              <List.Item.Meta
-                                avatar={
-                                  <Avatar
-                                    size={60}
-                                    src={
-                                      item.is_bot
-                                        ? getBotAvatarUrl(data.chat.characters.avatar)
-                                        : getAvatarUrl(profile?.avatar)
-                                    }
-                                  />
-                                }
-                                title={
-                                  item.is_bot ? data.chat.characters.name : profile?.name || "You"
-                                }
-                                description={
-                                  <MultilineMarkdown>{format(item.message)}</MultilineMarkdown>
-                                }
-                              />
-                            </List.Item>
+                              message={item}
+                              user={profile?.name}
+                              userAvatar={profile?.avatar}
+                              characterName={data.chat.characters.name}
+                              characterAvatar={data.chat.characters.avatar}
+                              onDelete={deleteMessage}
+                              onEdit={(messageId, newMessage) => {
+                                console.log(messageId, newMessage);
+                              }}
+                            />
                           ))}
                         </BotChoicesContainer>
                       </div>
