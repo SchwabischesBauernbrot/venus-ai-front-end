@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ConfigProvider, App as AntdApp, theme } from "antd";
 import loadable from "@loadable/component";
-
+import * as _ from "lodash-es";
 import { Session } from "@supabase/supabase-js";
 
 import { AppContext } from "./appContext";
@@ -10,14 +10,14 @@ import { axiosInstance, supabase } from "./config";
 
 import { useQuery } from "react-query";
 import { Profile } from "./types/profile";
-import { getLocalData, LocalData, saveLocalData } from "./services/local-data";
+import { getLocalData, UserLocalData, saveLocalData } from "./services/user-local-data";
 import { MainLayout } from "./MainLayout";
 import { CreateCharacter, EditCharacter, MyCharacters, ViewCharacter } from "./pages/Character";
 import { MyChats, ChatPage } from "./pages/Chat";
 import { Home } from "./pages/Home";
 import { Register, Login, PublicProfile, Profile as ProfilePage } from "./pages/Profile";
 import { TermOfUse, PrivatePolicy } from "./pages/ToC";
-import { getUserConfig, UserConfig } from "./services/user-config";
+import { getUserConfig, updateUserConfig, UserConfig } from "./services/user-config";
 
 const router = createBrowserRouter([
   {
@@ -92,10 +92,10 @@ const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [config, setConfig] = useState<UserConfig | undefined>();
-  const [localData, setLocalData] = useState<LocalData>(getLocalData());
+  const [localData, setLocalData] = useState<UserLocalData>(getLocalData());
 
   const updateLocalData = useCallback(
-    (newData: Partial<LocalData>) => {
+    (newData: Partial<UserLocalData>) => {
       setLocalData((oldData) => {
         const mergedData = { ...oldData, ...newData };
         saveLocalData(mergedData);
@@ -107,10 +107,21 @@ const App: React.FC = () => {
   );
 
   const updateConfig = useCallback(
-    (config: UserConfig) => {
-      setConfig(config);
+    (newConfig: UserConfig) => {
+      console.log("this callback is called");
 
-      // Back-end sync
+      setConfig((oldConfig) => {
+        if (!oldConfig) {
+          return newConfig;
+        }
+
+        if (!_.isEqual(oldConfig, newConfig)) {
+          // Back-end sync if value changes
+          updateUserConfig(newConfig);
+        }
+
+        return newConfig;
+      });
     },
     [setConfig]
   );
@@ -151,7 +162,7 @@ const App: React.FC = () => {
 
         if (profileData) {
           setProfile(profileData);
-          setConfig(getUserConfig(profileData.config));
+          updateConfig(getUserConfig(profileData.config));
         }
       },
     }

@@ -122,13 +122,15 @@ export interface components {
       name: string;
       profile: string;
       user_name: string;
+      config: Record<string, never>;
     };
     ProfileUpdateDto: {
-      about_me: string;
-      avatar: string;
-      name: string;
-      profile: string;
-      user_name: string;
+      about_me?: string;
+      avatar?: string;
+      name?: string;
+      profile?: string;
+      user_name?: string;
+      config?: Record<string, never>;
     };
     CreateChatDto: {
       character_id: string;
@@ -142,7 +144,7 @@ export interface components {
       is_public: boolean;
     };
     UpdateChatDto: {
-      is_public: boolean;
+      is_public?: boolean;
       summary?: string;
     };
     ChatEntityWithCharacter: {
@@ -181,8 +183,8 @@ export interface components {
       is_main: boolean;
     };
     UpdateChatMessageDto: {
-      message: string;
-      is_main: boolean;
+      message?: string;
+      is_main?: boolean;
     };
     DeleteChatMessageDto: {
       message_ids: (number)[];
@@ -331,6 +333,11 @@ export interface operations {
           "application/json": Record<string, never>;
         };
       };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
     };
   };
   ChatController_create: {
@@ -379,11 +386,7 @@ export interface operations {
       };
     };
     responses: {
-      200: {
-        content: {
-          "application/json": Record<string, never>;
-        };
-      };
+      200: never;
       default: {
         content: {
           "application/json": components["schemas"]["ChatEntity"];

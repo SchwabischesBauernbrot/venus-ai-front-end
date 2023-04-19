@@ -1,6 +1,6 @@
 import { Session, User } from "@supabase/supabase-js";
 import { createContext } from "react";
-import { getLocalData, LocalData } from "./services/local-data";
+import { getLocalData, UserLocalData } from "./services/user-local-data";
 import { UserConfig } from "./services/user-config";
 import { Profile } from "./types/profile";
 
@@ -11,8 +11,8 @@ interface AppContextType {
   setProfile: (profile: Profile | null) => void;
   config?: UserConfig;
   updateConfig: (config: UserConfig) => void;
-  localData: LocalData;
-  updateLocalData: (data: Partial<LocalData>) => void;
+  localData: UserLocalData;
+  updateLocalData: (data: Partial<UserLocalData>) => void;
 }
 
 export const AppContext = createContext<AppContextType>({

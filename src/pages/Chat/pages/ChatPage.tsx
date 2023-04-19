@@ -20,7 +20,7 @@ import { ChatMessageEntity, SupaChatMessage } from "../../../types/backend-alias
 import { useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { generate } from "../../../services/generate/mock-generate";
-import { chatService } from "../../../services/chat/chat-service";
+import { chatService } from "../services/chat-service";
 import {
   ChatContainer,
   BotMessageControl,
@@ -224,8 +224,7 @@ export const ChatPage: React.FC = () => {
         choiceToKeep.is_main = true;
 
         // No await, lol
-        chatService.updateMassage(chatId, {
-          message_id: choiceToKeep.id,
+        chatService.updateMassage(chatId, choiceToKeep.id, {
           is_main: true,
         });
       }
@@ -339,10 +338,13 @@ export const ChatPage: React.FC = () => {
                             item.message = newMessage; // Local edit
 
                             // Server edit
-                            const editedMessage = await chatService.updateMassage(chatId, {
-                              message_id: messageId,
-                              message: newMessage,
-                            });
+                            const editedMessage = await chatService.updateMassage(
+                              chatId,
+                              messageId,
+                              {
+                                message: newMessage,
+                              }
+                            );
                             dispatch({ type: "message_edited", message: editedMessage });
                           }}
                         />

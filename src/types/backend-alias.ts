@@ -3,13 +3,18 @@ import { Database } from "./supabase";
 
 export type CharacterView = components["schemas"]["CharacterView"];
 export type FullCharacterView = components["schemas"]["FullCharacterView"];
-export type ProfileRes = components["schemas"]["ProfileResponse"];
+export type ProfileResponse = components["schemas"]["ProfileResponse"];
 export type ChatEntity = components["schemas"]["ChatEntity"];
 export type ChatMessageEntity = components["schemas"]["ChatMessageEntity"];
 export type TagEntity = components["schemas"]["TagEntity"];
 export type ChatEntityWithCharacter = components["schemas"]["ChatEntityWithCharacter"];
 
 export type ChatResponse = components["schemas"]["ChatResponse"];
+
+export type ProfileUpdateDto = components["schemas"]["ProfileUpdateDto"];
+export type UpdateChatDto = components["schemas"]["UpdateChatDto"];
+export type CreateChatMessageDto = components["schemas"]["CreateChatMessageDto"];
+export type UpdateChatMessageDto = components["schemas"]["UpdateChatMessageDto"];
 
 export type SupaUserProfile = Database["public"]["Tables"]["user_profiles"]["Row"];
 export type SupaCharacter = Database["public"]["Tables"]["characters"]["Row"];

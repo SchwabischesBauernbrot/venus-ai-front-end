@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { axiosInstance } from "../../../config";
-import { CharacterView, ProfileRes } from "../../../types/backend-alias";
+import { CharacterView, ProfileResponse } from "../../../types/backend-alias";
 import { PageContainer } from "../../../components/shared";
 import { getAvatarUrl } from "../../../services/utils";
 import { CharacterList } from "../../../components/CharacterList";
@@ -19,7 +19,7 @@ export const PublicProfile: React.FC = () => {
     ["profile", profileId],
     async () => {
       const [profileResponse, profileCharacterResponse] = await Promise.all([
-        axiosInstance.get<ProfileRes>(`profiles/${profileId}`),
+        axiosInstance.get<ProfileResponse>(`profiles/${profileId}`),
         axiosInstance.get<CharacterView[]>(`profiles/${profileId}/characters`),
       ]);
 

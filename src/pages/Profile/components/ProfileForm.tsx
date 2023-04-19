@@ -2,11 +2,12 @@ import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../../config";
 import { message, Input, Button, Upload, Form } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-import { compressImage } from "../../../services/image-helper";
+import { compressImage } from "../../../services/image-utils";
 import { AxiosError } from "axios";
 import { FormContainer } from "../../../components/shared";
 import { useQueryClient } from "react-query";
 import { getAvatarUrl, randomID } from "../../../services/utils";
+import { profileService } from "../services/profile-service";
 
 interface FormValues {
   id: string;
@@ -39,18 +40,15 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
         newAvatar = result.data && result.data.path;
       }
 
-      const response = await axiosInstance.patch("/profiles/mine", {
+      const result = await profileService.updateProfile({
         about_me,
-        avatar: avatarImg ? newAvatar : values.avatar,
+        avatar: avatarImg ? newAvatar || undefined : values.avatar,
         name,
         profile,
-        user_name,
+        user_name: user_name ? user_name : undefined,
       });
-      const result = response.data;
 
-      if (result.error) {
-        console.log(result.error);
-      } else {
+      if (result) {
         message.success("Profile updated!");
         queryClient.invalidateQueries("profile");
       }

@@ -14,7 +14,7 @@ import { useContext, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../../appContext";
-import { chatService } from "../../../../services/chat/chat-service";
+import { chatService } from "../../services/chat-service";
 import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import { ChatHistoryModal } from "./ChatHistoryModal";
 

@@ -6,7 +6,7 @@ import { countTokens } from "gptoken";
 
 import { axiosInstance, supabase } from "../../../config";
 import { parseCharacter } from "../../../services/character-parse";
-import { compressImage } from "../../../services/image-helper";
+import { compressImage } from "../../../services/image-utils";
 import { useTags } from "../../../hooks/useTags";
 import { getBotAvatarUrl } from "../../../services/utils";
 

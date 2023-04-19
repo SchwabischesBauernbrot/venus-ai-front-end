@@ -5,7 +5,7 @@ import { Card, Popconfirm } from "antd";
 import { Link } from "react-router-dom";
 import { getBotAvatarUrl, getTimeAgo } from "../services/utils";
 import { PrivateIndicator } from "./PrivateIndicator";
-import { chatService } from "../services/chat/chat-service";
+import { chatService } from "../pages/Chat/services/chat-service";
 
 interface ChatListProps {
   chats: ChatEntityWithCharacter[];

@@ -26,7 +26,7 @@ import { MultiLine } from "../../../components/MultiLine";
 import { useCallback, useContext, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../components/PrivateIndicator";
-import { chatService } from "../../../services/chat/chat-service";
+import { chatService } from "../../Chat/services/chat-service";
 
 const { Title } = Typography;
 

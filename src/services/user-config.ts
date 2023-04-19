@@ -1,3 +1,4 @@
+import { profileService } from "../pages/Profile/services/profile-service";
 import { Json } from "../types/supabase";
 import { GenerationSetting, OPEN_AI_DEFAULT_GENERATION_SETTINGS } from "./generation-setting";
 
@@ -19,4 +20,9 @@ export const getUserConfig = (config?: Json) => {
     return defaultUserConfig;
   }
   return { ...defaultUserConfig, ...config };
+};
+
+export const updateUserConfig = async (config: UserConfig) => {
+  const result = profileService.updateProfile({ config: config as any });
+  return result;
 };

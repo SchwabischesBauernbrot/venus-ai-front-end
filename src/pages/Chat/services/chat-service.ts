@@ -1,23 +1,14 @@
-import { axiosInstance, supabase } from "../../config";
-import { ChatEntity, ChatMessageEntity, ChatResponse } from "../../types/backend-alias";
+import { axiosInstance, supabase } from "../../../config";
+import {
+  ChatEntity,
+  ChatMessageEntity,
+  ChatResponse,
+  CreateChatMessageDto,
+  UpdateChatDto,
+  UpdateChatMessageDto,
+} from "../../../types/backend-alias";
 
 type ChatID = number | string | undefined;
-interface CreateMessagePayload {
-  message: string;
-  is_bot: boolean;
-  is_main: boolean;
-}
-
-interface EditMessagePayload {
-  message?: string;
-  is_main?: boolean;
-  message_id: number;
-}
-
-interface UpdateChatPayload {
-  is_public?: boolean;
-  summary?: string;
-}
 
 const createChat = async (characterId: string) => {
   const newChat = await axiosInstance.post<ChatEntity>("chats", {
@@ -26,7 +17,7 @@ const createChat = async (characterId: string) => {
   return newChat.data;
 };
 
-const updateChat = async (chatId: ChatID, { is_public, summary }: UpdateChatPayload) => {
+const updateChat = async (chatId: ChatID, { is_public, summary }: UpdateChatDto) => {
   const updatedChat = await axiosInstance.patch<ChatEntity>(`chats/${chatId}`, {
     is_public,
     summary,
@@ -53,7 +44,7 @@ const deleteMessages = async (chatId: ChatID, messageIDs: number[]) => {
 
 const createMessage = async (
   chatId: ChatID,
-  { message, is_bot, is_main }: CreateMessagePayload
+  { message, is_bot, is_main }: CreateChatMessageDto
 ) => {
   const messageResponse = await axiosInstance.post<ChatMessageEntity>(`/chats/${chatId}/messages`, {
     message,
@@ -65,10 +56,11 @@ const createMessage = async (
 
 const updateMassage = async (
   chatId: ChatID,
-  { message_id, message, is_main }: EditMessagePayload
+  messageId: number,
+  { message, is_main }: UpdateChatMessageDto
 ) => {
   const messageResponse = await axiosInstance.patch<ChatMessageEntity>(
-    `/chats/${chatId}/messages/${message_id}`,
+    `/chats/${chatId}/messages/${messageId}`,
     {
       message: message,
       is_main,
