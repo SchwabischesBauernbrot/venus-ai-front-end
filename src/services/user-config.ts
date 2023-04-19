@@ -5,6 +5,7 @@ import { GenerationSetting, OPEN_AI_DEFAULT_GENERATION_SETTINGS } from "./genera
 export interface UserConfig {
   api: "openai" | "kobold" | "ooba";
   model?: "gpt-3.5-turbo" | "text-davinci-003" | "gpt-4"; // gpt-3.5-turbo, text-davinci-003, gpt-4
+  api_key?: string;
   api_url?: string;
   generation_settings: GenerationSetting;
 }

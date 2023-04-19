@@ -17,6 +17,7 @@ import { AppContext } from "../../../../appContext";
 import { chatService } from "../../services/chat-service";
 import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import { ChatHistoryModal } from "./ChatHistoryModal";
+import { ChatSettingsModal } from "./ChatSettingsModal";
 
 interface ChatOptionMenuProps {
   chat: ChatEntityWithCharacter;
@@ -31,6 +32,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [isSharingChat, setIsSharingChat] = useState(false);
   const [openChatHistoryModal, setOpenChatHistoryModal] = useState(false);
+  const [openChatSettingsModal, setOpenChatSettingsModal] = useState(true); // For testing
 
   const createChat = async () => {
     try {
@@ -93,7 +95,13 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
     <>
       <span style={{ marginLeft: "auto" }}>
         {/* <Tag color="green">green</Tag> */}
-        <Tag color="red">API not ready!</Tag>
+        <Tag
+          style={{ cursor: "pointer" }}
+          color="red"
+          onClick={() => setOpenChatSettingsModal(true)}
+        >
+          API not ready! Click to setup.
+        </Tag>
       </span>
 
       <Dropdown
@@ -104,8 +112,18 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
           items: [
             {
               key: "generation",
-              label: "API & Generation Settings",
-              icon: <SlidersOutlined />,
+
+              label: (
+                <Tooltip title="Setup this one time so you can start chatting" placement="right">
+                  <div
+                    onClick={() => {
+                      setOpenChatSettingsModal(true);
+                    }}
+                  >
+                    <SlidersOutlined /> API & Generation Settings
+                  </div>
+                </Tooltip>
+              ),
             },
             {
               key: "my_bot",
@@ -198,6 +216,11 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
         open={openChatHistoryModal}
         character={chat.characters}
         onModalClose={() => setOpenChatHistoryModal(false)}
+      />
+
+      <ChatSettingsModal
+        open={openChatSettingsModal}
+        onModalClose={() => setOpenChatSettingsModal(false)}
       />
     </>
   );
