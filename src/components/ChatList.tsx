@@ -9,6 +9,7 @@ import { chatService } from "../services/chat/chat-service";
 
 interface ChatListProps {
   chats: ChatEntityWithCharacter[];
+  size?: "small" | "medium";
   onChatDeleted: () => {};
 }
 
@@ -31,14 +32,14 @@ const ChatContainer = styled.div<{ size: "small" | "medium" }>`
   align-items: stretch;
 `;
 
-export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted }) => {
+export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size = "medium" }) => {
   const deleteChat = async (chatId: number) => {
     await chatService.deleteChat(chatId);
     onChatDeleted();
   };
 
   return (
-    <ChatContainer size="medium">
+    <ChatContainer size={size}>
       {chats.map((chat) => (
         <Card
           key={chat.id}

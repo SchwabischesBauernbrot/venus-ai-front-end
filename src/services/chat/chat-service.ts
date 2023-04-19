@@ -8,9 +8,16 @@ interface CreateMessagePayload {
   is_main: boolean;
 }
 
-type EditMessagePayload = Pick<CreateMessagePayload, "message" | "is_main"> & {
+interface EditMessagePayload {
+  message?: string;
+  is_main?: boolean;
   message_id: number;
-};
+}
+
+interface UpdateChatPayload {
+  is_public?: boolean;
+  summary?: string;
+}
 
 const createChat = async (characterId: string) => {
   const newChat = await axiosInstance.post<ChatEntity>("chats", {
@@ -19,7 +26,15 @@ const createChat = async (characterId: string) => {
   return newChat.data;
 };
 
-const deleteChat = async (chatId: number) => {
+const updateChat = async (chatId: ChatID, { is_public, summary }: UpdateChatPayload) => {
+  const updatedChat = await axiosInstance.patch<ChatEntity>(`chats/${chatId}`, {
+    is_public,
+    summary,
+  });
+  return updatedChat.data;
+};
+
+const deleteChat = async (chatId: ChatID) => {
   await supabase.from("chats").delete().eq("id", chatId);
 };
 
@@ -67,6 +82,7 @@ export const chatService = {
   deleteChat,
   getChatById,
   createMessage,
+  updateChat,
   updateMassage,
   deleteMessages,
 };

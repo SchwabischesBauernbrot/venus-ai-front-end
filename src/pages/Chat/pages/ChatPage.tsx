@@ -31,6 +31,7 @@ import {
 import { MessageDisplay } from "../components/MessageDisplay";
 import { formatTime, getBotAvatarUrl } from "../../../services/utils";
 import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
+import { PrivateIndicator } from "../../../components";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -96,6 +97,8 @@ export const ChatPage: React.FC = () => {
   const mainMessages = messagesToDisplay.filter((message) => message.is_main);
   const botChoices = messagesToDisplay.filter((message) => message.is_bot && !message.is_main);
 
+  const canEdit = Boolean(profile);
+
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
       if (messageDivRef.current) {
@@ -145,6 +148,8 @@ export const ChatPage: React.FC = () => {
       return;
     } else if (newIndex < botChoices.length) {
       dispatch({ type: "set_index", newIndex });
+      return;
+    } else if (!canEdit) {
       return;
     }
 
@@ -221,7 +226,6 @@ export const ChatPage: React.FC = () => {
         // No await, lol
         chatService.updateMassage(chatId, {
           message_id: choiceToKeep.id,
-          message: choiceToKeep.message,
           is_main: true,
         });
       }
@@ -310,13 +314,8 @@ export const ChatPage: React.FC = () => {
               </Row>
 
               <Divider className="mt-2">
-                <Avatar
-                  size={25}
-                  src={getBotAvatarUrl(data.chat.characters.avatar)}
-                  className="mr-2"
-                />
-                Chat with {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)}
-                )
+                <PrivateIndicator isPublic={data.chat.is_public} /> Chat with{" "}
+                {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)})
               </Divider>
 
               <Row>
@@ -329,6 +328,7 @@ export const ChatPage: React.FC = () => {
                       renderItem={(item) => (
                         <MessageDisplay
                           key={item.id}
+                          canEdit={canEdit}
                           message={item}
                           user={profile?.name}
                           userAvatar={profile?.avatar}
@@ -342,7 +342,6 @@ export const ChatPage: React.FC = () => {
                             const editedMessage = await chatService.updateMassage(chatId, {
                               message_id: messageId,
                               message: newMessage,
-                              is_main: item.is_main,
                             });
                             dispatch({ type: "message_edited", message: editedMessage });
                           }}
@@ -379,6 +378,7 @@ export const ChatPage: React.FC = () => {
                             <MessageDisplay
                               key={item.id}
                               message={item}
+                              canEdit={canEdit}
                               user={profile?.name}
                               userAvatar={profile?.avatar}
                               characterName={data.chat.characters.name}

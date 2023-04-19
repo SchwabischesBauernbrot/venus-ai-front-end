@@ -9,7 +9,7 @@ import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 interface ChatHistoryModalProps {
   character: ChatEntityWithCharacter["characters"];
   open: boolean;
-  onModalClose: () => {};
+  onModalClose: () => void;
 }
 
 export const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({
@@ -46,7 +46,7 @@ export const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({
       footer={null}
     >
       {isLoading && <Spin />}
-      {data && <ChatList chats={data} onChatDeleted={() => refetch()} />}
+      {data && <ChatList chats={data} size="small" onChatDeleted={() => refetch()} />}
     </Modal>
   );
 };

@@ -15,6 +15,7 @@ interface MessageDisplayProps {
   userAvatar?: string;
   onEdit?: (messageId: number, newMessage: string) => void;
   onDelete?: (messageId: number) => void;
+  canEdit: boolean;
 }
 
 // Some logic to replace {{bot}} and {{user}} on client side
@@ -44,6 +45,7 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
   userAvatar,
   onEdit,
   onDelete,
+  canEdit,
 }) => {
   const inputRef = useRef<InputRef>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -54,65 +56,67 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
       style={{ position: "relative" }}
       key={message.id}
       extra={
-        <ChatControl>
-          {!message.is_bot && (
-            <Button type="text" size="large" shape="circle">
-              <Popconfirm
-                title="Delete chat"
-                description="This will delete all messages after this too?"
-                onConfirm={() => onDelete?.(message.id)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </Button>
-          )}
+        canEdit && (
+          <ChatControl>
+            {!message.is_bot && (
+              <Button type="text" size="large" shape="circle">
+                <Popconfirm
+                  title="Delete chat"
+                  description="This will delete all messages after this too?"
+                  onConfirm={() => onDelete?.(message.id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <DeleteOutlined />
+                </Popconfirm>
+              </Button>
+            )}
 
-          {isEditing ? (
-            <>
+            {isEditing ? (
+              <>
+                <Button
+                  type="text"
+                  shape="circle"
+                  size="large"
+                  onClick={() => {
+                    setIsEditing(false);
+                    onEdit?.(message.id, editMessage);
+                  }}
+                >
+                  <CheckOutlined style={{ color: "#2ecc71" }} />
+                </Button>
+                <Button
+                  type="text"
+                  shape="circle"
+                  size="large"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditMessage(message.message);
+                  }}
+                >
+                  <CloseOutlined style={{ color: "#e74c3c", fontSize: "1.1rem" }} />
+                </Button>
+              </>
+            ) : (
               <Button
                 type="text"
-                shape="circle"
                 size="large"
-                onClick={() => {
-                  setIsEditing(false);
-                  onEdit?.(message.id, editMessage);
-                }}
-              >
-                <CheckOutlined style={{ color: "#2ecc71" }} />
-              </Button>
-              <Button
-                type="text"
                 shape="circle"
-                size="large"
                 onClick={() => {
-                  setIsEditing(false);
-                  setEditMessage(message.message);
-                }}
-              >
-                <CloseOutlined style={{ color: "#e74c3c", fontSize: "1.1rem" }} />
-              </Button>
-            </>
-          ) : (
-            <Button
-              type="text"
-              size="large"
-              shape="circle"
-              onClick={() => {
-                setIsEditing(true);
+                  setIsEditing(true);
 
-                setTimeout(() => {
-                  inputRef?.current?.focus({
-                    cursor: "start",
-                  });
-                }, 100);
-              }}
-            >
-              <EditOutlined />
-            </Button>
-          )}
-        </ChatControl>
+                  setTimeout(() => {
+                    inputRef?.current?.focus({
+                      cursor: "start",
+                    });
+                  }, 100);
+                }}
+              >
+                <EditOutlined />
+              </Button>
+            )}
+          </ChatControl>
+        )
       }
     >
       <List.Item.Meta

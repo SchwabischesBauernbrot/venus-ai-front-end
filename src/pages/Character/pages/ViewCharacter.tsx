@@ -13,14 +13,14 @@ import {
   Descriptions,
   message,
 } from "antd";
-import { WechatOutlined } from "@ant-design/icons";
+import { LoadingOutlined, WechatOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { PageContainer } from "../../../components/shared";
 import { axiosInstance, supabase } from "../../../config";
 import { getBotAvatarUrl } from "../../../services/utils";
-import { ChatEntity, FullCharacterView } from "../../../types/backend-alias";
+import { FullCharacterView } from "../../../types/backend-alias";
 import { Tokenizer } from "../../../services/character-parse/tokenizer";
 import { MultiLine } from "../../../components/MultiLine";
 import { useCallback, useContext, useState } from "react";
@@ -118,14 +118,8 @@ export const ViewCharacter: React.FC = () => {
             </Space>
 
             <div className="pr-4 mt-4">
-              <Button
-                type="primary"
-                block
-                onClick={startChat}
-                loading={isStartingChat}
-                disabled={isStartingChat}
-              >
-                <WechatOutlined /> Chat with {data.name}
+              <Button type="primary" block onClick={startChat} disabled={isStartingChat}>
+                {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name}
               </Button>
             </div>
           </Col>
