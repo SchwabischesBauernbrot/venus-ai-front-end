@@ -12,23 +12,29 @@ export const ChatContainer = styled.div`
   overflow-y: scroll;
 `;
 
-export const BotChoicesContainer = styled.div<{ index: number }>`
+export const BotChoicesContainer = styled.div`
+  overflow-x: hidden;
+  position: "relative";
+  border-block-start: "1px solid rgba(253, 253, 253, 0.12)";
+`;
+
+export const BotChoicesOverlay = styled.div<{ index: number }>`
   text-align: left;
   display: flex;
   min-height: 5rem;
 
   transition: 0.5s;
-  transform: ${(props) => `translateX(-${props.index * 100}%);`}
+  transform: ${(props) => `translateX(-${props.index * 100}%)`};
   scroll-snap-type: x mandatory;
 
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 
   .ant-list-item {
-	  flex: 0 0 100%;
-	  width: 100%;
-	  list-style-type: none;
-	  display: flex;
+    flex: 0 0 100%;
+    width: 100%;
+    list-style-type: none;
+    display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 0;

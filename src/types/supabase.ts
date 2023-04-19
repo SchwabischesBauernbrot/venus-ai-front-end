@@ -152,6 +152,7 @@ export interface Database {
         Row: {
           about_me: string
           avatar: string
+          config: Json
           id: string
           name: string
           profile: string
@@ -160,6 +161,7 @@ export interface Database {
         Insert: {
           about_me?: string
           avatar?: string
+          config?: Json
           id: string
           name?: string
           profile?: string
@@ -168,6 +170,7 @@ export interface Database {
         Update: {
           about_me?: string
           avatar?: string
+          config?: Json
           id?: string
           name?: string
           profile?: string

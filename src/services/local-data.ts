@@ -1,5 +1,6 @@
 export interface LocalData {
   theme: "light" | "dark";
+  openAIKey?: string;
 }
 
 const LOCAL_DATA_KEY = "local-data";

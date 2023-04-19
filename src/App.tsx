@@ -17,6 +17,7 @@ import { MyChats, ChatPage } from "./pages/Chat";
 import { Home } from "./pages/Home";
 import { Register, Login, PublicProfile, Profile as ProfilePage } from "./pages/Profile";
 import { TermOfUse, PrivatePolicy } from "./pages/ToC";
+import { getUserConfig, UserConfig } from "./services/user-config";
 
 const router = createBrowserRouter([
   {
@@ -90,6 +91,7 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [config, setConfig] = useState<UserConfig | undefined>();
   const [localData, setLocalData] = useState<LocalData>(getLocalData());
 
   const updateLocalData = useCallback(
@@ -102,6 +104,15 @@ const App: React.FC = () => {
       });
     },
     [setLocalData]
+  );
+
+  const updateConfig = useCallback(
+    (config: UserConfig) => {
+      setConfig(config);
+
+      // Back-end sync
+    },
+    [setConfig]
   );
 
   useEffect(() => {
@@ -136,7 +147,12 @@ const App: React.FC = () => {
     {
       enabled: !!session,
       onSuccess: (result) => {
-        setProfile(result.data);
+        const profileData = result.data;
+
+        if (profileData) {
+          setProfile(profileData);
+          setConfig(getUserConfig(profileData.config));
+        }
       },
     }
   );
@@ -148,6 +164,8 @@ const App: React.FC = () => {
         setSession,
         profile,
         setProfile,
+        config,
+        updateConfig,
         localData,
         updateLocalData,
       }}

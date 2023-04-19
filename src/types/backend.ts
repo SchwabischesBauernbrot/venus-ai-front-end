@@ -153,6 +153,7 @@ export interface components {
       created_at: string;
       is_public: boolean;
       characters: {
+        id?: string;
         name?: string;
         description?: string;
         avatar?: string;

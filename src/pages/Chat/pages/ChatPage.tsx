@@ -3,30 +3,15 @@ import {
   Col,
   Row,
   Spin,
-  Typography,
   Input,
   Layout,
   InputRef,
   List,
   message,
-  Dropdown,
   Divider,
-  Tag,
   Avatar,
-  Switch,
-  Tooltip,
 } from "antd";
-import {
-  LeftCircleFilled,
-  LeftOutlined,
-  LinkOutlined,
-  MenuOutlined,
-  RightOutlined,
-  SaveOutlined,
-  SendOutlined,
-  SettingOutlined,
-  SlidersOutlined,
-} from "@ant-design/icons";
+import { LeftCircleFilled, LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import * as _ from "lodash-es";
@@ -39,11 +24,13 @@ import { chatService } from "../../../services/chat/chat-service";
 import {
   ChatContainer,
   BotMessageControl,
-  BotChoicesContainer,
   ChatInputContainer,
+  BotChoicesOverlay,
+  BotChoicesContainer,
 } from "./ChatPage.style";
 import { MessageDisplay } from "../components/MessageDisplay";
 import { formatTime, getBotAvatarUrl } from "../../../services/utils";
+import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -318,53 +305,7 @@ export const ChatPage: React.FC = () => {
                     </Button>
                   </Link>
 
-                  <span style={{ marginLeft: "auto" }}>
-                    {/* <Tag color="green">green</Tag> */}
-                    <Tag color="red">API not ready!</Tag>
-                  </span>
-
-                  <Dropdown
-                    trigger={["click"]}
-                    menu={{
-                      selectable: false,
-                      items: [
-                        {
-                          key: "my_profile",
-                          label: "API Settings",
-                          icon: <SettingOutlined />,
-                        },
-                        {
-                          key: "generation",
-                          label: "Generation Settings",
-                          icon: <SlidersOutlined />,
-                        },
-                        // {
-                        //   key: "my_bot",
-                        //   label: "Chat Summary",
-                        //   icon: <SaveOutlined />,
-                        // },
-                        {
-                          key: "share",
-                          label: "Share Chat",
-                          icon: <LinkOutlined />,
-                        },
-                        {
-                          key: "immer",
-                          label: (
-                            <Tooltip title="Disable message edit/delete to make it more immersive">
-                              <span onClick={(e) => e.stopPropagation()}>
-                                Immerisive Mode <Switch className="ml-2" defaultChecked={false} />
-                              </span>
-                            </Tooltip>
-                          ),
-                        },
-                      ],
-                    }}
-                  >
-                    <Button type="text" size="large">
-                      <MenuOutlined />
-                    </Button>
-                  </Dropdown>
+                  <ChatOptionMenu chat={data.chat} />
                 </Col>
               </Row>
 
@@ -410,13 +351,7 @@ export const ChatPage: React.FC = () => {
                     />
 
                     {botChoices.length > 0 && (
-                      <div
-                        style={{
-                          overflowX: "hidden",
-                          position: "relative",
-                          borderBlockStart: "1px solid rgba(253, 253, 253, 0.12)",
-                        }}
-                      >
+                      <BotChoicesContainer>
                         <BotMessageControl>
                           {choiceIndex > 0 && (
                             <Button
@@ -439,7 +374,7 @@ export const ChatPage: React.FC = () => {
                           </Button>
                         </BotMessageControl>
 
-                        <BotChoicesContainer index={choiceIndex}>
+                        <BotChoicesOverlay index={choiceIndex}>
                           {botChoices.map((item) => (
                             <MessageDisplay
                               key={item.id}
@@ -454,8 +389,8 @@ export const ChatPage: React.FC = () => {
                               }}
                             />
                           ))}
-                        </BotChoicesContainer>
-                      </div>
+                        </BotChoicesOverlay>
+                      </BotChoicesContainer>
                     )}
                   </ChatContainer>
                 </Col>

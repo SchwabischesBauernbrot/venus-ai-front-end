@@ -4,3 +4,4 @@ export { MultiLine } from "./MultiLine";
 export { MultiLineMarkdown } from "./MultiLineMarkdown";
 export { UserAvatar } from "./UserAvatar";
 export { PrivateIndicator } from "./PrivateIndicator";
+export { ChatList } from "./ChatList";

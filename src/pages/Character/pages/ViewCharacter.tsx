@@ -26,6 +26,7 @@ import { MultiLine } from "../../../components/MultiLine";
 import { useCallback, useContext, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../components/PrivateIndicator";
+import { chatService } from "../../../services/chat/chat-service";
 
 const { Title } = Typography;
 
@@ -73,11 +74,10 @@ export const ViewCharacter: React.FC = () => {
       if (existingChat.data) {
         navigate(`/chats/${existingChat.data.id}`);
       } else {
-        const newChat = await axiosInstance.post<ChatEntity>("chats", {
-          character_id: characterId,
-        });
-        if (newChat.data) {
-          navigate(`/chats/${newChat.data.id}`);
+        const newChat = await chatService.createChat(characterId!);
+
+        if (newChat) {
+          navigate(`/chats/${newChat.id}`);
         }
       }
     } catch (err) {
@@ -91,6 +91,7 @@ export const ViewCharacter: React.FC = () => {
     <PageContainer>
       {isLoading && <Spin />}
       {!isLoading && !data && <p>Can not view this character. It might be deleted or private.</p>}
+
       {data && (
         <Row>
           <Col span={6} className="text-left pt-2 pb-2">

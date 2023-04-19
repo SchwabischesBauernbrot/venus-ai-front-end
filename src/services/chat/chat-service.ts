@@ -1,5 +1,5 @@
-import { axiosInstance } from "../../config";
-import { ChatMessageEntity, ChatResponse } from "../../types/backend-alias";
+import { axiosInstance, supabase } from "../../config";
+import { ChatEntity, ChatMessageEntity, ChatResponse } from "../../types/backend-alias";
 
 type ChatID = number | string | undefined;
 interface CreateMessagePayload {
@@ -10,6 +10,17 @@ interface CreateMessagePayload {
 
 type EditMessagePayload = Pick<CreateMessagePayload, "message" | "is_main"> & {
   message_id: number;
+};
+
+const createChat = async (characterId: string) => {
+  const newChat = await axiosInstance.post<ChatEntity>("chats", {
+    character_id: characterId,
+  });
+  return newChat.data;
+};
+
+const deleteChat = async (chatId: number) => {
+  await supabase.from("chats").delete().eq("id", chatId);
 };
 
 const getChatById = async (chatId: ChatID) => {
@@ -52,6 +63,8 @@ const updateMassage = async (
 };
 
 export const chatService = {
+  createChat,
+  deleteChat,
   getChatById,
   createMessage,
   updateMassage,
