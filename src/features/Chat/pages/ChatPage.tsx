@@ -101,6 +101,7 @@ export const ChatPage: React.FC = () => {
   const botChoices = messagesToDisplay.filter((message) => message.is_bot && !message.is_main);
 
   const canEdit = Boolean(profile);
+  const isImmersiveMode = Boolean(config?.immersive_mode);
   const readyToChat = chatService.readyToChat(config, localData);
 
   const fullConfig: UserConfigAndLocalData = useMemo(() => {
@@ -147,6 +148,10 @@ export const ChatPage: React.FC = () => {
   }, [profile]);
 
   const deleteMessage = async (messageId: number) => {
+    if (messageId < 0) {
+      return;
+    }
+
     const messageToDeletes = chatState.messages.filter((message) => message.id >= messageId);
     await chatService.deleteMessages(
       chatId,
@@ -168,19 +173,23 @@ export const ChatPage: React.FC = () => {
       return;
     }
 
+    if (isGenerating) {
+      return;
+    }
+
     // Otherwise, generate
     setIsGenerating(true);
     try {
-      const fakeBotMessage: ChatMessageEntity = {
+      const localBotMessage: ChatMessageEntity = {
         id: -1,
         chat_id: 0,
         created_at: "",
         is_bot: true,
         is_main: false,
-        message: "",
+        message: `${data?.chat.characters.name} is replying...`,
       };
       dispatch({ type: "set_index", newIndex });
-      dispatch({ type: "new_client_messages", messages: [fakeBotMessage] });
+      dispatch({ type: "new_client_messages", messages: [localBotMessage] });
 
       let combined = "";
 
@@ -220,6 +229,10 @@ export const ChatPage: React.FC = () => {
 
   const sendChat = async () => {
     try {
+      if (isGenerating) {
+        return;
+      }
+
       setIsGenerating(true);
       setInputMessage("");
 
@@ -237,7 +250,7 @@ export const ChatPage: React.FC = () => {
         created_at: "",
         is_bot: true,
         is_main: false,
-        message: "",
+        message: `${data?.chat.characters.name} is replying...`,
       };
 
       // Remove non is_main message
@@ -297,8 +310,9 @@ export const ChatPage: React.FC = () => {
       const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
 
       dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
-    } catch (error) {
-      message.error(JSON.stringify(error, null, 2));
+    } catch (err) {
+      const error = err as Error;
+      message.error(error.message, 3);
     } finally {
       setIsGenerating(false);
     }
@@ -307,13 +321,13 @@ export const ChatPage: React.FC = () => {
   return (
     <Layout
       style={{ minHeight: "100vh" }}
-      onKeyDown={(event) => {
-        if (event.key === "ArrowLeft") {
-          swipe("left");
-        } else if (event.key === "ArrowRight") {
-          swipe("right");
-        }
-      }}
+      // onKeyDown={(event) => {
+      //   if (event.key === "ArrowLeft") {
+      //     swipe("left");
+      //   } else if (event.key === "ArrowRight") {
+      //     swipe("right");
+      //   }
+      // }}
     >
       <Layout.Content>
         <div className="pt-4">
@@ -325,8 +339,8 @@ export const ChatPage: React.FC = () => {
 
           {data && (
             <>
-              <Row>
-                <Col span={12} offset={6} className="d-flex justify-space-between align-center">
+              <Row justify="center">
+                <Col lg={16} xs={24} md={20} className="d-flex justify-space-between align-center">
                   <Link to="/">
                     <Button type="text" size="large">
                       <LeftCircleFilled /> Back
@@ -342,8 +356,8 @@ export const ChatPage: React.FC = () => {
                 {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)})
               </Divider>
 
-              <Row>
-                <Col span={12} offset={6}>
+              <Row justify="center">
+                <Col lg={16} xs={24} md={20}>
                   <ChatContainer ref={messageDivRef}>
                     <List
                       className="text-left"
@@ -352,7 +366,7 @@ export const ChatPage: React.FC = () => {
                       renderItem={(item, index) => (
                         <MessageDisplay
                           key={item.id}
-                          canEdit={canEdit && index > 0}
+                          canEdit={canEdit && index > 0 && !isImmersiveMode}
                           message={item}
                           user={profile?.name}
                           userAvatar={profile?.avatar}
@@ -407,7 +421,7 @@ export const ChatPage: React.FC = () => {
                             <MessageDisplay
                               key={item.id}
                               message={item}
-                              canEdit={canEdit}
+                              canEdit={canEdit && !isImmersiveMode}
                               user={profile?.name}
                               userAvatar={profile?.avatar}
                               characterName={data.chat.characters.name}
@@ -429,9 +443,8 @@ export const ChatPage: React.FC = () => {
 
           {canEdit && (
             <ChatInputContainer>
-              <Row>
-                {/* TODO: Disable this when not set API */}
-                <Col span={12} offset={6}>
+              <Row justify="center">
+                <Col lg={16} xs={24} md={20}>
                   <form onSubmit={sendChat}>
                     <div className="d-flex align-center">
                       <Input.TextArea

@@ -5,7 +5,11 @@ import { UserLocalData } from "./user-local-data";
 
 export interface UserConfig {
   api: "openai" | "kobold" | "ooba" | "mock"; // Mock appear local only
+  open_ai_mode?: "api_key" | "proxy";
+  open_ai_reverse_proxy: string;
+
   model?: "gpt-3.5-turbo" | "text-davinci-003" | "gpt-4"; // gpt-3.5-turbo, text-davinci-003, gpt-4
+
   api_url?: string;
   generation_settings: GenerationSetting;
 
@@ -17,6 +21,8 @@ export type UserConfigAndLocalData = UserConfig & UserLocalData;
 
 const defaultUserConfig: UserConfig = {
   api: "openai",
+  open_ai_mode: "proxy",
+  open_ai_reverse_proxy: "https://whocars123-oai-proxy.hf.space/proxy/openai",
   model: "gpt-3.5-turbo",
   generation_settings: OPEN_AI_DEFAULT_GENERATION_SETTINGS,
   text_streaming: true,

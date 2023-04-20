@@ -31,7 +31,9 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
   }
 
   const apiWatch = Form.useWatch<string>("api", form);
+  const apiModeWatch = Form.useWatch<string>("open_ai_mode", form);
   const openAIAPIWatch = Form.useWatch<string>("openAIKey", form);
+  const openAIReverseProxyWatch = Form.useWatch<string>("open_ai_reverse_proxy", form);
 
   const initialValues: FormValues = { ...localData, ...config };
 
@@ -49,6 +51,8 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       model: formValues.model,
       api_url: formValues.api_url,
       generation_settings: formValues.generation_settings,
+      open_ai_mode: formValues.open_ai_mode,
+      open_ai_reverse_proxy: formValues.open_ai_reverse_proxy,
     };
     updateConfig(newConfig);
 
@@ -133,42 +137,95 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                 </Select>
               </Form.Item>
 
-              <Form.Item
-                name="openAIKey"
-                label="OpenAI Key"
-                help={
-                  <span>
-                    Sign up at{" "}
-                    <a href="https://platform.openai.com/" target="_blank">
-                      platform.openai.com
-                    </a>{" "}
-                    and get this at{" "}
-                    <a href="https://beta.openai.com/account/api-keys">
-                      beta.openai.com/account/api-keys
-                    </a>
-                    .
-                    <br />
-                    For security reason, this key is{" "}
-                    <strong>only stored locally in your device</strong> and never sent to server.
-                  </span>
-                }
-              >
-                <Space.Compact style={{ width: "100%" }}>
-                  {/* BUG with Form.Item LOL */}
-                  <Input
-                    value={openAIAPIWatch || ""}
-                    onChange={(e) => form.setFieldValue("openAIKey", e.target.value)}
-                    placeholder="sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-                  />
-                  <Button
-                    loading={isCheckingKey}
-                    disabled={isCheckingKey || !openAIAPIWatch || !openAIAPIWatch.startsWith("sk-")}
-                    onClick={checkAPIKey}
-                  >
-                    Check API Key
-                  </Button>
-                </Space.Compact>
+              <Form.Item name="open_ai_mode" label="How do you use OpenAI API">
+                <Radio.Group>
+                  <Radio.Button value="api_key">My Own API Key</Radio.Button>
+                  <Radio.Button value="proxy">Reverse Proxy</Radio.Button>
+                </Radio.Group>
               </Form.Item>
+
+              {/* <Form.Item
+                name="open_ai_reverse_proxy"
+                label="OpenAI Reverse Proxy"
+                rules={[{ required: true, message: "Please pick an item!" }]}
+                help="More API support (Horde, Claude, NovelAI,...) coming soon!"
+              >
+                <Radio.Group>
+                  {location.hostname === "localhost" && (
+                    <Radio.Button value="mock">Mock API for testing</Radio.Button>
+                  )}
+                  <Radio.Button value="openai">Open AI</Radio.Button>
+                  <Radio.Button value="kobold">Kobold AI</Radio.Button>
+                  <Radio.Button value="ooba">Oobabooga</Radio.Button>
+                </Radio.Group>
+              </Form.Item> */}
+
+              {apiModeWatch === "api_key" ? (
+                <Form.Item
+                  name="openAIKey"
+                  label="OpenAI Key"
+                  help={
+                    <span>
+                      Sign up at{" "}
+                      <a href="https://platform.openai.com/" target="_blank">
+                        platform.openai.com
+                      </a>{" "}
+                      and get this at{" "}
+                      <a href="https://beta.openai.com/account/api-keys">
+                        beta.openai.com/account/api-keys
+                      </a>
+                      .
+                      <br />
+                      For security reason, this key is{" "}
+                      <strong>only stored locally in your device</strong> and never sent to server.
+                    </span>
+                  }
+                >
+                  <Space.Compact style={{ width: "100%" }}>
+                    {/* BUG with Form.Item LOL */}
+                    <Input
+                      value={openAIAPIWatch || ""}
+                      onChange={(e) => form.setFieldValue("openAIKey", e.target.value)}
+                      placeholder="sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    />
+                    <Button
+                      loading={isCheckingKey}
+                      disabled={
+                        isCheckingKey || !openAIAPIWatch || !openAIAPIWatch.startsWith("sk-")
+                      }
+                      onClick={checkAPIKey}
+                    >
+                      Check API Key
+                    </Button>
+                  </Space.Compact>
+                </Form.Item>
+              ) : (
+                <Form.Item
+                  name="open_ai_reverse_proxy"
+                  label="Open AI Reverse Proxy"
+                  help={
+                    <span>
+                      These proxies are contributed by communities. It might be slow or unstable.{" "}
+                      <br />
+                      Use at your own risk. <strong>Does NOT support text streaming.</strong>
+                    </span>
+                  }
+                >
+                  <Space.Compact style={{ width: "100%" }}>
+                    {/* BUG with Form.Item LOL */}
+                    <Input
+                      value={openAIReverseProxyWatch || ""}
+                      onChange={(e) => form.setFieldValue("open_ai_reverse_proxy", e.target.value)}
+                      placeholder="https://whocars123-oai-proxy.hf.space/proxy/openai"
+                    />
+                    <Button
+                    // onClick={checkAPIKey}
+                    >
+                      Check Proxy
+                    </Button>
+                  </Space.Compact>
+                </Form.Item>
+              )}
             </>
           )}
 

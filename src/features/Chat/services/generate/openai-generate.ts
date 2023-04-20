@@ -1,8 +1,6 @@
-import { values } from "lodash-es";
-import { GenerationSetting } from "../../../../shared/services/generation-setting";
 import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
-import { OpenAIInputMessage, OpenAIResponse } from "../types/openai";
+import { OpenAIError, OpenAIInputMessage, OpenAIProxyError, OpenAIResponse } from "../types/openai";
 import { GenerateInterface, Prompt } from "./generate-interface";
 
 // Estimate token length, but somehow quite accurate lol
@@ -13,6 +11,14 @@ const chatToMessage = (chatMes: SupaChatMessage): OpenAIInputMessage => {
     role: chatMes.is_bot ? "assistant" : "user",
     content: chatMes.message,
   };
+};
+
+const shouldUseTextStreaming = (config: UserConfigAndLocalData) => {
+  if (config.open_ai_mode === "proxy") {
+    return false;
+  }
+
+  return config.text_streaming;
 };
 
 const buildSystemInstruction = (chat: ChatEntityWithCharacter, includeExampleDialog = false) => {
@@ -40,19 +46,21 @@ export const callOpenAI = async (
   messages: OpenAIInputMessage[],
   config: UserConfigAndLocalData
 ) => {
-  const stream = config.text_streaming;
-  const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
+  const baseUrl =
+    config.open_ai_mode === "api_key" ? "https://api.openai.com" : config.open_ai_reverse_proxy;
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
     body: JSON.stringify({
       model: config.model,
       temperature: config.generation_settings.temperature,
       max_tokens: config.generation_settings.max_new_token,
-      stream,
+      stream: shouldUseTextStreaming(config),
       messages,
     }),
     method: "POST",
     headers: {
       "content-type": "application/json",
-      Authorization: `Bearer ${config.openAIKey}`,
+      Authorization: config.open_ai_mode === "api_key" ? `Bearer ${config.openAIKey}` : "",
     },
   });
 
@@ -108,13 +116,17 @@ class OpenAIGenerate extends GenerateInterface {
     config: UserConfigAndLocalData
   ): AsyncGenerator<string, void, void> {
     const result = await callOpenAI(input.messages!, config);
+    let stream = shouldUseTextStreaming(config);
 
-    console.log({ result });
-
-    const stream = config.text_streaming;
     if (!stream) {
-      const openAIResponse = (await result.json()) as OpenAIResponse;
-      yield openAIResponse.choices[0].message.content;
+      const response = await result.json();
+      if ("choices" in response) {
+        const openAIResponse = response as OpenAIResponse;
+        yield openAIResponse.choices[0].message.content;
+      } else if ("error" in response) {
+        const error = response as { error: OpenAIError | OpenAIProxyError };
+        throw new Error(error.error.message);
+      }
     } else {
       const openAIStream = result.body;
       if (openAIStream) {

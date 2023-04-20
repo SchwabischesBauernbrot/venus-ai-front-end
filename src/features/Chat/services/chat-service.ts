@@ -71,7 +71,7 @@ const updateMassage = async (
   return messageResponse.data;
 };
 
-const readyToChat = (config?: UserConfig, localData: UserLocalData) => {
+const readyToChat = (config: UserConfig | undefined, localData: UserLocalData) => {
   if (!config) {
     return false;
   }
@@ -80,8 +80,13 @@ const readyToChat = (config?: UserConfig, localData: UserLocalData) => {
     return true;
   }
 
-  if (config.api === "openai" && localData.openAIKey) {
-    return true;
+  if (config.api === "openai") {
+    if (config.open_ai_mode === "api_key" && localData.openAIKey) {
+      return true;
+    }
+    if (config.open_ai_mode === "proxy" && config.open_ai_reverse_proxy) {
+      return true;
+    }
   }
 
   if ((config.api === "kobold" || config.api === "ooba") && config.api_url) {

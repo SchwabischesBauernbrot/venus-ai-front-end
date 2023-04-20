@@ -25,6 +25,13 @@ export interface OpenAIError {
   type: string;
 }
 
+export interface OpenAIProxyError {
+  message: string;
+  proxy_note: string;
+  stack: string;
+  type: string;
+}
+
 export interface OpenAIInputMessage {
   role: "system" | "assistant" | "user";
   content: string;

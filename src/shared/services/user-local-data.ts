@@ -5,7 +5,9 @@ export interface UserLocalData {
 
 const LOCAL_DATA_KEY = "local-data";
 
-export const defaultUserLocalData: UserLocalData = { theme: "light" };
+export const defaultUserLocalData: UserLocalData = {
+  theme: "light",
+};
 
 export const getLocalData = (): UserLocalData => {
   const data = localStorage.getItem(LOCAL_DATA_KEY);

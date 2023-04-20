@@ -96,7 +96,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
       <span style={{ marginLeft: "auto" }}>
         {readyToChat ? (
           <Tag color="green">
-            API is ready. Using {config.api} - {config.model}
+            API is ready. Using {config.api} - {config.model} ({config.open_ai_mode})
           </Tag>
         ) : (
           <Tag
@@ -135,7 +135,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
               key: "my_bot",
               label: (
                 <Tooltip
-                  title="Generate/Edit Chat Summary (Only support OpenAI for now)"
+                  title="Generate/Edit a summary of the chat (Only support OpenAI for now)"
                   placement="right"
                 >
                   <div
@@ -143,7 +143,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                       e.stopPropagation();
                     }}
                   >
-                    <SaveOutlined /> Chat Summary
+                    <SaveOutlined /> Chat Memory
                   </div>
                 </Tooltip>
               ),
