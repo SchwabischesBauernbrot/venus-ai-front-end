@@ -118,8 +118,8 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
               {location.hostname === "localhost" && (
                 <Radio.Button value="mock">Mock API for testing</Radio.Button>
               )}
-              <Radio.Button value="openai">Open AI</Radio.Button>
               <Radio.Button value="kobold">Kobold AI</Radio.Button>
+              <Radio.Button value="openai">Open AI</Radio.Button>
               <Radio.Button value="ooba">Oobabooga</Radio.Button>
             </Radio.Group>
           </Form.Item>
@@ -137,28 +137,12 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                 </Select>
               </Form.Item>
 
-              <Form.Item name="open_ai_mode" label="How do you use OpenAI API">
+              <Form.Item name="open_ai_mode" label="Access OpenAI API">
                 <Radio.Group>
                   <Radio.Button value="api_key">My Own API Key</Radio.Button>
                   <Radio.Button value="proxy">Reverse Proxy</Radio.Button>
                 </Radio.Group>
               </Form.Item>
-
-              {/* <Form.Item
-                name="open_ai_reverse_proxy"
-                label="OpenAI Reverse Proxy"
-                rules={[{ required: true, message: "Please pick an item!" }]}
-                help="More API support (Horde, Claude, NovelAI,...) coming soon!"
-              >
-                <Radio.Group>
-                  {location.hostname === "localhost" && (
-                    <Radio.Button value="mock">Mock API for testing</Radio.Button>
-                  )}
-                  <Radio.Button value="openai">Open AI</Radio.Button>
-                  <Radio.Button value="kobold">Kobold AI</Radio.Button>
-                  <Radio.Button value="ooba">Oobabooga</Radio.Button>
-                </Radio.Group>
-              </Form.Item> */}
 
               {apiModeWatch === "api_key" ? (
                 <Form.Item
@@ -236,7 +220,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
           The definitions are shamelessly copied from https://agnai.chat, so give them credit here.
         </span>
 
-        <code>{JSON.stringify(initialValues, null, 2)}</code>
+        {/* <code>{JSON.stringify(initialValues, null, 2)}</code> */}
       </div>
     </Modal>
   );
