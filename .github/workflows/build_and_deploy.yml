@@ -5,47 +5,47 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
-        cache: 'yarn'
-        
-    - name: Install dependencies
-      run: yarn install
-      
-    - name: Build
-      run: yarn build
-      
-    - name: Archive artifact
-      run: |
-        chmod -c -R +rX "./build" | while read line; do
-          echo "::warning title=Invalid file permissions automatically fixed::$line"
-        done
-        tar \
-          --dereference --hard-dereference \
-          --directory "./build" \
-          -cvf "$RUNNER_TEMP/artifact.tar" \
-          --exclude=.git \
-          --exclude=.github \
-          .
-    
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: 'github-pages'
-        path: ${{ runner.temp }}/artifact.tar
-        retention-days: 1
-        if-no-files-found: error
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Archive artifact
+        run: |
+          chmod -c -R +rX "./dist" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+          tar \
+            --dereference --hard-dereference \
+            --directory "./dist" \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: "github-pages"
+          path: ${{ runner.temp }}/artifact.tar
+          retention-days: 1
+          if-no-files-found: error
 
   deploy:
     # Add a dependency to the build job
@@ -53,8 +53,8 @@ jobs:
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
 
     # Deploy to the github-pages environment
     environment:
