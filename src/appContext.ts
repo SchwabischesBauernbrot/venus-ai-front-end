@@ -1,7 +1,7 @@
-import { Session, User } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { createContext } from "react";
-import { getLocalData, UserLocalData } from "./services/user-local-data";
-import { UserConfig } from "./services/user-config";
+import { getLocalData, UserLocalData } from "./shared/services/user-local-data";
+import { UserConfig } from "./shared/services/user-config";
 import { Profile } from "./types/profile";
 
 interface AppContextType {

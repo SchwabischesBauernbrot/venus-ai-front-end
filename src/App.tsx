@@ -10,51 +10,51 @@ import { axiosInstance, supabase } from "./config";
 
 import { useQuery } from "react-query";
 import { Profile } from "./types/profile";
-import { getLocalData, UserLocalData, saveLocalData } from "./services/user-local-data";
-import { getUserConfig, updateUserConfig, UserConfig } from "./services/user-config";
-import { MainLayout } from "./MainLayout";
+import { getLocalData, UserLocalData, saveLocalData } from "./shared/services/user-local-data";
+import { getUserConfig, updateUserConfig, UserConfig } from "./shared/services/user-config";
+import { MainLayout } from "./shared/MainLayout";
 
-const Home = loadable(() => import("./pages/Home"), {
+const Home = loadable(() => import("./features/Home"), {
   resolveComponent: (component) => component.Home,
 });
 
-const CreateCharacter = loadable(() => import("./pages/Character"), {
+const CreateCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.CreateCharacter,
 });
-const EditCharacter = loadable(() => import("./pages/Character"), {
+const EditCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.EditCharacter,
 });
-const MyCharacters = loadable(() => import("./pages/Character"), {
+const MyCharacters = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.MyCharacters,
 });
-const ViewCharacter = loadable(() => import("./pages/Character"), {
+const ViewCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.ViewCharacter,
 });
 
-const Register = loadable(() => import("./pages/Profile"), {
+const Register = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Register,
 });
-const Login = loadable(() => import("./pages/Profile"), {
+const Login = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Login,
 });
-const PublicProfile = loadable(() => import("./pages/Profile"), {
+const PublicProfile = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.PublicProfile,
 });
-const ProfilePage = loadable(() => import("./pages/Profile"), {
+const ProfilePage = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Profile,
 });
 
-const MyChats = loadable(() => import("./pages/Chat"), {
+const MyChats = loadable(() => import("./features/Chat"), {
   resolveComponent: (component) => component.MyChats,
 });
-const ChatPage = loadable(() => import("./pages/Chat"), {
+const ChatPage = loadable(() => import("./features/Chat"), {
   resolveComponent: (component) => component.ChatPage,
 });
 
-const TermOfUse = loadable(() => import("./pages/ToC"), {
+const TermOfUse = loadable(() => import("./features/ToC"), {
   resolveComponent: (component) => component.TermOfUse,
 });
-const PrivatePolicy = loadable(() => import("./pages/ToC"), {
+const PrivatePolicy = loadable(() => import("./features/ToC"), {
   resolveComponent: (component) => component.PrivatePolicy,
 });
 
