@@ -69,8 +69,10 @@ export const MyCharacters: React.FC = () => {
         </Button>
       </Link>
 
-      {isLoading && <Spin />}
-      {data && <CharacterList characters={data} editable />}
+      <div className="mt-4">
+        {isLoading && <Spin />}
+        {data && <CharacterList characters={data} editable />}
+      </div>
     </PageContainer>
   );
 };

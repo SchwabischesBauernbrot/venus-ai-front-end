@@ -4,9 +4,9 @@ import { AxiosError } from "axios";
 
 import { useContext, useState } from "react";
 import { AppContext } from "../../../../appContext";
-import { UserConfig } from "../../../../shared/services/user-config";
+import { UserConfig, UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { UserLocalData } from "../../../../shared/services/user-local-data";
-import { checkOpenAIAPIKey, OpenAIError } from "../../services/check-service";
+import { checkOpenAIAPIKey } from "../../services/check-service";
 
 const { Title } = Typography;
 
@@ -15,7 +15,7 @@ interface ChatSettingsModalProps {
   onModalClose: () => void;
 }
 
-type FormValues = UserConfig & UserLocalData;
+type FormValues = UserConfigAndLocalData;
 
 const OPEN_AI_MODELS = ["gpt-3.5-turbo", "text-davinci-003", "gpt-4"];
 
@@ -61,15 +61,21 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       const checkResult = await checkOpenAIAPIKey(form.getFieldValue("openAIKey"));
       console.log({ checkResult });
 
-      if (checkResult.choices[0].message.content.includes("TEST")) {
+      if (!checkResult) {
+        message.error("Network error. Try again later!");
+        return;
+      }
+
+      if ("error" in checkResult) {
+        message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
+      } else if (
+        "choices" in checkResult &&
+        checkResult.choices[0].message.content.includes("TEST")
+      ) {
         message.success(
           "Valid API Key. Click Save Settings, and you can start chatting to your waifu/husbando now!"
         );
       }
-    } catch (err) {
-      const axiosError = err as AxiosError<{ error: OpenAIError }>;
-      const error = axiosError.response?.data?.error;
-      error && message.error(`${error.code} - ${error.message}`);
     } finally {
       setIsCheckingKey(false);
     }
@@ -105,6 +111,9 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
             help="More API support (Horde, Claude, NovelAI,...) coming soon!"
           >
             <Radio.Group>
+              {location.hostname === "localhost" && (
+                <Radio.Button value="mock">Mock API for testing</Radio.Button>
+              )}
               <Radio.Button value="openai">Open AI</Radio.Button>
               <Radio.Button value="kobold">Kobold AI</Radio.Button>
               <Radio.Button value="ooba">Oobabooga</Radio.Button>
@@ -129,10 +138,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                 label="OpenAI Key"
                 help={
                   <span>
-                    Sign up and get this at{" "}
+                    Sign up at{" "}
+                    <a href="https://platform.openai.com/" target="_blank">
+                      platform.openai.com
+                    </a>{" "}
+                    and get this at{" "}
                     <a href="https://beta.openai.com/account/api-keys">
-                      https://beta.openai.com/account/api-keys
+                      beta.openai.com/account/api-keys
                     </a>
+                    .
                     <br />
                     For security reason, this key is{" "}
                     <strong>only stored locally in your device</strong> and never sent to server.

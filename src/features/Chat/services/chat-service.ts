@@ -76,6 +76,10 @@ const readyToChat = (config?: UserConfig, localData: UserLocalData) => {
     return false;
   }
 
+  if (config.api === "mock") {
+    return true;
+  }
+
   if (config.api === "openai" && localData.openAIKey) {
     return true;
   }

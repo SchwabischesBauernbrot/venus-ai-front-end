@@ -1,11 +1,12 @@
 import delay from "delay";
-import { GenerationSetting } from "../../../../shared/services/generation-setting";
+import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
 import { GenerateInterface, Prompt } from "./generate-interface";
 
 export class MockGenerate extends GenerateInterface {
-  async *generate({ text }: Prompt, generationSettings: GenerationSetting) {
-    const finalResult = `${text} ${text} ${text} ${Math.random()}`;
+  async *generate({ text }: Prompt, config: UserConfigAndLocalData) {
+    const finalResult = `ID: ${Math.random()}.
+    Prompt: ${text}!`;
     const words = finalResult.split(" ");
     for (const word of words) {
       await delay(50);
@@ -13,7 +14,12 @@ export class MockGenerate extends GenerateInterface {
     }
   }
 
-  buildPrompt(chat: ChatEntityWithCharacter, chatHistory: SupaChatMessage[]) {
+  buildPrompt(
+    message: string,
+    chat: ChatEntityWithCharacter,
+    chatHistory: SupaChatMessage[],
+    config: UserConfigAndLocalData
+  ) {
     const { summary, characters } = chat;
     const {
       personality = "",
@@ -26,7 +32,7 @@ export class MockGenerate extends GenerateInterface {
     Summary: ${summary}.
     ${chatHistory.map((chat) => chat.message).join("")}`;
 
-    return { text: basePrompt };
+    return { text: `Message: ${message}. ${basePrompt.substring(0, 200)}.` };
   }
 }
 

@@ -1,9 +1,10 @@
 import { profileService } from "../../features/Profile/services/profile-service";
 import { Json } from "../../types/supabase";
 import { GenerationSetting, OPEN_AI_DEFAULT_GENERATION_SETTINGS } from "./generation-setting";
+import { UserLocalData } from "./user-local-data";
 
 export interface UserConfig {
-  api: "openai" | "kobold" | "ooba";
+  api: "openai" | "kobold" | "ooba" | "mock"; // Mock appear local only
   model?: "gpt-3.5-turbo" | "text-davinci-003" | "gpt-4"; // gpt-3.5-turbo, text-davinci-003, gpt-4
   api_url?: string;
   generation_settings: GenerationSetting;
@@ -11,6 +12,8 @@ export interface UserConfig {
   immersive_mode: boolean;
   text_streaming: boolean;
 }
+
+export type UserConfigAndLocalData = UserConfig & UserLocalData;
 
 const defaultUserConfig: UserConfig = {
   api: "openai",

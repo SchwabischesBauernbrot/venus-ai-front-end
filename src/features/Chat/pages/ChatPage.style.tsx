@@ -7,15 +7,14 @@ export const ChatInputContainer = styled.div`
 `;
 
 export const ChatContainer = styled.div`
-  height: calc(100vh - 12rem);
-
+  height: calc(100vh - 13rem);
   overflow-y: scroll;
 `;
 
 export const BotChoicesContainer = styled.div`
   overflow-x: hidden;
-  position: "relative";
-  border-block-start: "1px solid rgba(253, 253, 253, 0.12)";
+  position: relative;
+  border-block-start: 1px solid rgba(253, 253, 253, 0.12);
 `;
 
 // Fix this dark-mode too?
@@ -36,9 +35,9 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
     width: 100%;
     list-style-type: none;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 0.5rem 2rem 0.5rem 0;
     color: rgba(255, 255, 255, 0.85);
   }
 

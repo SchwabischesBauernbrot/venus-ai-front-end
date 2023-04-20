@@ -17,9 +17,10 @@ import { Link, useParams } from "react-router-dom";
 import { findLast } from "lodash-es";
 
 import { ChatMessageEntity, SupaChatMessage } from "../../../types/backend-alias";
-import { useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { mockGenerateInstance } from "../services/generate/mock-generate";
+import { openAiGenerateInstance } from "../services/generate/openai-generate";
 import { chatService } from "../services/chat-service";
 import {
   ChatContainer,
@@ -32,6 +33,8 @@ import { MessageDisplay } from "../components/MessageDisplay";
 import { formatTime } from "../../../shared/services/utils";
 import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
 import { PrivateIndicator } from "../../../shared/components";
+import { UserConfigAndLocalData } from "../../../shared/services/user-config";
+import { GenerateInterface } from "../services/generate/generate-interface";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -99,6 +102,17 @@ export const ChatPage: React.FC = () => {
 
   const canEdit = Boolean(profile);
   const readyToChat = chatService.readyToChat(config, localData);
+
+  const fullConfig: UserConfigAndLocalData = useMemo(() => {
+    return { ...localData, ...config! };
+  }, [localData, config]);
+  let generateInstance: GenerateInterface = useMemo(() => {
+    if (fullConfig.api === "openai") {
+      return openAiGenerateInstance;
+    }
+
+    return mockGenerateInstance;
+  }, [fullConfig]);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -169,12 +183,16 @@ export const ChatPage: React.FC = () => {
       dispatch({ type: "new_client_messages", messages: [fakeBotMessage] });
 
       let combined = "";
-      // try get prompt somehow
-      const prompt = findLast(chatState.messages, (m) => !m.is_bot)?.message || "";
-      const botMessages = await mockGenerateInstance.generate(
-        { text: prompt },
-        config!.generation_settings
+
+      const lastMessage = findLast(chatState.messages, (m) => !m.is_bot);
+      const prompt = generateInstance.buildPrompt(
+        // message,
+        lastMessage?.message || "",
+        data?.chat!,
+        chatState.messages,
+        fullConfig
       );
+      const botMessages = await generateInstance.generate(prompt, fullConfig);
       for await (const message of botMessages) {
         combined = combined += message;
         const newBotMessage: ChatMessageEntity = {
@@ -253,12 +271,13 @@ export const ChatPage: React.FC = () => {
       scrollToBottom();
 
       // Generate prompt back-end to get generated message
-      const chatHistory = [...chatState.messages, localUserMessage];
-      const prompt = findLast(chatHistory, (m) => !m.is_bot)?.message || "";
-      const generatedTexts = await mockGenerateInstance.generate(
-        { text: prompt },
-        config?.generation_settings
+      const prompt = generateInstance.buildPrompt(
+        inputMessage,
+        data?.chat!,
+        chatState.messages,
+        fullConfig
       );
+      const generatedTexts = await generateInstance.generate(prompt, fullConfig);
 
       let streamingText = "";
       for await (const text of generatedTexts) {
@@ -277,7 +296,6 @@ export const ChatPage: React.FC = () => {
       const serverUserMassage = await chatService.createMessage(chatId, localUserMessage);
       const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
 
-      console.log("this is called??");
       dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
     } catch (error) {
       message.error(JSON.stringify(error, null, 2));
@@ -331,10 +349,10 @@ export const ChatPage: React.FC = () => {
                       className="text-left"
                       itemLayout="horizontal"
                       dataSource={mainMessages}
-                      renderItem={(item) => (
+                      renderItem={(item, index) => (
                         <MessageDisplay
                           key={item.id}
-                          canEdit={canEdit}
+                          canEdit={canEdit && index > 0}
                           message={item}
                           user={profile?.name}
                           userAvatar={profile?.avatar}
@@ -360,27 +378,29 @@ export const ChatPage: React.FC = () => {
 
                     {botChoices.length > 0 && (
                       <BotChoicesContainer>
-                        <BotMessageControl>
-                          {choiceIndex > 0 && (
+                        {!isGenerating && (
+                          <BotMessageControl>
+                            {choiceIndex > 0 && (
+                              <Button
+                                type="text"
+                                shape="circle"
+                                size="large"
+                                onClick={() => swipe("left")}
+                              >
+                                <LeftOutlined />
+                              </Button>
+                            )}
                             <Button
+                              style={{ marginLeft: "auto" }}
                               type="text"
                               shape="circle"
                               size="large"
-                              onClick={() => swipe("left")}
+                              onClick={() => swipe("right")}
                             >
-                              <LeftOutlined />
+                              <RightOutlined />
                             </Button>
-                          )}
-                          <Button
-                            style={{ marginLeft: "auto" }}
-                            type="text"
-                            shape="circle"
-                            size="large"
-                            onClick={() => swipe("right")}
-                          >
-                            <RightOutlined />
-                          </Button>
-                        </BotMessageControl>
+                          </BotMessageControl>
+                        )}
 
                         <BotChoicesOverlay index={choiceIndex}>
                           {botChoices.map((item) => (
