@@ -2,7 +2,6 @@ import { useCallback, useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Form, Input, Upload, Select, Button, message, Typography, Radio } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { countTokens } from "gptoken";
 
 import { axiosInstance, supabase } from "../../../config";
 import { parseCharacter } from "../services/character-parse";
@@ -222,7 +221,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           label="Introduction"
           help="This will be displayed in your character detail, not including in prompt or influence your character."
         >
-          <Input.TextArea rows={3} placeholder="Short introduction about your character" />
+          <Input.TextArea autoSize placeholder="Short introduction about your character" />
         </Form.Item>
 
         <Form.Item

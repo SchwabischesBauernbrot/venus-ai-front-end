@@ -318,6 +318,16 @@ export const ChatPage: React.FC = () => {
     }
   };
 
+  const editMessage = async (item: SupaChatMessage, messageId: number, newMessage: string) => {
+    item.message = newMessage; // Local edit
+
+    // Server edit
+    const editedMessage = await chatService.updateMassage(chatId, messageId, {
+      message: newMessage,
+    });
+    dispatch({ type: "message_edited", message: editedMessage });
+  };
+
   return (
     <Layout
       style={{ minHeight: "100vh" }}
@@ -341,7 +351,7 @@ export const ChatPage: React.FC = () => {
             <>
               <Row justify="center">
                 <Col lg={16} xs={24} md={20} className="d-flex justify-space-between align-center">
-                  <Link to="/">
+                  <Link to={`/characters/${data.chat.characters.id}`}>
                     <Button type="text" size="large">
                       <LeftCircleFilled /> Back
                     </Button>
@@ -374,17 +384,7 @@ export const ChatPage: React.FC = () => {
                           characterAvatar={data.chat.characters.avatar}
                           onDelete={deleteMessage}
                           onEdit={async (messageId, newMessage) => {
-                            item.message = newMessage; // Local edit
-
-                            // Server edit
-                            const editedMessage = await chatService.updateMassage(
-                              chatId,
-                              messageId,
-                              {
-                                message: newMessage,
-                              }
-                            );
-                            dispatch({ type: "message_edited", message: editedMessage });
+                            editMessage(item, messageId, newMessage);
                           }}
                         />
                       )}
@@ -428,7 +428,7 @@ export const ChatPage: React.FC = () => {
                               characterAvatar={data.chat.characters.avatar}
                               onDelete={deleteMessage}
                               onEdit={(messageId, newMessage) => {
-                                console.log(messageId, newMessage);
+                                editMessage(item, messageId, newMessage);
                               }}
                             />
                           ))}

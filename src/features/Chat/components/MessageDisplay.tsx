@@ -27,7 +27,8 @@ const format = (inputMessage: string, user = "", characterName = "") => {
     .replace(/<user>/gi, user)
     .replace(/{{bot}}/gi, characterName)
     .replace(/{{char}}/gi, characterName)
-    .replace(/<bot>/gi, characterName);
+    .replace(/<bot>/gi, characterName)
+    .replace(/<START>/gi, "");
 };
 
 export const ChatControl = styled.div`
@@ -59,17 +60,17 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
         canEdit && (
           <ChatControl>
             {!message.is_bot && (
-              <Button type="text" size="large" shape="circle">
-                <Popconfirm
-                  title="Delete chat"
-                  description="This will delete all messages after this too?"
-                  onConfirm={() => onDelete?.(message.id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
+              <Popconfirm
+                title="Delete chat"
+                description="This will delete all messages after this too?"
+                onConfirm={() => onDelete?.(message.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button type="text" size="large" shape="circle">
                   <DeleteOutlined />
-                </Popconfirm>
-              </Button>
+                </Button>
+              </Popconfirm>
             )}
 
             {isEditing ? (

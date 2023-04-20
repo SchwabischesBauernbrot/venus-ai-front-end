@@ -33,6 +33,17 @@ export const getUserConfig = (config?: Json | Partial<UserConfig>) => {
   if (!config || typeof config !== "object") {
     return defaultUserConfig;
   }
+
+  if (typeof config === "object") {
+    Object.keys(config).forEach((key) => {
+      // @ts-ignore
+      if (config[key] === undefined) {
+        // @ts-ignore
+        delete config[key];
+      }
+    });
+  }
+
   return { ...defaultUserConfig, ...config };
 };
 

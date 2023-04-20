@@ -27,6 +27,7 @@ export const MyCharacters: React.FC = () => {
         .from("characters")
         .select("*, tags(*), user_profiles(*)")
         .eq("creator_id", profile?.id)
+        .order("created_at", { ascending: false })
         .returns<CharacterWithProfileAndTag[]>();
 
       const characters = responses.data;
