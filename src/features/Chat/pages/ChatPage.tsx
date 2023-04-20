@@ -1,4 +1,16 @@
-import { Button, Col, Row, Spin, Input, Layout, InputRef, List, message, Divider } from "antd";
+import {
+  Button,
+  Col,
+  Row,
+  Spin,
+  Input,
+  Layout,
+  InputRef,
+  List,
+  message,
+  Divider,
+  Space,
+} from "antd";
 import { LeftCircleFilled, LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
@@ -7,7 +19,7 @@ import { findLast } from "lodash-es";
 import { ChatMessageEntity, SupaChatMessage } from "../../../types/backend-alias";
 import { useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { AppContext } from "../../../appContext";
-import { generate } from "../services/generate/mock-generate";
+import { mockGenerateInstance } from "../services/generate/mock-generate";
 import { chatService } from "../services/chat-service";
 import {
   ChatContainer,
@@ -17,7 +29,7 @@ import {
   BotChoicesContainer,
 } from "./ChatPage.style";
 import { MessageDisplay } from "../components/MessageDisplay";
-import { formatTime, getBotAvatarUrl } from "../../../shared/services/utils";
+import { formatTime } from "../../../shared/services/utils";
 import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
 import { PrivateIndicator } from "../../../shared/components";
 
@@ -72,7 +84,7 @@ const dispatchFunction = (state: ChatState, action: Action): ChatState => {
 };
 
 export const ChatPage: React.FC = () => {
-  const { profile } = useContext(AppContext);
+  const { profile, config, localData } = useContext(AppContext);
   const { chatId } = useParams();
   const inputRef = useRef<InputRef>(null);
   const messageDivRef = useRef<HTMLDivElement>(null);
@@ -86,6 +98,7 @@ export const ChatPage: React.FC = () => {
   const botChoices = messagesToDisplay.filter((message) => message.is_bot && !message.is_main);
 
   const canEdit = Boolean(profile);
+  const readyToChat = chatService.readyToChat(config, localData);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -158,7 +171,10 @@ export const ChatPage: React.FC = () => {
       let combined = "";
       // try get prompt somehow
       const prompt = findLast(chatState.messages, (m) => !m.is_bot)?.message || "";
-      const botMessages = await generate(prompt);
+      const botMessages = await mockGenerateInstance.generate(
+        { text: prompt },
+        config!.generation_settings
+      );
       for await (const message of botMessages) {
         combined = combined += message;
         const newBotMessage: ChatMessageEntity = {
@@ -239,7 +255,10 @@ export const ChatPage: React.FC = () => {
       // Generate prompt back-end to get generated message
       const chatHistory = [...chatState.messages, localUserMessage];
       const prompt = findLast(chatHistory, (m) => !m.is_bot)?.message || "";
-      const generatedTexts = await generate(prompt);
+      const generatedTexts = await mockGenerateInstance.generate(
+        { text: prompt },
+        config?.generation_settings
+      );
 
       let streamingText = "";
       for await (const text of generatedTexts) {
@@ -296,7 +315,7 @@ export const ChatPage: React.FC = () => {
                     </Button>
                   </Link>
 
-                  <ChatOptionMenu chat={data.chat} />
+                  <ChatOptionMenu readyToChat={readyToChat} chat={data.chat} />
                 </Col>
               </Row>
 
@@ -388,39 +407,47 @@ export const ChatPage: React.FC = () => {
             </>
           )}
 
-          <ChatInputContainer>
-            <Row>
-              {/* TODO: Disable this when not set API */}
-              <Col span={12} offset={6}>
-                <form onSubmit={sendChat}>
-                  <div className="d-flex align-center">
-                    <Input.TextArea
-                      rows={3}
-                      placeholder="Enter your chat"
-                      value={inputMessage}
-                      onChange={(e) => setInputMessage(e.target.value)}
-                      onPressEnter={(event) => {
-                        if (event.key === "Enter" && !event.shiftKey) {
-                          event.preventDefault(); // prevent the default line break behavior
-                          sendChat();
-                        }
-                      }}
-                      ref={inputRef}
-                    />
-                    <Button
-                      loading={isGenerating}
-                      disabled={inputMessage.length === 0 || isGenerating}
-                      icon={<SendOutlined />}
-                      type="text"
-                      size="large"
-                      style={{ color: "#3498db" }}
-                      onClick={sendChat}
-                    />
-                  </div>
-                </form>
-              </Col>
-            </Row>
-          </ChatInputContainer>
+          {canEdit && (
+            <ChatInputContainer>
+              <Row>
+                {/* TODO: Disable this when not set API */}
+                <Col span={12} offset={6}>
+                  <form onSubmit={sendChat}>
+                    <div className="d-flex align-center">
+                      <Input.TextArea
+                        rows={3}
+                        disabled={!readyToChat}
+                        placeholder="Enter your chat"
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onPressEnter={(event) => {
+                          if (event.key === "Enter" && !event.shiftKey) {
+                            event.preventDefault(); // prevent the default line break behavior
+                            sendChat();
+                          }
+                        }}
+                        ref={inputRef}
+                      />
+                      <Button
+                        loading={isGenerating}
+                        disabled={!readyToChat || inputMessage.length === 0 || isGenerating}
+                        icon={<SendOutlined />}
+                        type="text"
+                        size="large"
+                        style={{
+                          color: "#3498db",
+                          fontSize: "1.5rem",
+                          height: "4rem",
+                          paddingLeft: "0.5rem",
+                        }}
+                        onClick={sendChat}
+                      />
+                    </div>
+                  </form>
+                </Col>
+              </Row>
+            </ChatInputContainer>
+          )}
         </div>
       </Layout.Content>
     </Layout>

@@ -1,5 +1,6 @@
+import axios from "axios";
+
 interface OpenAIResponse {
-  error?: OpenAIError;
   id: string;
   object: string;
   created: number;
@@ -19,7 +20,7 @@ interface OpenAIResponse {
   }>;
 }
 
-interface OpenAIError {
+export interface OpenAIError {
   code: string;
   message: string;
   param: object | null;
@@ -27,21 +28,22 @@ interface OpenAIError {
 }
 
 export const checkOpenAIAPIKey = async (apiKey: string) => {
-  const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
-    body: JSON.stringify({
+  const response = await axios.post<OpenAIResponse>(
+    "https://api.openai.com/v1/chat/completions",
+    {
       model: "gpt-3.5-turbo",
       temperature: 0,
       max_tokens: 10,
       messages: [{ role: "user", content: "Just say TEST" }],
-    }),
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    }
+  );
 
-  const result: OpenAIResponse = await response.json();
-
-  return result;
+  return response.data;
 };
+
+export const checkKoboldURL = async (url: string) => {};

@@ -1,11 +1,12 @@
 import { SaveOutlined } from "@ant-design/icons";
 import { App, Button, Collapse, Form, Input, Modal, Radio, Select, Space, Typography } from "antd";
+import { AxiosError } from "axios";
 
 import { useContext, useState } from "react";
 import { AppContext } from "../../../../appContext";
 import { UserConfig } from "../../../../shared/services/user-config";
 import { UserLocalData } from "../../../../shared/services/user-local-data";
-import { checkOpenAIAPIKey } from "../../services/openai-service";
+import { checkOpenAIAPIKey, OpenAIError } from "../../services/check-service";
 
 const { Title } = Typography;
 
@@ -60,13 +61,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       const checkResult = await checkOpenAIAPIKey(form.getFieldValue("openAIKey"));
       console.log({ checkResult });
 
-      if (checkResult.error) {
-        message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
-      } else if (checkResult.choices[0].message.content.includes("TEST")) {
+      if (checkResult.choices[0].message.content.includes("TEST")) {
         message.success(
           "Valid API Key. Click Save Settings, and you can start chatting to your waifu/husbando now!"
         );
       }
+    } catch (err) {
+      const axiosError = err as AxiosError<{ error: OpenAIError }>;
+      const error = axiosError.response?.data?.error;
+      error && message.error(`${error.code} - ${error.message}`);
     } finally {
       setIsCheckingKey(false);
     }

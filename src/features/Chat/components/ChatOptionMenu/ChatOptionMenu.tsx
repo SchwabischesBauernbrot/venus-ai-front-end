@@ -21,11 +21,11 @@ import { ChatSettingsModal } from "./ChatSettingsModal";
 
 interface ChatOptionMenuProps {
   chat: ChatEntityWithCharacter;
+  readyToChat: boolean;
 }
 
-export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
+export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToChat }) => {
   const { profile, config, updateConfig } = useContext(AppContext);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { modal } = App.useApp();
 
@@ -94,14 +94,20 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
   return (
     <>
       <span style={{ marginLeft: "auto" }}>
+        {readyToChat ? (
+          <Tag color="green">
+            API is ready. Using {config.api} - {config.model}
+          </Tag>
+        ) : (
+          <Tag
+            style={{ cursor: "pointer" }}
+            color="red"
+            onClick={() => setOpenChatSettingsModal(true)}
+          >
+            API not ready! Click to setup.
+          </Tag>
+        )}
         {/* <Tag color="green">green</Tag> */}
-        <Tag
-          style={{ cursor: "pointer" }}
-          color="red"
-          onClick={() => setOpenChatSettingsModal(true)}
-        >
-          API not ready! Click to setup.
-        </Tag>
       </span>
 
       <Dropdown

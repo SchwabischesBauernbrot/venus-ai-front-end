@@ -1,4 +1,6 @@
 import { axiosInstance, supabase } from "../../../config";
+import { UserConfig } from "../../../shared/services/user-config";
+import { UserLocalData } from "../../../shared/services/user-local-data";
 import {
   ChatEntity,
   ChatMessageEntity,
@@ -69,6 +71,21 @@ const updateMassage = async (
   return messageResponse.data;
 };
 
+const readyToChat = (config?: UserConfig, localData: UserLocalData) => {
+  if (!config) {
+    return false;
+  }
+
+  if (config.api === "openai" && localData.openAIKey) {
+    return true;
+  }
+
+  if ((config.api === "kobold" || config.api === "ooba") && config.api_url) {
+    return true;
+  }
+  return false;
+};
+
 export const chatService = {
   createChat,
   deleteChat,
@@ -77,4 +94,5 @@ export const chatService = {
   updateChat,
   updateMassage,
   deleteMessages,
+  readyToChat,
 };
