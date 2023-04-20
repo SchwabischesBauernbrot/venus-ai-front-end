@@ -92,6 +92,7 @@ const readyToChat = (config: UserConfig | undefined, localData: UserLocalData) =
   if ((config.api === "kobold" || config.api === "ooba") && config.api_url) {
     return true;
   }
+
   return false;
 };
 
