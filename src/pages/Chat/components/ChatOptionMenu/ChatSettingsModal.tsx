@@ -29,6 +29,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
   const apiWatch = Form.useWatch<string>("api", form);
 
   const initialValues: FormValues = { ...localData, ...config };
+  console.log({ initialValues, config });
 
   const onFinish = (formValues: FormValues) => {
     console.log({ formValues });
@@ -59,7 +60,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
             name="api"
             label="API"
             rules={[{ required: true, message: "Please pick an item!" }]}
-            help="More API support coming soon!"
+            help="More API support (Horde, Claude, NovelAI,...) coming soon!"
           >
             <Radio.Group>
               <Radio.Button value="openai">Open AI</Radio.Button>

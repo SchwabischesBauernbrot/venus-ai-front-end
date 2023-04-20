@@ -24,7 +24,7 @@ interface ChatOptionMenuProps {
 }
 
 export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
-  const { profile } = useContext(AppContext);
+  const { profile, config, updateConfig } = useContext(AppContext);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { modal } = App.useApp();
@@ -87,7 +87,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
   };
 
   // Do not display when user not logged in
-  if (!profile) {
+  if (!profile || !config) {
     return null;
   }
 
@@ -195,11 +195,31 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat }) => {
               key: "immer",
               label: (
                 <Tooltip
-                  title="Disable message edit/delete to make it more immersive"
+                  title="Hide message edit/delete to make it more immersive"
                   placement="right"
                 >
                   <div onClick={(e) => e.stopPropagation()}>
-                    Immersive Mode <Switch className="ml-2" defaultChecked={false} />
+                    <Switch
+                      className="mr-2"
+                      defaultChecked={config.immersive_mode}
+                      onChange={(checked) => updateConfig({ immersive_mode: checked })}
+                    />
+                    Immersive Mode
+                  </div>
+                </Tooltip>
+              ),
+            },
+            {
+              key: "stream",
+              label: (
+                <Tooltip title="Make text gradually appear (like CAI or ChatGPT)" placement="right">
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Switch
+                      className="mr-2"
+                      defaultChecked={config.text_streaming}
+                      onChange={(checked) => updateConfig({ text_streaming: checked })}
+                    />
+                    Text streaming
                   </div>
                 </Tooltip>
               ),

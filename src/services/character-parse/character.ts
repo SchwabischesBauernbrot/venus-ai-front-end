@@ -57,8 +57,8 @@ export class Character {
     return true;
   }
 
-  #sanitize(object: CharacterJsonObject, key: CharacterJsonObjKey) {
-    return (object[key] as string).trim() || "";
+  #sanitize(object: Partial<CharacterJsonObject & CaiCharacterJson>, key: CharacterJsonObjKey) {
+    return ((object[key] as string) || "").trim();
   }
 
   constructor(json: CharacterJsonObject | null) {

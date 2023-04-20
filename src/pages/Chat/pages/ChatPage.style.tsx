@@ -18,6 +18,7 @@ export const BotChoicesContainer = styled.div`
   border-block-start: "1px solid rgba(253, 253, 253, 0.12)";
 `;
 
+// Fix this dark-mode too?
 export const BotChoicesOverlay = styled.div<{ index: number }>`
   text-align: left;
   display: flex;

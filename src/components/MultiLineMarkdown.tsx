@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useContext } from "react";
 import { AppContext } from "../appContext";
 
-// Darkmode?
 const MarkdownContainer = styled.div<{ theme: "light" | "dark" }>`
   p {
     color: ${(props) => (props.theme === "light" ? "black" : "rgb(229, 224, 216)")};

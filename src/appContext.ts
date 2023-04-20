@@ -10,7 +10,7 @@ interface AppContextType {
   profile?: Profile | null;
   setProfile: (profile: Profile | null) => void;
   config?: UserConfig;
-  updateConfig: (config: UserConfig) => void;
+  updateConfig: (config: Partial<UserConfig>) => void;
   localData: UserLocalData;
   updateLocalData: (data: Partial<UserLocalData>) => void;
 }

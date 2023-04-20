@@ -1,20 +1,8 @@
-import {
-  Button,
-  Col,
-  Row,
-  Spin,
-  Input,
-  Layout,
-  InputRef,
-  List,
-  message,
-  Divider,
-  Avatar,
-} from "antd";
+import { Button, Col, Row, Spin, Input, Layout, InputRef, List, message, Divider } from "antd";
 import { LeftCircleFilled, LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
-import * as _ from "lodash-es";
+import { findLast } from "lodash-es";
 
 import { ChatMessageEntity, SupaChatMessage } from "../../../types/backend-alias";
 import { useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
@@ -169,7 +157,7 @@ export const ChatPage: React.FC = () => {
 
       let combined = "";
       // try get prompt somehow
-      const prompt = _.findLast(chatState.messages, (m) => !m.is_bot)?.message || "";
+      const prompt = findLast(chatState.messages, (m) => !m.is_bot)?.message || "";
       const botMessages = await generate(prompt);
       for await (const message of botMessages) {
         combined = combined += message;
@@ -250,7 +238,7 @@ export const ChatPage: React.FC = () => {
 
       // Generate prompt back-end to get generated message
       const chatHistory = [...chatState.messages, localUserMessage];
-      const prompt = _.findLast(chatHistory, (m) => !m.is_bot)?.message || "";
+      const prompt = findLast(chatHistory, (m) => !m.is_bot)?.message || "";
       const generatedTexts = await generate(prompt);
 
       let streamingText = "";

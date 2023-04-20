@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ConfigProvider, App as AntdApp, theme } from "antd";
 import loadable from "@loadable/component";
-import * as _ from "lodash-es";
+import { isEqual } from "lodash-es";
 import { Session } from "@supabase/supabase-js";
 
 import { AppContext } from "./appContext";
@@ -11,13 +11,52 @@ import { axiosInstance, supabase } from "./config";
 import { useQuery } from "react-query";
 import { Profile } from "./types/profile";
 import { getLocalData, UserLocalData, saveLocalData } from "./services/user-local-data";
-import { MainLayout } from "./MainLayout";
-import { CreateCharacter, EditCharacter, MyCharacters, ViewCharacter } from "./pages/Character";
-import { MyChats, ChatPage } from "./pages/Chat";
-import { Home } from "./pages/Home";
-import { Register, Login, PublicProfile, Profile as ProfilePage } from "./pages/Profile";
-import { TermOfUse, PrivatePolicy } from "./pages/ToC";
 import { getUserConfig, updateUserConfig, UserConfig } from "./services/user-config";
+import { MainLayout } from "./MainLayout";
+
+const Home = loadable(() => import("./pages/Home"), {
+  resolveComponent: (component) => component.Home,
+});
+
+const CreateCharacter = loadable(() => import("./pages/Character"), {
+  resolveComponent: (component) => component.CreateCharacter,
+});
+const EditCharacter = loadable(() => import("./pages/Character"), {
+  resolveComponent: (component) => component.EditCharacter,
+});
+const MyCharacters = loadable(() => import("./pages/Character"), {
+  resolveComponent: (component) => component.MyCharacters,
+});
+const ViewCharacter = loadable(() => import("./pages/Character"), {
+  resolveComponent: (component) => component.ViewCharacter,
+});
+
+const Register = loadable(() => import("./pages/Profile"), {
+  resolveComponent: (component) => component.Register,
+});
+const Login = loadable(() => import("./pages/Profile"), {
+  resolveComponent: (component) => component.Login,
+});
+const PublicProfile = loadable(() => import("./pages/Profile"), {
+  resolveComponent: (component) => component.PublicProfile,
+});
+const ProfilePage = loadable(() => import("./pages/Profile"), {
+  resolveComponent: (component) => component.Profile,
+});
+
+const MyChats = loadable(() => import("./pages/Chat"), {
+  resolveComponent: (component) => component.MyChats,
+});
+const ChatPage = loadable(() => import("./pages/Chat"), {
+  resolveComponent: (component) => component.ChatPage,
+});
+
+const TermOfUse = loadable(() => import("./pages/ToC"), {
+  resolveComponent: (component) => component.TermOfUse,
+});
+const PrivatePolicy = loadable(() => import("./pages/ToC"), {
+  resolveComponent: (component) => component.PrivatePolicy,
+});
 
 const router = createBrowserRouter([
   {
@@ -107,20 +146,17 @@ const App: React.FC = () => {
   );
 
   const updateConfig = useCallback(
-    (newConfig: UserConfig) => {
-      console.log("this callback is called");
-
+    (newConfig: Partial<UserConfig>) => {
       setConfig((oldConfig) => {
         if (!oldConfig) {
-          return newConfig;
+          return getUserConfig(newConfig);
         }
 
-        if (!_.isEqual(oldConfig, newConfig)) {
-          // Back-end sync if value changes
-          updateUserConfig(newConfig);
+        if (!isEqual(oldConfig, newConfig)) {
+          return updateUserConfig(newConfig);
         }
 
-        return newConfig;
+        return getUserConfig(newConfig);
       });
     },
     [setConfig]

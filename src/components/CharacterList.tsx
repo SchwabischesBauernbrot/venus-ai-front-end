@@ -1,9 +1,9 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Card, Space, Tooltip, Tag, Button } from "antd";
+import { Card, Space, Tooltip, Tag } from "antd";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import * as _ from "lodash-es";
+import { truncate } from "lodash-es";
 
 import { getBotAvatarUrl } from "../services/utils";
 import { CharacterView } from "../types/backend-alias";
@@ -75,7 +75,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
             <Meta
               description={
                 <Tooltip title={character.description}>
-                  {_.truncate(character.description, { length: 100 })}
+                  {truncate(character.description, { length: 100 })}
                 </Tooltip>
               }
             />
