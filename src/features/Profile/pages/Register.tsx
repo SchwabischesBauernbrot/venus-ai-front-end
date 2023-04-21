@@ -59,7 +59,7 @@ export const Register = () => {
     return supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: "http://localhost:5173/profile",
+        redirectTo: `${location.origin}/profile`,
       },
     });
   };

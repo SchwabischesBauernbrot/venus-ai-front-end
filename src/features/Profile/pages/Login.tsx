@@ -60,7 +60,7 @@ export const Login = () => {
     return supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: "http://localhost:5173",
+        redirectTo: location.origin,
       },
     });
   };
