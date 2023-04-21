@@ -134,7 +134,7 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
               ref={inputRef}
               autoSize
               bordered={false}
-              className="mt-3"
+              className="mt-0 px-0 py-0"
               value={editMessage}
               onChange={(e) => setEditMessage(e.target.value)}
             />

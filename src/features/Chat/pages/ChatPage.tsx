@@ -141,6 +141,8 @@ export const ChatPage: React.FC = () => {
     const messages = data.data?.chatMessages || [];
     messages.sort((a, b) => a.id - b.id);
     dispatch({ type: "set_messages", messages });
+
+    scrollToBottom();
   };
 
   useEffect(() => {
@@ -193,12 +195,16 @@ export const ChatPage: React.FC = () => {
 
       let combined = "";
 
+      // Simulate regenrate the massage
+      const historyWithoutLastMessage = [...chatState.messages];
+      historyWithoutLastMessage.pop();
       const lastMessage = findLast(chatState.messages, (m) => !m.is_bot);
+
       const prompt = generateInstance.buildPrompt(
         // message,
         lastMessage?.message || "",
         data?.chat!,
-        chatState.messages,
+        historyWithoutLastMessage,
         fullConfig
       );
       const botMessages = await generateInstance.generate(prompt, fullConfig);
@@ -313,6 +319,9 @@ export const ChatPage: React.FC = () => {
     } catch (err) {
       const error = err as Error;
       message.error(error.message, 3);
+
+      // Refetch on error to avoid out of sync
+      refreshChats();
     } finally {
       setIsGenerating(false);
     }

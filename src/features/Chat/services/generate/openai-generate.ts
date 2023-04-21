@@ -4,7 +4,7 @@ import { OpenAIError, OpenAIInputMessage, OpenAIProxyError, OpenAIResponse } fro
 import { GenerateInterface, Prompt } from "./generate-interface";
 
 // Estimate token length only, should divide by 4.4 but left some as buffer
-const getTokenLength = (messages: OpenAIInputMessage[]) => JSON.stringify(messages).length / 4.25;
+const getTokenLength = (messages: OpenAIInputMessage[]) => JSON.stringify(messages).length / 4;
 
 const chatToMessage = (chatMes: SupaChatMessage): OpenAIInputMessage => {
   return {
@@ -77,7 +77,10 @@ class OpenAIGenerate extends GenerateInterface {
     config: UserConfigAndLocalData
   ): Prompt {
     let chatCopy = chatHistory.filter((message) => message.is_main).map(chatToMessage);
-    const maxToken = config.generation_settings.max_new_token || 4095;
+    const maxNewToken = config.generation_settings.max_new_token || 300;
+    // Hack, otherwise the genrated message will be cut-off, lol
+    const maxContentLength = (config.generation_settings.context_length || 4095) - maxNewToken;
+
     const userMessage: OpenAIInputMessage = { role: "user", content: message };
 
     let messages: OpenAIInputMessage[] = [
@@ -88,7 +91,7 @@ class OpenAIGenerate extends GenerateInterface {
     ];
 
     let promptTokenLength = getTokenLength(messages);
-    if (promptTokenLength < maxToken) {
+    if (promptTokenLength < maxContentLength) {
       return { messages };
     }
 
@@ -101,7 +104,7 @@ class OpenAIGenerate extends GenerateInterface {
     ];
     promptTokenLength = getTokenLength(messages);
 
-    while (promptTokenLength >= maxToken) {
+    while (promptTokenLength >= maxContentLength) {
       // Remove couple of chat until it fit max token
       chatCopy.shift();
       chatCopy.shift();

@@ -1,4 +1,3 @@
-import { GenerationSetting } from "../../../../shared/services/generation-setting";
 import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
 import { OpenAIInputMessage } from "../types/openai";
