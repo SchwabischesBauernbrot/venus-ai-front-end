@@ -1,14 +1,15 @@
+import { Divider } from "antd";
 import styled from "styled-components";
 
 export const ChatInputContainer = styled.div`
-  position: fixed;
-  bottom: 1rem;
+  margin-top: 1rem;
   width: 100%;
 `;
 
 export const ChatContainer = styled.div`
-  height: calc(100vh - 13rem);
+  /* height: calc(100vh - 13rem); */
   overflow-y: scroll;
+  padding-left: 1rem;
 `;
 
 export const BotChoicesContainer = styled.div`
@@ -66,4 +67,15 @@ export const BotMessageControl = styled.div`
   justify-content: space-around;
   width: 100%;
   top: 40%;
+`;
+
+export const CustomDivider = styled(Divider)`
+  &&.ant-divider {
+    white-space: normal;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    span {
+      min-width: 80%;
+    }
+  }
 `;

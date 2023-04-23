@@ -28,6 +28,7 @@ import {
   ChatInputContainer,
   BotChoicesOverlay,
   BotChoicesContainer,
+  CustomDivider,
 } from "./ChatPage.style";
 import { MessageDisplay } from "../components/MessageDisplay";
 import { formatTime } from "../../../shared/services/utils";
@@ -339,7 +340,7 @@ export const ChatPage: React.FC = () => {
 
   return (
     <Layout
-      style={{ minHeight: "100vh" }}
+      style={{ height: "100vh", display: "grid", gridTemplateRows: "4rem 3rem auto 6.5rem" }}
       // onKeyDown={(event) => {
       //   if (event.key === "ArrowLeft") {
       //     swipe("left");
@@ -348,150 +349,146 @@ export const ChatPage: React.FC = () => {
       //   }
       // }}
     >
-      <Layout.Content>
-        <div className="pt-4">
-          {isLoading && (
-            <div className="text-center">
-              <Spin />
-            </div>
-          )}
+      {isLoading && (
+        <div className="text-center">
+          <Spin />
+        </div>
+      )}
 
-          {data && (
-            <>
-              <Row justify="center">
-                <Col lg={16} xs={24} md={20} className="d-flex justify-space-between align-center">
-                  <Link to={`/characters/${data.chat.characters.id}`}>
-                    <Button type="text" size="large">
-                      <LeftCircleFilled /> Back
-                    </Button>
-                  </Link>
+      {data && (
+        <>
+          <Row justify="center">
+            <Col lg={16} xs={24} md={20} className="d-flex justify-space-between align-center">
+              <Link to={`/characters/${data.chat.characters.id}`}>
+                <Button type="text" size="large">
+                  <LeftCircleFilled /> Back
+                </Button>
+              </Link>
 
-                  <ChatOptionMenu readyToChat={readyToChat} chat={data.chat} />
-                </Col>
-              </Row>
+              <ChatOptionMenu readyToChat={readyToChat} chat={data.chat} />
+            </Col>
+          </Row>
 
-              <Divider className="mt-2">
-                <PrivateIndicator isPublic={data.chat.is_public} /> Chat with{" "}
-                {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)})
-              </Divider>
+          <CustomDivider>
+            <PrivateIndicator isPublic={data.chat.is_public} /> Chat with{" "}
+            {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)})
+          </CustomDivider>
 
-              <Row justify="center">
-                <Col lg={16} xs={24} md={20}>
-                  <ChatContainer ref={messageDivRef}>
-                    <List
-                      className="text-left"
-                      itemLayout="horizontal"
-                      dataSource={mainMessages}
-                      renderItem={(item, index) => (
+          <Row justify="center" style={{ overflowY: "scroll" }}>
+            <Col lg={16} xs={24} md={20}>
+              <ChatContainer ref={messageDivRef}>
+                <List
+                  className="text-left"
+                  itemLayout="horizontal"
+                  dataSource={mainMessages}
+                  renderItem={(item, index) => (
+                    <MessageDisplay
+                      key={item.id}
+                      canEdit={canEdit && index > 0 && !isImmersiveMode}
+                      message={item}
+                      user={profile?.name}
+                      userAvatar={profile?.avatar}
+                      characterName={data.chat.characters.name}
+                      characterAvatar={data.chat.characters.avatar}
+                      onDelete={deleteMessage}
+                      onEdit={async (messageId, newMessage) => {
+                        editMessage(item, messageId, newMessage);
+                      }}
+                    />
+                  )}
+                />
+
+                {botChoices.length > 0 && (
+                  <BotChoicesContainer>
+                    {!isGenerating && (
+                      <BotMessageControl>
+                        {choiceIndex > 0 && (
+                          <Button
+                            type="text"
+                            shape="circle"
+                            size="large"
+                            onClick={() => swipe("left")}
+                          >
+                            <LeftOutlined />
+                          </Button>
+                        )}
+                        <Button
+                          style={{ marginLeft: "auto" }}
+                          type="text"
+                          shape="circle"
+                          size="large"
+                          onClick={() => swipe("right")}
+                        >
+                          <RightOutlined />
+                        </Button>
+                      </BotMessageControl>
+                    )}
+
+                    <BotChoicesOverlay index={choiceIndex}>
+                      {botChoices.map((item) => (
                         <MessageDisplay
                           key={item.id}
-                          canEdit={canEdit && index > 0 && !isImmersiveMode}
                           message={item}
+                          canEdit={canEdit && !isImmersiveMode}
                           user={profile?.name}
                           userAvatar={profile?.avatar}
                           characterName={data.chat.characters.name}
                           characterAvatar={data.chat.characters.avatar}
                           onDelete={deleteMessage}
-                          onEdit={async (messageId, newMessage) => {
+                          onEdit={(messageId, newMessage) => {
                             editMessage(item, messageId, newMessage);
                           }}
                         />
-                      )}
-                    />
+                      ))}
+                    </BotChoicesOverlay>
+                  </BotChoicesContainer>
+                )}
+              </ChatContainer>
+            </Col>
+          </Row>
+        </>
+      )}
 
-                    {botChoices.length > 0 && (
-                      <BotChoicesContainer>
-                        {!isGenerating && (
-                          <BotMessageControl>
-                            {choiceIndex > 0 && (
-                              <Button
-                                type="text"
-                                shape="circle"
-                                size="large"
-                                onClick={() => swipe("left")}
-                              >
-                                <LeftOutlined />
-                              </Button>
-                            )}
-                            <Button
-                              style={{ marginLeft: "auto" }}
-                              type="text"
-                              shape="circle"
-                              size="large"
-                              onClick={() => swipe("right")}
-                            >
-                              <RightOutlined />
-                            </Button>
-                          </BotMessageControl>
-                        )}
-
-                        <BotChoicesOverlay index={choiceIndex}>
-                          {botChoices.map((item) => (
-                            <MessageDisplay
-                              key={item.id}
-                              message={item}
-                              canEdit={canEdit && !isImmersiveMode}
-                              user={profile?.name}
-                              userAvatar={profile?.avatar}
-                              characterName={data.chat.characters.name}
-                              characterAvatar={data.chat.characters.avatar}
-                              onDelete={deleteMessage}
-                              onEdit={(messageId, newMessage) => {
-                                editMessage(item, messageId, newMessage);
-                              }}
-                            />
-                          ))}
-                        </BotChoicesOverlay>
-                      </BotChoicesContainer>
-                    )}
-                  </ChatContainer>
-                </Col>
-              </Row>
-            </>
-          )}
-
-          {canEdit && (
-            <ChatInputContainer>
-              <Row justify="center">
-                <Col lg={16} xs={24} md={20}>
-                  <form onSubmit={sendChat}>
-                    <div className="d-flex align-center">
-                      <Input.TextArea
-                        rows={3}
-                        disabled={!readyToChat}
-                        placeholder="Enter your chat"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onPressEnter={(event) => {
-                          if (event.key === "Enter" && !event.shiftKey) {
-                            event.preventDefault(); // prevent the default line break behavior
-                            sendChat();
-                          }
-                        }}
-                        ref={inputRef}
-                      />
-                      <Button
-                        loading={isGenerating}
-                        disabled={!readyToChat || inputMessage.length === 0 || isGenerating}
-                        icon={<SendOutlined />}
-                        type="text"
-                        size="large"
-                        style={{
-                          color: "#3498db",
-                          fontSize: "1.5rem",
-                          height: "4rem",
-                          paddingLeft: "0.5rem",
-                        }}
-                        onClick={sendChat}
-                      />
-                    </div>
-                  </form>
-                </Col>
-              </Row>
-            </ChatInputContainer>
-          )}
-        </div>
-      </Layout.Content>
+      {canEdit && (
+        <ChatInputContainer>
+          <Row justify="center">
+            <Col lg={16} xs={24} md={20}>
+              <form onSubmit={sendChat}>
+                <div className="d-flex align-center">
+                  <Input.TextArea
+                    rows={3}
+                    disabled={!readyToChat}
+                    placeholder="Enter your chat"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onPressEnter={(event) => {
+                      if (event.key === "Enter" && !event.shiftKey) {
+                        event.preventDefault(); // prevent the default line break behavior
+                        sendChat();
+                      }
+                    }}
+                    ref={inputRef}
+                  />
+                  <Button
+                    loading={isGenerating}
+                    disabled={!readyToChat || inputMessage.length === 0 || isGenerating}
+                    icon={<SendOutlined />}
+                    type="text"
+                    size="large"
+                    style={{
+                      color: "#3498db",
+                      fontSize: "1.5rem",
+                      height: "4rem",
+                      paddingLeft: "0.5rem",
+                    }}
+                    onClick={sendChat}
+                  />
+                </div>
+              </form>
+            </Col>
+          </Row>
+        </ChatInputContainer>
+      )}
     </Layout>
   );
 };

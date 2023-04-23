@@ -93,8 +93,8 @@ export const ViewCharacter: React.FC = () => {
       {!isLoading && !data && <p>Can not view this character. It might be deleted or private.</p>}
 
       {data && (
-        <Row>
-          <Col span={6} className="text-left pt-2 pb-2">
+        <Row gutter={16}>
+          <Col lg={6} xs={24} className="text-left pt-2 pb-2 mb-2">
             <Title level={3}>
               <PrivateIndicator isPublic={data.is_public} /> {data.name}
             </Title>
@@ -117,14 +117,14 @@ export const ViewCharacter: React.FC = () => {
               ))}
             </Space>
 
-            <div className="pr-4 mt-4">
+            <div className="mt-4">
               <Button type="primary" block onClick={startChat} disabled={isStartingChat}>
                 {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name}
               </Button>
             </div>
           </Col>
 
-          <Col span={18} className="text-left">
+          <Col lg={18} xs={24} className="text-left">
             <Collapse>
               <Collapse.Panel
                 header={`Character definition (Total ${Tokenizer.tokenCountFormat(

@@ -96,7 +96,8 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
       <span style={{ marginLeft: "auto" }}>
         {readyToChat ? (
           <Tag color="green">
-            API is ready. Using {config.api} - {config.model} ({config.open_ai_mode})
+            API is ready.
+            {/* Using {config.api} - {config.model} ({config.open_ai_mode}) */}
           </Tag>
         ) : (
           <Tag
