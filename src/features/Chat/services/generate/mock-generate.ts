@@ -5,8 +5,7 @@ import { GenerateInterface, Prompt } from "./generate-interface";
 
 export class MockGenerate extends GenerateInterface {
   async *generate({ text }: Prompt, config: UserConfigAndLocalData) {
-    const finalResult = `ID: ${Math.random()}.
-    Prompt: ${text}!`;
+    const finalResult = `ID: ${Math.random()}. Prompt: ${text}!`;
     const words = finalResult.split(" ");
     for (const word of words) {
       await delay(50);
@@ -28,11 +27,10 @@ export class MockGenerate extends GenerateInterface {
       example_dialogs = "",
     } = characters;
 
-    const basePrompt = `${personality}. ${first_message}. ${scenario}. ${example_dialogs}.
-    Summary: ${summary}.
+    const basePrompt = `${personality}. ${first_message}. ${scenario}. ${example_dialogs}. Summary: ${summary}.
     ${chatHistory.map((chat) => chat.message).join("")}`;
 
-    return { text: `Message: ${message}. ${basePrompt.substring(0, 200)}.` };
+    return { text: `Message: ${message}. ${basePrompt.substring(0, 300)}.` };
   }
 }
 

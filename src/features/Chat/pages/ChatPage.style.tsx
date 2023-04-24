@@ -3,13 +3,19 @@ import styled from "styled-components";
 
 export const ChatInputContainer = styled.div`
   margin-top: 1rem;
+  padding: 0 1rem;
   width: 100%;
+
+  textarea {
+    font-size: 1rem; // Safari fix lol
+  }
 `;
 
 export const ChatContainer = styled.div`
-  /* height: calc(100vh - 13rem); */
   overflow-y: scroll;
   padding-left: 1rem;
+
+  font-size: 1rem !important; // Lol default font too small
 `;
 
 export const BotChoicesContainer = styled.div`

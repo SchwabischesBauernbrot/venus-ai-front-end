@@ -132,7 +132,7 @@ export const ViewCharacter: React.FC = () => {
                 )}) - May contains spoiler`}
                 key="1"
               >
-                <Descriptions bordered size="small">
+                <Descriptions bordered size="small" layout="vertical">
                   <Descriptions.Item
                     label={`Personality (${Tokenizer.tokenCountFormat(data.personality)})`}
                     span={3}

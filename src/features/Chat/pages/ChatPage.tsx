@@ -340,7 +340,7 @@ export const ChatPage: React.FC = () => {
 
   return (
     <Layout
-      style={{ height: "100vh", display: "grid", gridTemplateRows: "4rem 3rem auto 6.5rem" }}
+      style={{ height: "100vh", display: "grid", gridTemplateRows: "4rem 1.5rem auto 6.5rem" }}
       // onKeyDown={(event) => {
       //   if (event.key === "ArrowLeft") {
       //     swipe("left");
@@ -371,12 +371,12 @@ export const ChatPage: React.FC = () => {
 
           <CustomDivider>
             <PrivateIndicator isPublic={data.chat.is_public} /> Chat with{" "}
-            {data.chat.characters.name} (Started at {formatTime(data.chat.created_at)})
+            {data.chat.characters.name}
           </CustomDivider>
 
-          <Row justify="center" style={{ overflowY: "scroll" }}>
+          <Row justify="center" style={{ overflowY: "scroll" }} ref={messageDivRef}>
             <Col lg={16} xs={24} md={20}>
-              <ChatContainer ref={messageDivRef}>
+              <ChatContainer>
                 <List
                   className="text-left"
                   itemLayout="horizontal"
@@ -449,7 +449,7 @@ export const ChatPage: React.FC = () => {
         </>
       )}
 
-      {canEdit && (
+      {!isLoading && canEdit && (
         <ChatInputContainer>
           <Row justify="center">
             <Col lg={16} xs={24} md={20}>

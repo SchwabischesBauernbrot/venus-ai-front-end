@@ -223,6 +223,9 @@ const App: React.FC = () => {
             localData.theme === "light" ? theme.defaultAlgorithm : theme.darkAlgorithm,
             // theme.compactAlgorithm,
           ],
+          token: {
+            fontSize: 16,
+          },
         }}
       >
         <AntdApp>
