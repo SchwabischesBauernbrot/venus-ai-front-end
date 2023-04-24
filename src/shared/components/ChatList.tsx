@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { WechatOutlined, DeleteOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { Card, Popconfirm } from "antd";
 import { Link } from "react-router-dom";
+import { truncate } from "lodash-es";
+
 import { getBotAvatarUrl, getTimeAgo } from "../services/utils";
 import { PrivateIndicator } from "./PrivateIndicator";
 import { chatService } from "../../features/Chat/services/chat-service";
@@ -63,15 +65,17 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
           ]}
         >
           <Card.Meta
-            avatar={<BotAvatar alt="" src={getBotAvatarUrl(chat.characters.avatar || "")} />}
+            avatar={<BotAvatar alt="" src={getBotAvatarUrl(chat.characters?.avatar || "")} />}
             title={
               <span>
                 <PrivateIndicator isPublic={chat.is_public} /> {chat.characters.name}
               </span>
             }
+            // Change to summary later
             description={
               <div>
-                <p>{chat.characters.description}</p>
+                {chat.summary && <p>Summary: {truncate(chat.summary, { length: 200 })}</p>}
+                <p>{truncate(chat.characters.description, { length: 200 })}</p>
                 <p>
                   <ClockCircleOutlined /> {getTimeAgo(chat.created_at)} ago
                 </p>

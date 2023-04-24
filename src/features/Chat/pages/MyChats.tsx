@@ -1,11 +1,11 @@
-import { Typography, Spin } from "antd";
-import { PageContainer } from "../../../shared/components/shared";
-import { useQuery } from "react-query";
-import { supabase } from "../../../config";
 import { useContext } from "react";
+import { Typography, Spin } from "antd";
+import { useQuery } from "react-query";
+
+import { PageContainer } from "../../../shared/components/shared";
+import { supabase } from "../../../config";
 import { AppContext } from "../../../appContext";
 import { ChatEntityWithCharacter } from "../../../types/backend-alias";
-
 import { ChatList } from "../../../shared/components/ChatList";
 
 const { Title } = Typography;
@@ -25,7 +25,7 @@ export const MyChats: React.FC = () => {
         .returns<ChatEntityWithCharacter[]>();
 
       const chats = responses.data;
-      return chats;
+      return chats?.filter((chat) => chat.characters); // Character can be null if deleted or privated
     },
     { enabled: !!profile }
   );
