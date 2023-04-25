@@ -155,7 +155,10 @@ export const ChatPage: React.FC = () => {
       return;
     }
 
-    const messageToDeletes = chatState.messages.filter((message) => message.id >= messageId);
+    // Delete non-main message too
+    const messageToDeletes = chatState.messages.filter(
+      (message) => message.id >= messageId || !message.is_main
+    );
     await chatService.deleteMessages(
       chatId,
       messageToDeletes.map((message) => message.id)
@@ -194,6 +197,9 @@ export const ChatPage: React.FC = () => {
       };
       dispatch({ type: "set_index", newIndex });
       dispatch({ type: "new_client_messages", messages: [localBotMessage] });
+      if (direction === "regen") {
+        scrollToBottom();
+      }
 
       let combined = "";
 
@@ -213,7 +219,7 @@ export const ChatPage: React.FC = () => {
       // This method might fail for multiple reasons, allow user to regenerate
       const botMessages = await generateInstance.generate(prompt, fullConfig);
 
-      if (direction === "right") {
+      if (direction === "right" || direction === "regen") {
         for await (const message of botMessages) {
           combined += message;
           const newBotMessage: ChatMessageEntity = {
@@ -233,21 +239,13 @@ export const ChatPage: React.FC = () => {
           is_main: false,
         });
         dispatch({ type: "new_server_messages", messages: [botMessage] });
-      } else if (direction === "regen") {
-        const botChoice = botChoices[newIndex];
-        botChoice.message = "";
-        for await (const message of botMessages) {
-          botChoice.message += message;
-          dispatch({ type: "message_edited", message: botChoice });
-          scrollToBottom();
-        }
-
-        // Update after regen
-        const newRegenMessage = await chatService.updateMassage(chatId, botChoice.id, {
-          message: botChoice.message,
-        });
-        dispatch({ type: "message_edited", message: newRegenMessage });
       }
+    } catch (err) {
+      const error = err as Error;
+      message.error(error.message, 3);
+
+      // Refetch on error to avoid out of sync
+      refreshChats();
     } finally {
       setIsGenerating(false);
     }
@@ -399,6 +397,10 @@ export const ChatPage: React.FC = () => {
                       canEdit={canEdit && index > 0 && !isImmersiveMode}
                       message={item}
                       user={profile?.name}
+                      showRegenerate={
+                        item.is_main && index === mainMessages.length - 1 && botChoices.length === 0
+                      }
+                      onRegenerate={() => swipe("regen")}
                       userAvatar={profile?.avatar}
                       characterName={data.chat.characters.name}
                       characterAvatar={data.chat.characters.avatar}
@@ -443,6 +445,7 @@ export const ChatPage: React.FC = () => {
                           message={item}
                           canEdit={canEdit && !isImmersiveMode}
                           user={profile?.name}
+                          showRegenerate={false}
                           userAvatar={profile?.avatar}
                           characterName={data.chat.characters.name}
                           characterAvatar={data.chat.characters.avatar}

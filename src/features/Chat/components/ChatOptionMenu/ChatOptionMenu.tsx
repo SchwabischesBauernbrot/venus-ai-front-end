@@ -127,7 +127,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                       setOpenChatSettingsModal(true);
                     }}
                   >
-                    <SlidersOutlined /> API & Generation Settings
+                    <SlidersOutlined /> Chat Settings
                   </div>
                 </Tooltip>
               ),

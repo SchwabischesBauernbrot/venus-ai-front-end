@@ -94,6 +94,8 @@ class OpenAIGenerate extends GenerateInterface {
     ];
 
     let promptTokenLength = getTokenLength(messages);
+    console.log({ promptTokenLength });
+
     if (promptTokenLength < maxContentLength) {
       return { messages };
     }
@@ -119,6 +121,8 @@ class OpenAIGenerate extends GenerateInterface {
       ];
       promptTokenLength = getTokenLength(messages);
     }
+
+    console.log({ promptTokenLength });
 
     return { messages };
   }
@@ -148,8 +152,8 @@ class OpenAIGenerate extends GenerateInterface {
         const start = new Date().getTime();
         let continueLoop = true;
         while (continueLoop) {
-          // Prevent blocking if call take more than 1 minutes
-          if (new Date().getTime() - start > 60 * 100) {
+          // Prevent blocking if call take more than 2 minutes
+          if (new Date().getTime() - start > 120 * 1000) {
             continueLoop = false;
           }
 

@@ -1,5 +1,6 @@
 import { Divider, Layout } from "antd";
 import styled from "styled-components";
+import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
 
 export const ChatLayout = styled(Layout)`
   height: 100vh;
@@ -88,7 +89,11 @@ export const CustomDivider = styled(Divider)`
     margin: 0;
     margin-bottom: 0.5rem;
     span {
-      min-width: 80%;
+      min-width: 50%;
+
+      ${MOBILE_BREAKPOINT_CSS} {
+        min-width: 80%;
+      }
     }
   }
 `;

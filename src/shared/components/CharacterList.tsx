@@ -81,7 +81,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
               }
             />
 
-            <Space className="mt-4" size={[0, 8]} wrap>
+            <Space className="mt-4 " size={[0, 8]} wrap>
               {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
               {character.tags?.map((tag) => (
                 <Tooltip key={tag.id} title={tag.description}>

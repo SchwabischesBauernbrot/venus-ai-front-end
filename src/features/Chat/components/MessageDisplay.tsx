@@ -1,6 +1,12 @@
-import { Avatar, Button, Input, InputRef, List, Popconfirm } from "antd";
+import { Avatar, Button, Input, InputRef, List, Popconfirm, Tooltip } from "antd";
 import styled from "styled-components";
-import { CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  RedoOutlined,
+} from "@ant-design/icons";
 import { MultiLineMarkdown } from "../../../shared/components/MultiLineMarkdown";
 import { getAvatarUrl, getBotAvatarUrl } from "../../../shared/services/utils";
 import { SupaChatMessage } from "../../../types/backend-alias";
@@ -15,7 +21,11 @@ interface MessageDisplayProps {
   userAvatar?: string;
   onEdit?: (messageId: number, newMessage: string) => void;
   onDelete?: (messageId: number) => void;
+
+  onRegenerate?: (messageId: number) => void;
   canEdit: boolean;
+
+  showRegenerate: boolean;
 }
 
 // Some logic to replace {{bot}} and {{user}} on client side
@@ -47,6 +57,8 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
   onEdit,
   onDelete,
   canEdit,
+  showRegenerate,
+  onRegenerate,
 }) => {
   const inputRef = useRef<InputRef>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -59,20 +71,6 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
       extra={
         canEdit && (
           <ChatControl>
-            {!message.is_bot && (
-              <Popconfirm
-                title="Delete chat"
-                description="This will delete all messages after this too?"
-                onConfirm={() => onDelete?.(message.id)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type="text" size="large" shape="circle">
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>
-            )}
-
             {isEditing ? (
               <>
                 <Button
@@ -99,22 +97,50 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
                 </Button>
               </>
             ) : (
-              <Button
-                type="text"
-                size="large"
-                shape="circle"
-                onClick={() => {
-                  setIsEditing(true);
+              <>
+                {showRegenerate && (
+                  <Tooltip title="Re-generate last massage">
+                    <Button
+                      type="text"
+                      size="large"
+                      shape="circle"
+                      onClick={() => onRegenerate?.(message.id)}
+                    >
+                      <RedoOutlined />
+                    </Button>
+                  </Tooltip>
+                )}
 
-                  setTimeout(() => {
-                    inputRef?.current?.focus({
-                      cursor: "start",
-                    });
-                  }, 100);
-                }}
-              >
-                <EditOutlined />
-              </Button>
+                {!message.is_bot && (
+                  <Popconfirm
+                    title="Delete chat"
+                    description="This will delete all messages after this too?"
+                    onConfirm={() => onDelete?.(message.id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type="text" size="large" shape="circle">
+                      <DeleteOutlined />
+                    </Button>
+                  </Popconfirm>
+                )}
+                <Button
+                  type="text"
+                  size="large"
+                  shape="circle"
+                  onClick={() => {
+                    setIsEditing(true);
+
+                    setTimeout(() => {
+                      inputRef?.current?.focus({
+                        cursor: "start",
+                      });
+                    }, 100);
+                  }}
+                >
+                  <EditOutlined />
+                </Button>
+              </>
             )}
           </ChatControl>
         )
