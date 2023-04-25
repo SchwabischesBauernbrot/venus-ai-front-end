@@ -1,12 +1,25 @@
 import { SaveOutlined } from "@ant-design/icons";
-import { App, Button, Collapse, Form, Input, Modal, Radio, Select, Space, Typography } from "antd";
+import {
+  App,
+  Button,
+  Collapse,
+  Form,
+  Input,
+  Modal,
+  Radio,
+  Select,
+  Space,
+  Switch,
+  Typography,
+} from "antd";
 import { AxiosError } from "axios";
 
 import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { AppContext } from "../../../../appContext";
 import { UserConfig, UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { UserLocalData } from "../../../../shared/services/user-local-data";
-import { checkOpenAIAPIKey } from "../../services/check-service";
+import { CheckInput, checkKoboldURL, checkOpenAIKeyOrProxy } from "../../services/check-service";
 
 const { Title } = Typography;
 
@@ -21,7 +34,10 @@ const OPEN_AI_MODELS = ["gpt-3.5-turbo", "text-davinci-003", "gpt-4"];
 
 export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onModalClose }) => {
   const { localData, updateLocalData, config, updateConfig } = useContext(AppContext);
-  const [isCheckingKey, setIsCheckingKey] = useState(false);
+  const [isCheckingOpenAI, setIsCheckingOpenAI] = useState(false);
+  const [isCheckingKobol, setIsCheckingKobol] = useState(false);
+  const [koboldModel, setKoboldModel] = useState("");
+
   const { message } = App.useApp();
   const [form] = Form.useForm<FormValues>();
 
@@ -32,37 +48,39 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
 
   const apiWatch = Form.useWatch<string>("api", form);
   const apiModeWatch = Form.useWatch<string>("open_ai_mode", form);
-  const openAIAPIWatch = Form.useWatch<string>("openAIKey", form);
-  const openAIReverseProxyWatch = Form.useWatch<string>("open_ai_reverse_proxy", form);
+  const openAIAPIKeyWatch = Form.useWatch<string>("openAIKey", form);
+  const openAIProxyWatch = Form.useWatch<string>("open_ai_reverse_proxy", form);
+  const apiUrlWatch = Form.useWatch<string>("api_url", form);
 
   const initialValues: FormValues = { ...localData, ...config };
 
   const onFinish = (formValues: FormValues) => {
-    console.log({ formValues });
+    // console.log({ formValues });
 
     const newLocalData: Partial<UserLocalData> = {
-      theme: formValues.theme,
       openAIKey: formValues.openAIKey,
     };
     updateLocalData(newLocalData);
 
     const newConfig: Partial<UserConfig> = {
       api: formValues.api,
+
       model: formValues.model,
-      api_url: formValues.api_url,
-      generation_settings: formValues.generation_settings,
       open_ai_mode: formValues.open_ai_mode,
       open_ai_reverse_proxy: formValues.open_ai_reverse_proxy,
+      jailbreak_prompt: formValues.jailbreak_prompt,
+
+      api_url: formValues.api_url,
     };
     updateConfig(newConfig);
 
     onModalClose();
   };
 
-  const checkAPIKey = async () => {
-    setIsCheckingKey(true);
+  const checkOpenAI = async (checkInput: CheckInput) => {
+    setIsCheckingOpenAI(true);
     try {
-      const checkResult = await checkOpenAIAPIKey(form.getFieldValue("openAIKey"));
+      const checkResult = await checkOpenAIKeyOrProxy(checkInput);
       console.log({ checkResult });
 
       if (!checkResult) {
@@ -77,11 +95,35 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
         checkResult.choices[0].message.content.includes("TEST")
       ) {
         message.success(
-          "Valid API Key. Click Save Settings, and you can start chatting to your waifu/husbando now!"
+          "Valid API Key/Proxy. Click Save Settings, and you can start chatting to your waifu/husbando now!"
         );
       }
     } finally {
-      setIsCheckingKey(false);
+      setIsCheckingOpenAI(false);
+    }
+  };
+
+  const checkKobold = async (apiUrl: string) => {
+    setIsCheckingKobol(true);
+    try {
+      const checkResult = await checkKoboldURL(apiUrl);
+      console.log({ checkResult });
+
+      if (!checkResult) {
+        message.error("Network error. Try if you can access the URL later!");
+        return;
+      }
+
+      if ("error" in checkResult) {
+        message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
+      } else {
+        setKoboldModel(checkResult.result);
+        message.success(
+          `Kobold API detected. Model loaded: ${checkResult.result}. Save Settings to start chat.`
+        );
+      }
+    } finally {
+      setIsCheckingKobol(false);
     }
   };
 
@@ -112,15 +154,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
             name="api"
             label="API"
             rules={[{ required: true, message: "Please pick an item!" }]}
-            help="More API support (Horde, Claude, NovelAI,...) coming soon!"
+            help="More API support (Horde, Oobabooga, Claude, NovelAI,...) coming soon!"
           >
             <Radio.Group>
               {location.hostname === "localhost" && (
                 <Radio.Button value="mock">Mock API for testing</Radio.Button>
               )}
-              <Radio.Button value="kobold">Kobold AI</Radio.Button>
               <Radio.Button value="openai">Open AI</Radio.Button>
-              <Radio.Button value="ooba">Oobabooga</Radio.Button>
+              <Radio.Button value="kobold">Kobold AI</Radio.Button>
+              {/* <Radio.Button value="ooba">Oobabooga</Radio.Button> */}
             </Radio.Group>
           </Form.Item>
 
@@ -160,24 +202,26 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                       </a>
                       .
                       <br />
-                      For security reason, this key is{" "}
-                      <strong>only stored locally in your device</strong> and never sent to server.
+                      This key is <strong>only stored locally in your device</strong> and never sent
+                      to server.
                     </span>
                   }
                 >
                   <Space.Compact style={{ width: "100%" }}>
                     {/* BUG with Form.Item LOL */}
                     <Input
-                      value={openAIAPIWatch || ""}
+                      value={openAIAPIKeyWatch || ""}
                       onChange={(e) => form.setFieldValue("openAIKey", e.target.value)}
                       placeholder="sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                     />
                     <Button
-                      loading={isCheckingKey}
+                      loading={isCheckingOpenAI}
                       disabled={
-                        isCheckingKey || !openAIAPIWatch || !openAIAPIWatch.startsWith("sk-")
+                        isCheckingOpenAI ||
+                        !openAIAPIKeyWatch ||
+                        !openAIAPIKeyWatch.startsWith("sk-")
                       }
-                      onClick={checkAPIKey}
+                      onClick={() => checkOpenAI({ mode: "api_key", apiKey: openAIAPIKeyWatch })}
                     >
                       Check API Key
                     </Button>
@@ -198,29 +242,108 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                   <Space.Compact style={{ width: "100%" }}>
                     {/* BUG with Form.Item LOL */}
                     <Input
-                      value={openAIReverseProxyWatch || ""}
+                      value={openAIProxyWatch || ""}
                       onChange={(e) => form.setFieldValue("open_ai_reverse_proxy", e.target.value)}
                       placeholder="https://whocars123-oai-proxy.hf.space/proxy/openai"
                     />
                     <Button
-                    // onClick={checkAPIKey}
+                      loading={isCheckingOpenAI}
+                      disabled={isCheckingOpenAI || !openAIProxyWatch}
+                      onClick={() => checkOpenAI({ mode: "proxy", proxy: openAIProxyWatch })}
                     >
                       Check Proxy
                     </Button>
                   </Space.Compact>
                 </Form.Item>
               )}
+
+              <Form.Item
+                name="jailbreak_prompt"
+                label="Jailbreak Prompt"
+                className="pt-4"
+                help={
+                  <span>
+                    This is added to OpenAI prompt to set behaviour the of the bot. See{" "}
+                    <a href="https://rentry.co/GPTJailbreakPrompting" target="_blank">
+                      here
+                    </a>{" "}
+                    for more information.
+                  </span>
+                }
+                rules={[{ required: true, message: "Please enter a prompt." }]}
+              >
+                <Input.TextArea autoSize rows={4} />
+              </Form.Item>
             </>
           )}
 
-          <Title level={5}>Generation Settings</Title>
+          {apiWatch === "kobold" && (
+            <>
+              <Title level={5}>KoboldAI Settings</Title>
+
+              <Form.Item
+                name="api_url"
+                label="KoboldAI API URL"
+                help={koboldModel && <span>Model loaded: {koboldModel}</span>}
+                extra={
+                  <div className="mt-2">
+                    <span>
+                      If you have a PC more than 4.5GB of VRAM. Follow{" "}
+                      <a
+                        href="https://docs.alpindale.dev/local-installation-(gpu)/kobold/"
+                        target="_blank"
+                      >
+                        Local Install Guide
+                      </a>{" "}
+                      to install and get the API URL.
+                    </span>
+                    <br />
+                    <span>
+                      You can also rent a GPU for 0.2$/hour. Follow{" "}
+                      <a href="https://docs.alpindale.dev/cloud-installation/vast/" target="_blank">
+                        VastAI guide
+                      </a>{" "}
+                      to install and get the API URL.
+                    </span>
+                  </div>
+                }
+              >
+                <Space.Compact style={{ width: "100%" }}>
+                  {/* BUG with Form.Item LOL */}
+                  <Input
+                    value={apiUrlWatch || ""}
+                    onChange={(e) => form.setFieldValue("api_url", e.target.value)}
+                    placeholder="https://pieces-strictly-transparency-luther.trycloudflare.com/api"
+                  />
+                  <Button
+                    loading={isCheckingKobol}
+                    disabled={isCheckingKobol || !apiUrlWatch}
+                    onClick={() => checkKobold(apiUrlWatch)}
+                  >
+                    Check Kobold URL
+                  </Button>
+                </Space.Compact>
+              </Form.Item>
+
+              <Form.Item
+                className="pt-4"
+                name="use_pygmalion_format"
+                label="Use Pygmalion Format"
+                help="Use Pygmalion format (select this if you use any Pygmalion related model"
+              >
+                <Switch />
+              </Form.Item>
+            </>
+          )}
         </Form>
 
-        <span>
-          The definitions are shamelessly copied from https://agnai.chat, so give them credit here.
-        </span>
-
-        {/* <code>{JSON.stringify(initialValues, null, 2)}</code> */}
+        <p className="mt-4">
+          For more advanced generation settings (temparature, max token), go to{" "}
+          <Link to="/settings" target="_blank">
+            Profile / Advanced Settings
+          </Link>
+          .
+        </p>
       </div>
     </Modal>
   );

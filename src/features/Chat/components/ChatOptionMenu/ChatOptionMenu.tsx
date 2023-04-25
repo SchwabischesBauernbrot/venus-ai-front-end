@@ -32,7 +32,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [isSharingChat, setIsSharingChat] = useState(false);
   const [openChatHistoryModal, setOpenChatHistoryModal] = useState(false);
-  const [openChatSettingsModal, setOpenChatSettingsModal] = useState(false); // For testing
+  const [openChatSettingsModal, setOpenChatSettingsModal] = useState(true); // For testing
 
   const createChat = async () => {
     try {

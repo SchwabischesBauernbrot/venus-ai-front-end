@@ -149,7 +149,7 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
       <List.Item.Meta
         avatar={
           <Avatar
-            size={50}
+            size={60}
             src={message.is_bot ? getBotAvatarUrl(characterAvatar) : getAvatarUrl(userAvatar)}
           />
         }
