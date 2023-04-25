@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Form, Input, Upload, Select, Button, message, Typography, Radio } from "antd";
+import { Form, Input, Upload, Select, Button, message, Typography, Radio, ColProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { axiosInstance, supabase } from "../../../config";
@@ -38,6 +38,11 @@ export interface CharacterFormProps {
   id?: string;
   values: Partial<FormValues>;
 }
+
+const RESPONSIVE_WRAPPER_COL: ColProps = {
+  lg: { offset: 6, span: 18 },
+  xs: { offset: 0, span: 24 },
+};
 
 export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
   const queryClient = useQueryClient();
@@ -196,7 +201,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         </Form.Item>
 
         {mode === "create" && (
-          <Form.Item wrapperCol={{ offset: 6, span: 18 }}>
+          <Form.Item wrapperCol={RESPONSIVE_WRAPPER_COL}>
             <p>Select an image as bot avatar, or you can import Tavern PNG file.</p>
             <p>
               If you want to import CAI character, go to{" "}
@@ -315,7 +320,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           <Input.TextArea rows={4} autoSize placeholder="Example dialogs" />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 6, span: 18 }} className="pt-4">
+        <Form.Item wrapperCol={RESPONSIVE_WRAPPER_COL} className="pt-4">
           <p>
             Total:{" "}
             {countToken(personalityWatch + firstMessageWatch + scenarioWatch + exampleDialogWatch)}

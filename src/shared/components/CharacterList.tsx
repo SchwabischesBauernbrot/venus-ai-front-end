@@ -20,7 +20,7 @@ const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    ${(props) => (props.size === "small" ? "minmax(16rem, 1fr)" : "minmax(20rem, 1fr)")}
+    ${(props) => (props.size === "small" ? "minmax(15rem, 1fr)" : "minmax(18rem, 1fr)")}
   );
   grid-gap: ${(props) => (props.size === "small" ? "1rem" : "1.5rem")};
   align-items: stretch;

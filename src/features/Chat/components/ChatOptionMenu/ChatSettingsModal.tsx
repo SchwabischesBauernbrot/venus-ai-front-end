@@ -337,7 +337,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
           )}
         </Form>
 
-        <p className="mt-4">
+        <p className="mt-10">
           For more advanced generation settings (temparature, max token), go to{" "}
           <Link to="/settings" target="_blank">
             Profile / Advanced Settings

@@ -28,7 +28,7 @@ const ChatContainer = styled.div<{ size: "small" | "medium" }>`
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    ${(props) => (props.size === "small" ? "20rem" : "25rem")}
+    ${(props) => (props.size === "small" ? "minmax(16rem, 1fr)" : "minmax(20rem, 1fr)")}
   );
   grid-gap: ${(props) => (props.size === "small" ? "1rem" : "2rem")};
   align-items: stretch;
@@ -45,6 +45,7 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
       {chats.map((chat) => (
         <Card
           key={chat.id}
+          className="d-flex flex-column"
           size="small"
           actions={[
             <span>
