@@ -20,9 +20,9 @@ const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    ${(props) => (props.size === "small" ? "12rem" : "15rem")}
+    ${(props) => (props.size === "small" ? "minmax(16rem, 1fr)" : "minmax(20rem, 1fr)")}
   );
-  grid-gap: ${(props) => (props.size === "small" ? "1rem" : "2rem")};
+  grid-gap: ${(props) => (props.size === "small" ? "1rem" : "1.5rem")};
   align-items: stretch;
 `;
 
@@ -48,7 +48,8 @@ export const CharacterList: React.FC<CharacterListProps> = ({
           <Card
             hoverable
             size="small"
-            style={{ maxWidth: "16rem", height: "100%" }}
+            style={{ height: "100%" }}
+            className="d-flex flex-column"
             key={character.id}
             title={
               <span>

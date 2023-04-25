@@ -228,7 +228,7 @@ const App: React.FC = () => {
           },
         }}
       >
-        <AntdApp>
+        <AntdApp className="global-css-override">
           <RouterProvider router={router} />
         </AntdApp>
       </ConfigProvider>

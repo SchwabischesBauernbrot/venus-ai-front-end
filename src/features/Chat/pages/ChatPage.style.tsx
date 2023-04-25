@@ -1,9 +1,16 @@
-import { Divider } from "antd";
+import { Divider, Layout } from "antd";
 import styled from "styled-components";
 
+export const ChatLayout = styled(Layout)`
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: 4rem 1.75rem auto 6.5rem;
+`;
+
 export const ChatInputContainer = styled.div`
-  margin-top: 1rem;
   padding: 0 1rem;
+  margin: auto 0;
   width: 100%;
 
   textarea {
@@ -13,7 +20,7 @@ export const ChatInputContainer = styled.div`
 
 export const ChatContainer = styled.div`
   overflow-y: scroll;
-  padding-left: 1rem;
+  padding: 0 1rem;
 
   font-size: 1rem !important; // Lol default font too small
 `;

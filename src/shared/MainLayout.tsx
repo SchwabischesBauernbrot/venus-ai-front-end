@@ -16,7 +16,7 @@ export const MainLayout: React.FC = () => {
     <Layout style={{ minHeight: "100vh" }}>
       <Header>
         <Menu selectable={false} theme="dark" mode="horizontal">
-          <Menu.Item key="home">
+          <Menu.Item className="no-padding" key="home">
             <Link to="/">
               <Avatar shape="square" size="large" src="/logo.png" alt="logo" />
             </Link>
@@ -49,7 +49,7 @@ export const MainLayout: React.FC = () => {
               <Menu.Item style={{ marginLeft: "auto" }} key="login">
                 <Link to="/login">Login</Link>
               </Menu.Item>
-              <Menu.Item key="register">
+              <Menu.Item className="no-padding" key="register">
                 <Link to="/register">Register</Link>
               </Menu.Item>
             </>
@@ -57,7 +57,7 @@ export const MainLayout: React.FC = () => {
         </Menu>
       </Header>
 
-      <Content style={{ padding: "0 50px" }}>
+      <Content className="main-layout-content">
         <Outlet />
       </Content>
 

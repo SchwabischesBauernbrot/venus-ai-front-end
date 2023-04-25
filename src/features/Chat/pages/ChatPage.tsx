@@ -29,9 +29,9 @@ import {
   BotChoicesOverlay,
   BotChoicesContainer,
   CustomDivider,
+  ChatLayout,
 } from "./ChatPage.style";
 import { MessageDisplay } from "../components/MessageDisplay";
-import { formatTime } from "../../../shared/services/utils";
 import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
 import { PrivateIndicator } from "../../../shared/components";
 import { UserConfigAndLocalData } from "../../../shared/services/user-config";
@@ -164,9 +164,10 @@ export const ChatPage: React.FC = () => {
     refreshChats();
   };
 
-  const swipe = async (direction: "left" | "right") => {
-    // If message already have, just slide
-    const newIndex = choiceIndex + (direction === "left" ? -1 : 1);
+  const swipe = async (direction: "left" | "right" | "regen") => {
+    // If message already exist, just slide
+    const directionIndex = { left: -1, regen: 0, right: 1 };
+    const newIndex = choiceIndex + directionIndex[direction];
     if (newIndex < 0) {
       return;
     } else if (newIndex < botChoices.length) {
@@ -208,27 +209,45 @@ export const ChatPage: React.FC = () => {
         historyWithoutLastMessage,
         fullConfig
       );
+
+      // This method might fail for multiple reasons, allow user to regenerate
       const botMessages = await generateInstance.generate(prompt, fullConfig);
-      for await (const message of botMessages) {
-        combined = combined += message;
-        const newBotMessage: ChatMessageEntity = {
-          id: -1,
-          chat_id: 0,
-          created_at: "",
+
+      if (direction === "right") {
+        for await (const message of botMessages) {
+          combined += message;
+          const newBotMessage: ChatMessageEntity = {
+            id: -1,
+            chat_id: 0,
+            created_at: "",
+            is_bot: true,
+            is_main: false,
+            message: combined,
+          };
+          dispatch({ type: "new_client_messages", messages: [newBotMessage] });
+          scrollToBottom();
+        }
+        const botMessage = await chatService.createMessage(chatId, {
+          message: combined,
           is_bot: true,
           is_main: false,
-          message: combined,
-        };
-        dispatch({ type: "new_client_messages", messages: [newBotMessage] });
-        scrollToBottom();
-      }
+        });
+        dispatch({ type: "new_server_messages", messages: [botMessage] });
+      } else if (direction === "regen") {
+        const botChoice = botChoices[newIndex];
+        botChoice.message = "";
+        for await (const message of botMessages) {
+          botChoice.message += message;
+          dispatch({ type: "message_edited", message: botChoice });
+          scrollToBottom();
+        }
 
-      const botMessage = await chatService.createMessage(chatId, {
-        message: combined,
-        is_bot: true,
-        is_main: false,
-      });
-      dispatch({ type: "new_server_messages", messages: [botMessage] });
+        // Update after regen
+        const newRegenMessage = await chatService.updateMassage(chatId, botChoice.id, {
+          message: botChoice.message,
+        });
+        dispatch({ type: "message_edited", message: newRegenMessage });
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -290,6 +309,8 @@ export const ChatPage: React.FC = () => {
       dispatch({ type: "set_index", newIndex: 0 });
       scrollToBottom();
 
+      const serverUserMassage = await chatService.createMessage(chatId, localUserMessage);
+
       // Generate prompt back-end to get generated message
       const prompt = generateInstance.buildPrompt(
         inputMessage,
@@ -297,6 +318,8 @@ export const ChatPage: React.FC = () => {
         chatState.messages,
         fullConfig
       );
+
+      // This method might fail for multiple reasons, allow user to regenerate
       const generatedTexts = await generateInstance.generate(prompt, fullConfig);
 
       let streamingText = "";
@@ -311,9 +334,7 @@ export const ChatPage: React.FC = () => {
         scrollToBottom();
       }
 
-      // Don't do in parallel, make sure user message is created first
-      // Create both of them, if failed to create bot message, no need to save
-      const serverUserMassage = await chatService.createMessage(chatId, localUserMessage);
+      // If failed to create bot message, no need to save
       const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
 
       dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
@@ -339,18 +360,9 @@ export const ChatPage: React.FC = () => {
   };
 
   return (
-    <Layout
-      style={{ height: "100vh", display: "grid", gridTemplateRows: "4rem 1.5rem auto 6.5rem" }}
-      // onKeyDown={(event) => {
-      //   if (event.key === "ArrowLeft") {
-      //     swipe("left");
-      //   } else if (event.key === "ArrowRight") {
-      //     swipe("right");
-      //   }
-      // }}
-    >
+    <ChatLayout>
       {isLoading && (
-        <div className="text-center">
+        <div className="text-center mt-4">
           <Spin />
         </div>
       )}
@@ -489,6 +501,6 @@ export const ChatPage: React.FC = () => {
           </Row>
         </ChatInputContainer>
       )}
-    </Layout>
+    </ChatLayout>
   );
 };

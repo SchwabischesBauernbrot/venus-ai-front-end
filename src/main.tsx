@@ -4,7 +4,7 @@ import loadable from "@loadable/component";
 
 import "antd/dist/reset.css";
 import "antd-css-utilities/utility.min.css";
-import "./global.css";
+import "./global.scss";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient({
