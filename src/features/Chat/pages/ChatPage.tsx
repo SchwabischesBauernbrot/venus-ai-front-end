@@ -24,7 +24,7 @@ import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
 import { PrivateIndicator } from "../../../shared/components";
 import { UserConfigAndLocalData } from "../../../shared/services/user-config";
 import { GenerateInterface } from "../services/generate/generate-interface";
-import { PageContainer } from "../../../shared/components/shared";
+import { koboldGenerateInstance } from "../services/generate/kobold-generate";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -92,16 +92,20 @@ export const ChatPage: React.FC = () => {
   const mainMessages = messagesToDisplay.filter((message) => message.is_main);
   const botChoices = messagesToDisplay.filter((message) => message.is_bot && !message.is_main);
 
-  const canEdit = Boolean(profile);
   const isImmersiveMode = Boolean(config?.immersive_mode);
   const readyToChat = chatService.readyToChat(config, localData);
 
   const fullConfig: UserConfigAndLocalData = useMemo(() => {
     return { ...localData, ...config! };
   }, [localData, config]);
-  let generateInstance: GenerateInterface = useMemo(() => {
+  const generateInstance: GenerateInterface = useMemo(() => {
     if (fullConfig.api === "openai") {
       return openAiGenerateInstance;
+    } else if (fullConfig.api === "kobold") {
+      // import('./../services/generate/kobold-generate').then(module => {
+      //   module.koboldGenerateInstance;
+      // })
+      return koboldGenerateInstance;
     }
 
     return mockGenerateInstance;
@@ -144,6 +148,7 @@ export const ChatPage: React.FC = () => {
       retry: 1,
     }
   );
+  const canEdit = Boolean(profile && profile.id === data?.chat.user_id);
 
   const refreshChats = async () => {
     const data = await refetch();
@@ -207,7 +212,7 @@ export const ChatPage: React.FC = () => {
       dispatch({ type: "new_client_messages", messages: [localBotMessage] });
       if (direction === "regen") {
         scrollToBottom();
-      } else if (direction === "right") {
+      } else if (direction === "left") {
         scrollToTopChoice();
       }
 
@@ -417,12 +422,12 @@ export const ChatPage: React.FC = () => {
                       key={item.id}
                       canEdit={canEdit && index > 0 && !isImmersiveMode}
                       message={item}
-                      user={profile?.name}
+                      user={canEdit ? profile?.name : "Anon"}
+                      userAvatar={canEdit ? profile?.avatar : undefined}
                       showRegenerate={
                         item.is_main && index === mainMessages.length - 1 && botChoices.length === 0
                       }
                       onRegenerate={() => swipe("regen")}
-                      userAvatar={profile?.avatar}
                       characterName={data.chat.characters.name}
                       characterAvatar={data.chat.characters.avatar}
                       onDelete={deleteMessage}
@@ -465,9 +470,9 @@ export const ChatPage: React.FC = () => {
                           key={item.id}
                           message={item}
                           canEdit={canEdit && !isImmersiveMode}
-                          user={profile?.name}
+                          user={canEdit ? profile?.name : "Anon"}
+                          userAvatar={canEdit ? profile?.avatar : undefined}
                           showRegenerate={false}
-                          userAvatar={profile?.avatar}
                           characterName={data.chat.characters.name}
                           characterAvatar={data.chat.characters.avatar}
                           onDelete={deleteMessage}
