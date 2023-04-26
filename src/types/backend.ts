@@ -47,6 +47,9 @@ export interface paths {
   "/tags": {
     get: operations["TagController_findAll"];
   };
+  "/tunnel/kobold/check": {
+    get: operations["TunnelController_checkKoboldUrl"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -146,6 +149,7 @@ export interface components {
     UpdateChatDto: {
       is_public?: boolean;
       summary?: string;
+      summary_chat_id?: number;
     };
     ChatEntityWithCharacter: {
       id: number;
@@ -475,6 +479,16 @@ export interface operations {
           "application/json": (components["schemas"]["TagEntity"])[];
         };
       };
+    };
+  };
+  TunnelController_checkKoboldUrl: {
+    parameters: {
+      query: {
+        apiUrl: string;
+      };
+    };
+    responses: {
+      200: never;
     };
   };
 }

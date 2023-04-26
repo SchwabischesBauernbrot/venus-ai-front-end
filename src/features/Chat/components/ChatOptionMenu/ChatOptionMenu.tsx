@@ -12,12 +12,13 @@ import { AxiosError } from "axios";
 
 import { useContext, useState } from "react";
 import { useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+
 import { AppContext } from "../../../../appContext";
 import { chatService } from "../../services/chat-service";
 import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import { ChatHistoryModal } from "./ChatHistoryModal";
 import { ChatSettingsModal } from "./ChatSettingsModal";
+import { ChatSummaryModal } from "./ChatSummaryModal";
 
 interface ChatOptionMenuProps {
   chat: ChatEntityWithCharacter;
@@ -33,6 +34,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
   const [isSharingChat, setIsSharingChat] = useState(false);
   const [openChatHistoryModal, setOpenChatHistoryModal] = useState(false);
   const [openChatSettingsModal, setOpenChatSettingsModal] = useState(false); // For testing
+  const [openChatSummaryModal, setOpenChatSummaryModal] = useState(false);
 
   const createChat = async () => {
     try {
@@ -95,10 +97,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
     <>
       <span style={{ marginLeft: "auto" }}>
         {readyToChat ? (
-          <Tag color="green">
-            API is ready.
-            {/* Using {config.api} - {config.model} ({config.open_ai_mode}) */}
-          </Tag>
+          <Tag color="green">API is ready. Using {config.api}.</Tag>
         ) : (
           <Tag
             style={{ cursor: "pointer" }}
@@ -140,8 +139,8 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                   placement="right"
                 >
                   <div
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
+                      setOpenChatSummaryModal(true);
                     }}
                   >
                     <SaveOutlined /> Chat Memory
@@ -205,13 +204,13 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                   title="Hide message edit/delete to make it more immersive"
                   placement="right"
                 >
-                  <div onClick={(e) => e.stopPropagation()}>
+                  <div style={{ whiteSpace: "pre" }} onClick={(e) => e.stopPropagation()}>
                     <Switch
                       className="mr-2"
                       defaultChecked={config.immersive_mode}
                       onChange={(checked) => updateConfig({ immersive_mode: checked })}
                     />
-                    Immersive Mode
+                    Immersive mode
                   </div>
                 </Tooltip>
               ),
@@ -248,6 +247,12 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
       <ChatSettingsModal
         open={openChatSettingsModal}
         onModalClose={() => setOpenChatSettingsModal(false)}
+      />
+
+      <ChatSummaryModal
+        chat={chat}
+        open={openChatSummaryModal}
+        onModalClose={() => setOpenChatSummaryModal(false)}
       />
     </>
   );

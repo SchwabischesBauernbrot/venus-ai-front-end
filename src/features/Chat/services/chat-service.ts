@@ -19,10 +19,14 @@ const createChat = async (characterId: string) => {
   return newChat.data;
 };
 
-const updateChat = async (chatId: ChatID, { is_public, summary }: UpdateChatDto) => {
+const updateChat = async (
+  chatId: ChatID,
+  { is_public, summary, summary_chat_id }: UpdateChatDto
+) => {
   const updatedChat = await axiosInstance.patch<ChatEntity>(`chats/${chatId}`, {
     is_public,
     summary,
+    summary_chat_id,
   });
   return updatedChat.data;
 };

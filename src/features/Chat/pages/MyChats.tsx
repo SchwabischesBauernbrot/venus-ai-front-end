@@ -20,6 +20,7 @@ export const MyChats: React.FC = () => {
       const responses = await supabase
         .from("chats")
         .select("*, characters(name, description, avatar)")
+        .order("updated_at", { ascending: false })
         .order("created_at", { ascending: false })
         .eq("user_id", profile?.id)
         .returns<ChatEntityWithCharacter[]>();

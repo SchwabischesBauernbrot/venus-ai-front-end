@@ -102,9 +102,6 @@ export const ChatPage: React.FC = () => {
     if (fullConfig.api === "openai") {
       return openAiGenerateInstance;
     } else if (fullConfig.api === "kobold") {
-      // import('./../services/generate/kobold-generate').then(module => {
-      //   module.koboldGenerateInstance;
-      // })
       profile && koboldGenerateInstance.setName(profile.name);
       return koboldGenerateInstance;
     }
@@ -128,7 +125,7 @@ export const ChatPage: React.FC = () => {
         const botChoiceOffset = botChoiceDivRef.current.getBoundingClientRect().top;
         if (botChoiceOffset < 0) {
           messageDivRef.current.scrollTop =
-            messageDivRef.current.scrollTop -
+            messageDivRef.current.scrollHeight -
             botChoiceDivRef.current.getBoundingClientRect().height +
             100; // Harcode 100 at message height
         }
@@ -263,6 +260,7 @@ export const ChatPage: React.FC = () => {
 
       // Refetch on error to avoid out of sync
       refreshChats();
+      dispatch({ type: "set_index", newIndex: choiceIndex });
     } finally {
       setIsGenerating(false);
     }

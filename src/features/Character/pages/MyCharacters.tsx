@@ -27,6 +27,7 @@ export const MyCharacters: React.FC = () => {
         .from("characters")
         .select("*, tags(*), user_profiles(*)")
         .eq("creator_id", profile?.id)
+        .order("updated_at", { ascending: false })
         .order("created_at", { ascending: false })
         .returns<CharacterWithProfileAndTag[]>();
 
