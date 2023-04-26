@@ -39,10 +39,17 @@ export const checkOpenAIKeyOrProxy = async ({ mode, apiKey, proxy }: CheckInput)
   }
 };
 
+export const getValidKoboldUrlApi = (url: string) => {
+  const koboldUrl = new URL(url);
+  koboldUrl.pathname = "/api";
+  const apiUrl = koboldUrl.toString();
+  return apiUrl.replace("localhost", "127.0.0.1");
+};
+
 export const checkKoboldURL = async (url: string) => {
   try {
     const response = await axiosInstance.get<{ result: string }>(
-      `/tunnel/kobold/check?apiUrl=${url}`
+      `${getValidKoboldUrlApi(url)}/v1/model`
     );
     return response.data;
   } catch (err) {

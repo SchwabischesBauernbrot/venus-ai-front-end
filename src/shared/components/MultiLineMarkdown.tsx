@@ -6,10 +6,7 @@ import { AppContext } from "../../appContext";
 const MarkdownContainer = styled.div<{ theme: "light" | "dark" }>`
   p {
     color: ${(props) => (props.theme === "light" ? "black" : "rgb(229, 224, 216)")};
-
-    &:last-child {
-      margin-bottom: 0;
-    }
+    margin-bottom: 0.7rem;
   }
 
   em {

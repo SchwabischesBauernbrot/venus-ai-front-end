@@ -65,6 +65,7 @@ export const getUserConfig = (config?: Json | Partial<UserConfig>) => {
 
 export const updateUserConfig = (config: Partial<UserConfig>) => {
   const newConfig = getUserConfig(config);
+
   profileService.updateProfile({ config: newConfig as any }); // This is an async call, just ignore it
 
   return newConfig;

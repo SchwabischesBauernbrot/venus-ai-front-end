@@ -17,6 +17,10 @@ import { AxiosError } from "axios";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../../../appContext";
+import {
+  KOBOLD_AI_DEFAULT_GENERATION_SETTING,
+  OPEN_AI_DEFAULT_GENERATION_SETTINGS,
+} from "../../../../shared/services/generation-setting";
 import { UserConfig, UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { UserLocalData } from "../../../../shared/services/user-local-data";
 import { CheckInput, checkKoboldURL, checkOpenAIKeyOrProxy } from "../../services/check-service";
@@ -38,7 +42,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
   const [isCheckingKobol, setIsCheckingKobol] = useState(false);
   const [koboldModel, setKoboldModel] = useState("");
 
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const [form] = Form.useForm<FormValues>();
 
   // This shouldn't happen because user should see config
@@ -55,6 +59,20 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
   const initialValues: FormValues = { ...localData, ...config };
 
   const onFinish = (formValues: FormValues) => {
+    const updateApiSetting = formValues.api !== initialValues.api;
+    let shouldUpdateGenerationSetting = false;
+    if (updateApiSetting) {
+      if (formValues.api === "openai") {
+        shouldUpdateGenerationSetting = confirm(
+          "You just changed API. Do you want to set generation settings to OpenAI's default?"
+        );
+      } else if (formValues.api === "kobold") {
+        shouldUpdateGenerationSetting = confirm(
+          "You just changed API. Do you want to set generation settings to Kobold's default?"
+        );
+      }
+    }
+
     const newLocalData: Partial<UserLocalData> = {
       ...localData,
       openAIKey: formValues.openAIKey,
@@ -73,6 +91,13 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
 
       api_url: formValues.api_url,
     };
+    if (shouldUpdateGenerationSetting) {
+      if (formValues.api === "openai") {
+        newConfig.generation_settings = OPEN_AI_DEFAULT_GENERATION_SETTINGS;
+      } else if (formValues.api === "kobold") {
+        newConfig.generation_settings = KOBOLD_AI_DEFAULT_GENERATION_SETTING;
+      }
+    }
     updateConfig(newConfig);
 
     onModalClose();
@@ -118,10 +143,16 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       if ("error" in checkResult) {
         message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
       } else {
-        setKoboldModel(checkResult.result);
-        message.success(
-          `Kobold API detected. Model loaded: ${checkResult.result}. Save Settings to start chat.`
-        );
+        const modelLoaded = checkResult.result;
+
+        setKoboldModel(modelLoaded);
+        if (modelLoaded === "ReadOnly") {
+          message.error(`No model loaded! Please visit ${apiUrl} and load a model.`);
+        } else {
+          message.success(
+            `Kobold API detected. Model loaded: ${checkResult.result}. Save Settings to start chat.`
+          );
+        }
       }
     } finally {
       setIsCheckingKobol(false);
@@ -289,12 +320,16 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                 extra={
                   <div className="mt-2">
                     <span>
+                      Make sure you are running <strong>KoboldAI United</strong> version.
+                    </span>
+                    <br />
+                    <span>
                       If you have a PC more than 4.5GB of VRAM. Follow{" "}
                       <a
                         href="https://docs.alpindale.dev/local-installation-(gpu)/kobold/"
                         target="_blank"
                       >
-                        Local Install Guide
+                        Local install Guide
                       </a>{" "}
                       to install and get the API URL.
                     </span>
@@ -332,7 +367,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                 label="Use Pygmalion Format"
                 help="Use Pygmalion format (select this if you use any Pygmalion related model"
               >
-                <Switch />
+                <Switch defaultChecked={form.getFieldValue("use_pygmalion_format")} />
               </Form.Item>
             </>
           )}

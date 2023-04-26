@@ -71,9 +71,6 @@ export const callOpenAI = async (
 
   return response;
 };
-
-// export const
-
 class OpenAIGenerate extends GenerateInterface {
   buildPrompt(
     message: string,

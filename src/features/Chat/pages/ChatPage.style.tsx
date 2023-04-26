@@ -6,7 +6,8 @@ export const ChatLayout = styled(Layout)`
   height: 100vh;
   height: 100dvh;
   display: grid;
-  grid-template-rows: 4rem 1.75rem auto 6.5rem;
+  padding-top: 0.25rem;
+  grid-template-rows: 3rem 1.75rem auto 6.5rem;
 `;
 
 export const ChatInputContainer = styled.div`

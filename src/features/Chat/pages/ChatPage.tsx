@@ -105,11 +105,12 @@ export const ChatPage: React.FC = () => {
       // import('./../services/generate/kobold-generate').then(module => {
       //   module.koboldGenerateInstance;
       // })
+      profile && koboldGenerateInstance.setName(profile.name);
       return koboldGenerateInstance;
     }
 
     return mockGenerateInstance;
-  }, [fullConfig]);
+  }, [fullConfig, profile]);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -219,9 +220,10 @@ export const ChatPage: React.FC = () => {
       let combined = "";
 
       // Simulate regenrate the massage
-      const historyWithoutLastMessage = [...chatState.messages];
-      historyWithoutLastMessage.pop();
       const lastMessage = findLast(chatState.messages, (m) => !m.is_bot);
+      const historyWithoutLastMessage = chatState.messages.filter(
+        (massage) => massage.id < lastMessage!.id
+      );
 
       const prompt = generateInstance.buildPrompt(
         // message,
@@ -499,7 +501,11 @@ export const ChatPage: React.FC = () => {
                   <Input.TextArea
                     rows={3}
                     disabled={!readyToChat}
-                    placeholder="Enter to chat. Shift + Enter for linebreak."
+                    placeholder={
+                      readyToChat
+                        ? "Enter to chat. Shift + Enter for linebreak."
+                        : "Please setup the API on top right corner to start chating."
+                    }
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onPressEnter={(event) => {

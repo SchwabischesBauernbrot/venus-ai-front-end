@@ -14,8 +14,8 @@ export const OPEN_AI_DEFAULT_GENERATION_SETTINGS: GenerationSetting = {
 export const KOBOLD_AI_DEFAULT_GENERATION_SETTING: GenerationSetting = {
   temperature: 0.7,
   max_new_token: 200,
-  context_length: 1400, // can increase
-  repetition_penalty: 1.08,
+  context_length: 1500, // can increase
+  repetition_penalty: 1.1,
 };
 
 export const OOBAGOOGA_AI_DEFAULT_GENERATION_SETTING: GenerationSetting = {
