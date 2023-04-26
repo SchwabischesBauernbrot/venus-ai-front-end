@@ -30,7 +30,7 @@ export const MainLayout: React.FC = () => {
                 </Link>
               </Menu.Item>
 
-              <Menu.Item
+              {/* <Menu.Item
                 key="theme"
                 style={{ marginLeft: "auto" }}
                 onClick={() => {
@@ -40,7 +40,7 @@ export const MainLayout: React.FC = () => {
                 <Tooltip title="Toggle Dark mode">
                   <BulbOutlined />
                 </Tooltip>
-              </Menu.Item>
+              </Menu.Item> */}
 
               <UserAvatar />
             </>

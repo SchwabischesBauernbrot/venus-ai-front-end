@@ -1,4 +1,4 @@
-import { UserOutlined } from "@ant-design/icons";
+import { TeamOutlined, UserOutlined, WechatOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, Menu } from "antd";
 import { useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,13 +19,28 @@ export const UserAvatar: React.FC = () => {
   }, []);
 
   return (
-    <Menu.Item className="no-padding" key="profile">
+    <Menu.Item className="no-padding" style={{ marginLeft: "auto" }} key="profile">
       <Dropdown
         menu={{
           items: [
-            { key: "my_profile", label: "My Profile", onClick: () => navigate("/profile") },
-            { key: "my_bot", label: "My Characters", onClick: () => navigate("/my_characters") },
-            { key: "my_chat", label: "My Chats", onClick: () => navigate("/my_chats") },
+            {
+              key: "my_profile",
+              icon: <UserOutlined />,
+              label: "My Profile",
+              onClick: () => navigate("/profile"),
+            },
+            {
+              key: "my_char",
+              icon: <TeamOutlined />,
+              label: "My Characters",
+              onClick: () => navigate("/my_characters"),
+            },
+            {
+              key: "my_chat",
+              icon: <WechatOutlined />,
+              label: "My Chats",
+              onClick: () => navigate("/my_chats"),
+            },
             { key: "logout", label: "Logout", onClick: () => logout() },
           ],
         }}

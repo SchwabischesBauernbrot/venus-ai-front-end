@@ -55,14 +55,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
   const initialValues: FormValues = { ...localData, ...config };
 
   const onFinish = (formValues: FormValues) => {
-    // console.log({ formValues });
-
     const newLocalData: Partial<UserLocalData> = {
+      ...localData,
       openAIKey: formValues.openAIKey,
     };
     updateLocalData(newLocalData);
 
     const newConfig: Partial<UserConfig> = {
+      ...config,
+
       api: formValues.api,
 
       model: formValues.model,

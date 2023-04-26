@@ -2,7 +2,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { Card, Space, Tooltip, Tag } from "antd";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { truncate } from "lodash-es";
 
 import { getBotAvatarUrl } from "../services/utils";
@@ -20,10 +20,34 @@ const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    ${(props) => (props.size === "small" ? "minmax(15rem, 1fr)" : "minmax(18rem, 1fr)")}
+    ${(props) => (props.size === "small" ? "minmax(10rem, 1fr)" : "minmax(14rem, 1fr)")}
   );
   grid-gap: ${(props) => (props.size === "small" ? "1rem" : "1.5rem")};
   align-items: stretch;
+
+  .ant-card-cover {
+    position: relative;
+  }
+
+  ${(props) =>
+    props.size === "small" &&
+    css`
+      .ant-card-head {
+        min-height: 2rem;
+        padding: 0 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .ant-card-body {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .ant-tag {
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+    `}
 `;
 
 const CharacterImage = styled.img`
@@ -81,9 +105,9 @@ export const CharacterList: React.FC<CharacterListProps> = ({
               }
             />
 
-            <Space className="mt-4 " size={[0, 8]} wrap>
+            <Space className="mt-4 " size={[0, 4]} wrap>
               {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-              {character.tags?.map((tag) => (
+              {character.tags?.slice(0, 4).map((tag) => (
                 <Tooltip key={tag.id} title={tag.description}>
                   <Tag>{tag.name}</Tag>
                 </Tooltip>

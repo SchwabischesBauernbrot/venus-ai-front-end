@@ -3,7 +3,7 @@ import {
   Spin,
   Row,
   Col,
-  Avatar,
+  Image,
   App,
   Space,
   Tag,
@@ -13,6 +13,7 @@ import {
   Descriptions,
   message,
 } from "antd";
+import { useCallback, useContext, useState } from "react";
 import { LoadingOutlined, WechatOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -23,7 +24,6 @@ import { getBotAvatarUrl } from "../../../shared/services/utils";
 import { FullCharacterView } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { MultiLine } from "../../../shared/components/MultiLine";
-import { useCallback, useContext, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../shared/components/PrivateIndicator";
 import { chatService } from "../../Chat/services/chat-service";
@@ -99,7 +99,7 @@ export const ViewCharacter: React.FC = () => {
               <PrivateIndicator isPublic={data.is_public} /> {data.name}
             </Title>
 
-            <Avatar shape="square" size={100} src={getBotAvatarUrl(data.avatar)} />
+            <Image src={getBotAvatarUrl(data.avatar)} />
 
             <div className="mt-2">
               <Link target="_blank" to={`/profiles/${data.creator_id}`}>

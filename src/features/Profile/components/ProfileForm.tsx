@@ -144,15 +144,21 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           <Input.TextArea rows={4} />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           name="profile"
           label="User profile"
           help="This will be included in the prompt to let the bot know about you"
         >
           <Input.TextArea rows={4} placeholder='name("Harry") age("29") gender("male")' />
-        </Form.Item>
+        </Form.Item> */}
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} className="pt-4">
+        <Form.Item
+          wrapperCol={{
+            lg: { offset: 8, span: 16 },
+            xs: { offset: 0, span: 24 },
+          }}
+          className="pt-4"
+        >
           <Button type="primary" htmlType="submit" block>
             Update profile
           </Button>

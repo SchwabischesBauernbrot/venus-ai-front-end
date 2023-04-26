@@ -11,9 +11,9 @@ export const Profile = () => {
 
   return (
     <PageContainer>
-      <Title level={2}>Advance Settings</Title>
+      <Title level={2}>My Profile</Title>
 
-      {/* {profile ? <ProfileForm values={profile} /> : <Spin />} */}
+      {profile ? <ProfileForm values={profile} /> : <Spin />}
     </PageContainer>
   );
 };
