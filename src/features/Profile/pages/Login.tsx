@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-import { Typography, Input, Button, Form, message } from "antd";
+import { Typography, Input, Button, Form, message, Space } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -67,7 +67,7 @@ export const Login = () => {
 
   return (
     <LoginFormContainer>
-      <Title>Login</Title>
+      <Title level={2}>Login</Title>
 
       <Form form={form} onFinish={onFinish}>
         <Form.Item name="email" rules={[{ required: true, message: "Please enter your email." }]}>
@@ -88,11 +88,7 @@ export const Login = () => {
         </Form.Item>
       </Form>
 
-      <div>
-        <p>
-          We recommend login using third party, as our email sending might not working properly lol
-        </p>
-
+      <Space.Compact direction="vertical" className="w-100">
         <Button icon={<GoogleOutlined />} onClick={() => loginWithProvider("google")} block>
           Login with Google
         </Button>
@@ -103,7 +99,7 @@ export const Login = () => {
         <Button icon={<GithubOutlined />} onClick={() => loginWithProvider("github")} block>
           Login with Github
         </Button>
-      </div>
+      </Space.Compact>
     </LoginFormContainer>
   );
 };

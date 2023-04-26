@@ -96,7 +96,6 @@ class OpenAIGenerate extends GenerateInterface {
     ];
 
     let promptTokenLength = getTokenLength(messages);
-    console.log({ promptTokenLength });
 
     if (promptTokenLength < maxContentLength) {
       return { messages };
@@ -123,8 +122,6 @@ class OpenAIGenerate extends GenerateInterface {
       ];
       promptTokenLength = getTokenLength(messages);
     }
-
-    console.log({ promptTokenLength });
 
     return { messages };
   }

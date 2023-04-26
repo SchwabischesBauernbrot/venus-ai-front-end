@@ -1,4 +1,4 @@
-import { Avatar, Button, Input, InputRef, List, Popconfirm, Tooltip } from "antd";
+import { Image, Button, Input, InputRef, List, Popconfirm, Tooltip } from "antd";
 import styled from "styled-components";
 import {
   CheckOutlined,
@@ -148,8 +148,9 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
     >
       <List.Item.Meta
         avatar={
-          <Avatar
-            size={60}
+          <Image
+            width={60}
+            style={{ borderRadius: "0.5rem" }}
             src={message.is_bot ? getBotAvatarUrl(characterAvatar) : getAvatarUrl(userAvatar)}
           />
         }

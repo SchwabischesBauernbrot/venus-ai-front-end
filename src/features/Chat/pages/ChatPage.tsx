@@ -1,16 +1,4 @@
-import {
-  Button,
-  Col,
-  Row,
-  Spin,
-  Input,
-  Layout,
-  InputRef,
-  List,
-  message,
-  Divider,
-  Space,
-} from "antd";
+import { Button, Col, Row, Spin, Input, InputRef, List, message } from "antd";
 import { LeftCircleFilled, LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
@@ -36,6 +24,7 @@ import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
 import { PrivateIndicator } from "../../../shared/components";
 import { UserConfigAndLocalData } from "../../../shared/services/user-config";
 import { GenerateInterface } from "../services/generate/generate-interface";
+import { PageContainer } from "../../../shared/components/shared";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -90,8 +79,10 @@ const dispatchFunction = (state: ChatState, action: Action): ChatState => {
 export const ChatPage: React.FC = () => {
   const { profile, config, localData } = useContext(AppContext);
   const { chatId } = useParams();
+
   const inputRef = useRef<InputRef>(null);
   const messageDivRef = useRef<HTMLDivElement>(null);
+  const botChoiceDivRef = useRef<HTMLDivElement>(null);
 
   const [inputMessage, setInputMessage] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -119,12 +110,28 @@ export const ChatPage: React.FC = () => {
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
       if (messageDivRef.current) {
-        messageDivRef.current.scrollTop = messageDivRef.current?.scrollHeight;
+        (window as any).messageDiv = messageDivRef.current;
+
+        messageDivRef.current.scrollTop = messageDivRef.current.scrollHeight;
       }
     }, 50);
   }, [messageDivRef.current]);
 
-  const { data, refetch, isLoading } = useQuery(
+  const scrollToTopChoice = useCallback(() => {
+    setTimeout(() => {
+      if (messageDivRef.current && botChoiceDivRef.current) {
+        const botChoiceOffset = botChoiceDivRef.current.getBoundingClientRect().top;
+        if (botChoiceOffset < 0) {
+          messageDivRef.current.scrollTop =
+            messageDivRef.current.scrollTop -
+            botChoiceDivRef.current.getBoundingClientRect().height +
+            100; // Harcode 100 at message height
+        }
+      }
+    }, 50);
+  }, [messageDivRef.current, botChoiceDivRef.current]);
+
+  const { data, refetch, isLoading, error } = useQuery(
     ["chat", chatId],
     async () => chatService.getChatById(chatId),
     {
@@ -134,6 +141,7 @@ export const ChatPage: React.FC = () => {
 
         scrollToBottom();
       },
+      retry: 1,
     }
   );
 
@@ -199,6 +207,8 @@ export const ChatPage: React.FC = () => {
       dispatch({ type: "new_client_messages", messages: [localBotMessage] });
       if (direction === "regen") {
         scrollToBottom();
+      } else if (direction === "right") {
+        scrollToTopChoice();
       }
 
       let combined = "";
@@ -357,6 +367,17 @@ export const ChatPage: React.FC = () => {
     dispatch({ type: "message_edited", message: editedMessage });
   };
 
+  if (!isLoading && error) {
+    return (
+      <ChatLayout>
+        <p>
+          Can not view this chat. It might be deleted or private.{" "}
+          <Link to="/">Back to home page!</Link>
+        </p>
+      </ChatLayout>
+    );
+  }
+
   return (
     <ChatLayout>
       {isLoading && (
@@ -438,7 +459,7 @@ export const ChatPage: React.FC = () => {
                       </BotMessageControl>
                     )}
 
-                    <BotChoicesOverlay index={choiceIndex}>
+                    <BotChoicesOverlay ref={botChoiceDivRef} index={choiceIndex}>
                       {botChoices.map((item) => (
                         <MessageDisplay
                           key={item.id}
@@ -473,7 +494,7 @@ export const ChatPage: React.FC = () => {
                   <Input.TextArea
                     rows={3}
                     disabled={!readyToChat}
-                    placeholder="Enter your chat"
+                    placeholder="Enter to chat. Shift + Enter for linebreak."
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onPressEnter={(event) => {

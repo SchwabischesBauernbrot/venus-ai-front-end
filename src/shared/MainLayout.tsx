@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Layout, Avatar, Menu, Tooltip } from "antd";
-import { BulbOutlined, UserAddOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+import { UserAddOutlined } from "@ant-design/icons";
 
 import { AppContext } from "../appContext";
 
@@ -18,7 +18,11 @@ export const MainLayout: React.FC = () => {
         <Menu selectable={false} theme="dark" mode="horizontal">
           <Menu.Item className="no-padding" key="home">
             <Link to="/">
-              <Avatar shape="square" size="large" src="/logo.png" alt="logo" />
+              <img
+                style={{ width: "100px", position: "relative", top: "-1px" }}
+                src="/logo_small.png"
+                alt="logo"
+              />
             </Link>
           </Menu.Item>
 
@@ -62,7 +66,7 @@ export const MainLayout: React.FC = () => {
       </Content>
 
       <Footer style={{ textAlign: "center" }}>
-        <p>This is the unofficial website of Pygmalion AI. Uncensored, No Ad, Forever Free.</p>
+        <p>Venus AI - Chat with your waifu/husbando. Uncensored, No Ad, Forever Free.</p>
 
         <p>
           <a target="_blank" href="https://www.reddit.com/r/PygmalionAI">

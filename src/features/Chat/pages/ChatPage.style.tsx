@@ -21,9 +21,17 @@ export const ChatInputContainer = styled.div`
 
 export const ChatContainer = styled.div`
   overflow-y: scroll;
-  padding: 0 1rem;
+  padding: 0 0.5rem 0 1rem;
 
-  font-size: 1rem !important; // Lol default font too small
+  .ant-list-item-meta-title {
+    font-weight: 600;
+  }
+
+  ${MOBILE_BREAKPOINT_CSS} {
+    .ant-list-item-meta-description {
+      font-size: 0.95rem !important; // Chat font smaller on web
+    }
+  }
 `;
 
 export const BotChoicesContainer = styled.div`
@@ -52,7 +60,7 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 0.5rem 2rem 0.5rem 0;
+    padding: 0.75rem 1.25rem 0.75rem 0;
     color: rgba(255, 255, 255, 0.85);
   }
 
@@ -65,6 +73,10 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
 
   .ant-list-item-meta-avatar {
     margin-inline-end: 1rem;
+
+    ${MOBILE_BREAKPOINT_CSS} {
+      margin-inline-end: 0.75rem;
+    }
   }
 
   .ant-list-item-meta-content {
@@ -79,7 +91,7 @@ export const BotMessageControl = styled.div`
   z-index: 1;
   display: flex;
   justify-content: space-around;
-  width: 100%;
+  width: calc(100% + 0.5rem);
   top: 40%;
 `;
 

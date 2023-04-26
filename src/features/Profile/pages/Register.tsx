@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { Typography, Input, Button, Form, message } from "antd";
+import { Typography, Input, Button, Form, message, Space } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -66,10 +66,8 @@ export const Register = () => {
 
   return (
     <RegisterFormContainer>
-      {/* <button>Create test users (Create a lot of test user with password 123456)</button> */}
-
       <Form form={form} onFinish={onSubmit}>
-        <Title>Register</Title>
+        <Title level={2}>Register</Title>
 
         <Form.Item name="email" rules={[{ required: true, message: "Please enter your email." }]}>
           <Input prefix={<MailOutlined />} placeholder="Email" />
@@ -82,6 +80,18 @@ export const Register = () => {
           <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
         </Form.Item>
 
+        <p>
+          {" "}
+          By registering, you agree with our{" "}
+          <a href="/policy" target="_blank">
+            📜 Content & Private Policy
+          </a>
+          <span> and </span>
+          <a href="/term" target="_blank">
+            🤝 Term of Use
+          </a>
+        </p>
+
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
             Register
@@ -89,11 +99,11 @@ export const Register = () => {
         </Form.Item>
       </Form>
 
-      <div>
-        <p>
+      <Space.Compact direction="vertical" className="w-100">
+        {/* <p>
           We recommend register using third party. Our email sending might not working properly lol
           so you can't reset password.
-        </p>
+        </p> */}
 
         <Button icon={<GoogleOutlined />} onClick={() => registerWithProvider("google")} block>
           Register with Google
@@ -106,7 +116,7 @@ export const Register = () => {
         <Button icon={<GithubOutlined />} onClick={() => registerWithProvider("github")} block>
           Register with Github
         </Button>
-      </div>
+      </Space.Compact>
     </RegisterFormContainer>
   );
 };
