@@ -112,8 +112,6 @@ export const ChatPage: React.FC = () => {
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
       if (messageDivRef.current) {
-        (window as any).messageDiv = messageDivRef.current;
-
         messageDivRef.current.scrollTop = messageDivRef.current.scrollHeight;
       }
     }, 50);
@@ -124,10 +122,12 @@ export const ChatPage: React.FC = () => {
       if (messageDivRef.current && botChoiceDivRef.current) {
         const botChoiceOffset = botChoiceDivRef.current.getBoundingClientRect().top;
         if (botChoiceOffset < 0) {
-          messageDivRef.current.scrollTop =
-            messageDivRef.current.scrollHeight -
+          const massageDiv = messageDivRef.current;
+          massageDiv.scrollTop =
+            massageDiv.scrollHeight -
+            massageDiv.clientHeight -
             botChoiceDivRef.current.getBoundingClientRect().height +
-            100; // Harcode 100 at message height
+            100; // Hardcode 100 at avatar height
         }
       }
     }, 50);
@@ -210,7 +210,7 @@ export const ChatPage: React.FC = () => {
       dispatch({ type: "new_client_messages", messages: [localBotMessage] });
       if (direction === "regen") {
         scrollToBottom();
-      } else if (direction === "left") {
+      } else if (direction === "right") {
         scrollToTopChoice();
       }
 

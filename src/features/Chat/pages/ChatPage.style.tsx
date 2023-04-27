@@ -26,6 +26,9 @@ export const ChatContainer = styled.div`
 
   .ant-list-item-meta-title {
     font-weight: 600;
+    position: relative;
+    top: -5px;
+    margin-bottom: 0.25rem;
   }
 
   ${MOBILE_BREAKPOINT_CSS} {
@@ -103,6 +106,9 @@ export const CustomDivider = styled(Divider)`
     margin-bottom: 0.5rem;
     span {
       min-width: 50%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       ${MOBILE_BREAKPOINT_CSS} {
         min-width: 80%;

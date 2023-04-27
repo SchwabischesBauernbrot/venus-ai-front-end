@@ -108,14 +108,16 @@ export const ViewCharacter: React.FC = () => {
               <p>{data.description}</p>
             </div>
 
-            <Space size={[0, 8]} wrap>
-              {data.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-              {data.tags?.map((tag) => (
-                <Tooltip key={tag.id} title={tag.description}>
-                  <Tag>{tag.name}</Tag>
-                </Tooltip>
-              ))}
-            </Space>
+            {data.is_nsfw || data.tags?.length ? (
+              <Space size={[0, 8]} wrap>
+                {data.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
+                {data.tags?.map((tag) => (
+                  <Tooltip key={tag.id} title={tag.description}>
+                    <Tag>{tag.name}</Tag>
+                  </Tooltip>
+                ))}
+              </Space>
+            ) : null}
 
             <div className="mt-4">
               <Button type="primary" block onClick={startChat} disabled={isStartingChat}>
