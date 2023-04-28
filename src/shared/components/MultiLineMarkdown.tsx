@@ -9,8 +9,13 @@ const MarkdownContainer = styled.div<{ theme: "light" | "dark" }>`
     margin-bottom: 0.7rem;
   }
 
+  code {
+    font-size: 0.9rem;
+    letter-spacing: -0.5px;
+  }
+
   em {
-    color: grey;
+    color: #8f8e8e;
   }
 `;
 
