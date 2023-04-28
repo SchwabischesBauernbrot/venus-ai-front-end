@@ -1,4 +1,4 @@
-import { Button, Col, Row, Spin, Input, InputRef, List, message } from "antd";
+import { Button, Col, Row, Spin, Input, InputRef, List, message, ColProps } from "antd";
 import { LeftCircleFilled, LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
@@ -76,6 +76,8 @@ const dispatchFunction = (state: ChatState, action: Action): ChatState => {
   }
 };
 
+const CHAT_COLUMN_PROPS: ColProps = { lg: 14, xs: 24, md: 18 };
+
 export const ChatPage: React.FC = () => {
   const { profile, config, localData } = useContext(AppContext);
   const { chatId } = useParams();
@@ -94,6 +96,7 @@ export const ChatPage: React.FC = () => {
 
   const isImmersiveMode = Boolean(config?.immersive_mode);
   const readyToChat = chatService.readyToChat(config, localData);
+  const canGenerateChat = readyToChat && inputMessage.length > 0 && !isGenerating;
 
   const fullConfig: UserConfigAndLocalData = useMemo(() => {
     return { ...localData, ...config! };
@@ -234,6 +237,8 @@ export const ChatPage: React.FC = () => {
       const botMessages = await generateInstance.generate(prompt, fullConfig);
 
       if (direction === "right" || direction === "regen") {
+        const oldHeight = botChoiceDivRef.current?.getBoundingClientRect().height || 0;
+
         for await (const message of botMessages) {
           combined += message;
           const newBotMessage: ChatMessageEntity = {
@@ -245,7 +250,11 @@ export const ChatPage: React.FC = () => {
             message: combined,
           };
           dispatch({ type: "new_client_messages", messages: [newBotMessage] });
-          scrollToBottom();
+
+          const newHeight = botChoiceDivRef.current?.getBoundingClientRect().height || 0;
+          if (newHeight > oldHeight) {
+            scrollToBottom();
+          }
         }
         const botMessage = await chatService.createMessage(chatId, {
           message: combined,
@@ -266,9 +275,9 @@ export const ChatPage: React.FC = () => {
     }
   };
 
-  const sendChat = async () => {
+  const generateChat = async () => {
     try {
-      if (isGenerating) {
+      if (!canGenerateChat) {
         return;
       }
 
@@ -394,7 +403,7 @@ export const ChatPage: React.FC = () => {
       {data && (
         <>
           <Row justify="center">
-            <Col lg={16} xs={24} md={20} className="d-flex justify-space-between align-center">
+            <Col {...CHAT_COLUMN_PROPS} className="d-flex justify-space-between align-center">
               <Link to={`/characters/${data.chat.characters.id}`}>
                 <Button type="text" size="large">
                   <LeftCircleFilled /> Back
@@ -411,7 +420,7 @@ export const ChatPage: React.FC = () => {
           </CustomDivider>
 
           <Row justify="center" style={{ overflowY: "scroll" }} ref={messageDivRef}>
-            <Col lg={16} xs={24} md={20}>
+            <Col {...CHAT_COLUMN_PROPS}>
               <ChatContainer>
                 <List
                   className="text-left"
@@ -493,8 +502,8 @@ export const ChatPage: React.FC = () => {
       {!isLoading && canEdit && (
         <ChatInputContainer>
           <Row justify="center">
-            <Col lg={16} xs={24} md={20}>
-              <form onSubmit={sendChat}>
+            <Col {...CHAT_COLUMN_PROPS}>
+              <form onSubmit={generateChat}>
                 <div className="d-flex align-center">
                   <Input.TextArea
                     rows={3}
@@ -509,24 +518,24 @@ export const ChatPage: React.FC = () => {
                     onPressEnter={(event) => {
                       if (event.key === "Enter" && !event.shiftKey) {
                         event.preventDefault(); // prevent the default line break behavior
-                        sendChat();
+                        generateChat();
                       }
                     }}
                     ref={inputRef}
                   />
                   <Button
                     loading={isGenerating}
-                    disabled={!readyToChat || inputMessage.length === 0 || isGenerating}
+                    disabled={!canGenerateChat}
                     icon={<SendOutlined />}
                     type="text"
                     size="large"
                     style={{
-                      color: "#3498db",
+                      color: isGenerating || canGenerateChat ? "#3498db" : "#ffffff40",
                       fontSize: "1.5rem",
                       height: "4rem",
                       paddingLeft: "0.5rem",
                     }}
-                    onClick={sendChat}
+                    onClick={generateChat}
                   />
                 </div>
               </form>

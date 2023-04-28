@@ -8,6 +8,7 @@ import {
   GoogleOutlined,
   GithubOutlined,
   DisconnectOutlined,
+  TwitterOutlined,
 } from "@ant-design/icons";
 import { Provider } from "@supabase/supabase-js";
 import { AppContext } from "../../../appContext";
@@ -107,6 +108,10 @@ export const Register = () => {
 
         <Button icon={<GoogleOutlined />} onClick={() => registerWithProvider("google")} block>
           Register with Google
+        </Button>
+
+        <Button icon={<TwitterOutlined />} onClick={() => registerWithProvider("twitter")} block>
+          Register with Twitter
         </Button>
 
         <Button icon={<DisconnectOutlined />} onClick={() => registerWithProvider("discord")} block>

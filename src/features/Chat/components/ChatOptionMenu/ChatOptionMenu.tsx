@@ -6,6 +6,7 @@ import {
   MenuOutlined,
   SaveOutlined,
   LoadingOutlined,
+  ToolOutlined,
 } from "@ant-design/icons";
 import { Tag, Dropdown, Tooltip, Switch, Button, message, App, Input } from "antd";
 import { AxiosError } from "axios";
@@ -117,8 +118,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
           selectable: false,
           items: [
             {
-              key: "generation",
-
+              key: "api",
               label: (
                 <Tooltip title="Setup this one time so you can start chatting" placement="right">
                   <div
@@ -126,7 +126,21 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                       setOpenChatSettingsModal(true);
                     }}
                   >
-                    <SlidersOutlined /> Chat Settings
+                    <ToolOutlined /> API Settings
+                  </div>
+                </Tooltip>
+              ),
+            },
+            {
+              key: "generation",
+              label: (
+                <Tooltip title="Generation settings (For advanced users)" placement="right">
+                  <div
+                    onClick={() => {
+                      setOpenChatSettingsModal(true);
+                    }}
+                  >
+                    <SlidersOutlined /> Generation Settings
                   </div>
                 </Tooltip>
               ),

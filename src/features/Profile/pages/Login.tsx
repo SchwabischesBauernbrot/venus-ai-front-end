@@ -9,6 +9,7 @@ import {
   GoogleOutlined,
   GithubOutlined,
   DisconnectOutlined,
+  TwitterOutlined,
 } from "@ant-design/icons";
 import { AppContext } from "../../../appContext";
 import { supabase } from "../../../config";
@@ -91,6 +92,10 @@ export const Login = () => {
       <Space.Compact direction="vertical" className="w-100">
         <Button icon={<GoogleOutlined />} onClick={() => loginWithProvider("google")} block>
           Login with Google
+        </Button>
+
+        <Button icon={<TwitterOutlined />} onClick={() => loginWithProvider("twitter")} block>
+          Login with Twitter
         </Button>
 
         <Button icon={<DisconnectOutlined />} onClick={() => loginWithProvider("discord")} block>

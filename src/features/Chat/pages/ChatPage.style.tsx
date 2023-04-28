@@ -66,6 +66,10 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
     justify-content: space-between;
     padding: 0.75rem 1.25rem 0.75rem 0;
     color: rgba(255, 255, 255, 0.85);
+
+    &:last-child {
+      padding-bottom: 0;
+    }
   }
 
   .ant-list-item .ant-list-item-meta {

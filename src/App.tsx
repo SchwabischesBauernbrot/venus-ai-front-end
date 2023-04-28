@@ -227,7 +227,8 @@ const App: React.FC = () => {
       <ConfigProvider
         theme={{
           algorithm: [
-            localData.theme === "light" ? theme.defaultAlgorithm : theme.darkAlgorithm,
+            theme.darkAlgorithm,
+            // localData.theme === "light" ? theme.defaultAlgorithm : theme.darkAlgorithm,
             // theme.compactAlgorithm,
           ],
           token: {
