@@ -18,6 +18,10 @@
 
 // Mobile override lol
 .global-css-override {
+  .ant-layout {
+    background: #242525;
+  }
+
   .ant-layout-header {
     padding-inline: 3rem;
   }

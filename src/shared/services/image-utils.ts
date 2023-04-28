@@ -4,7 +4,7 @@ export const compressImage = (file: File | Blob): Promise<File> => {
   return new Promise((resolve, reject) => {
     new Compressor(file, {
       quality: 0.9,
-      maxWidth: 500,
+      maxWidth: 800,
       minWidth: 100,
       success(result) {
         resolve(result as File);
