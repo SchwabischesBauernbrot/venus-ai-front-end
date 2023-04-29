@@ -16,6 +16,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@loadable/component": "^5.15.3",
+    "@sentry/react": "^7.50.0",
     "@supabase/supabase-js": "^2.8.0",
     "antd": "^5.4.0",
     "antd-css-utilities": "^1.0.3",

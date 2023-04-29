@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import * as Sentry from "@sentry/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ConfigProvider, App as AntdApp, theme } from "antd";
 import loadable from "@loadable/component";
@@ -205,6 +206,7 @@ const App: React.FC = () => {
 
         if (profileData) {
           setProfile(profileData);
+          Sentry.setUser(profileData);
           updateConfig(getUserConfig(profileData.config));
         }
       },
