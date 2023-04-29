@@ -1,5 +1,5 @@
-import { axiosInstance, supabase, SUPABASE_BUCKET_URL } from "../../../config";
-import { message, Input, Button, Upload, Form } from "antd";
+import { supabase } from "../../../config";
+import { Input, Button, Upload, Form, App } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { compressImage } from "../../../shared/services/image-utils";
@@ -21,6 +21,7 @@ interface FormValues {
 
 export const ProfileForm = ({ values }: { values: FormValues }) => {
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
   const [form] = Form.useForm<FormValues>();
 
   const onFinish = async ({ avatar_payload, name, user_name, profile, about_me }: FormValues) => {

@@ -145,6 +145,7 @@ export interface components {
       summary: string;
       created_at: string;
       is_public: boolean;
+      summary_chat_id: number | null;
     };
     UpdateChatDto: {
       is_public?: boolean;
@@ -158,6 +159,7 @@ export interface components {
       summary: string;
       created_at: string;
       is_public: boolean;
+      summary_chat_id: number | null;
       characters: {
         id?: string;
         name?: string;

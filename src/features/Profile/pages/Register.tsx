@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { Typography, Input, Button, Form, message, Space } from "antd";
+import { Typography, Input, Button, Form, Space, App } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -30,6 +30,7 @@ const RegisterFormContainer = styled.div`
 
 export const Register = () => {
   const { setSession } = useContext(AppContext);
+  const { message } = App.useApp();
   const navigate = useNavigate();
 
   const [form] = Form.useForm<FormValues>();

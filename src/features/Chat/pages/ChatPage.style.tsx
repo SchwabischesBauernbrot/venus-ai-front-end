@@ -1,5 +1,5 @@
 import { Divider, Layout } from "antd";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
 
 export const ChatLayout = styled(Layout)`
@@ -19,6 +19,11 @@ export const ChatContainer = styled.div`
     position: relative;
     top: -5px;
     margin-bottom: 0.25rem;
+    font-size: 1.05rem !important;
+  }
+
+  .ant-list-item-meta-description {
+    font-size: 1.05rem !important;
   }
 
   ${MOBILE_BREAKPOINT_CSS} {
@@ -54,7 +59,7 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 0.75rem 1.25rem 0.75rem 0;
+    padding: 0.75rem 1.4rem 0.75rem 0;
     color: rgba(255, 255, 255, 0.85);
 
     &:last-child {
@@ -83,14 +88,19 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
   }
 `;
 
-export const BotMessageControl = styled.div`
+export const BotMessageControlWrapper = styled.div<{ side: "left" | "right" }>`
   position: absolute;
-  top: 0px;
-  z-index: 1;
-  display: flex;
-  justify-content: space-around;
-  width: calc(100% + 0.5rem);
   top: 40%;
+  z-index: 1;
+
+  ${(props) =>
+    props.side === "left"
+      ? css`
+          left: 0;
+        `
+      : css`
+          right: -0.4rem;
+        `}
 `;
 
 export const CustomDivider = styled(Divider)`

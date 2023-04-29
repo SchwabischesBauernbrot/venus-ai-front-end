@@ -35,8 +35,6 @@ export const GenerationSettingsModal: React.FC<ChatSettingsModalProps> = ({
 
   const initialValues: FormValues = useMemo(() => ({ ...config.generation_settings }), [config]);
 
-  console.log({ initialValues });
-
   const onFinish = (formValues: FormValues) => {
     const newConfig: Partial<UserConfig> = {
       ...config,

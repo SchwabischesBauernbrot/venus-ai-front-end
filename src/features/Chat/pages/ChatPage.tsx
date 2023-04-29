@@ -12,11 +12,11 @@ import { openAiGenerateInstance } from "../services/generate/openai-generate";
 import { chatService } from "../services/chat-service";
 import {
   ChatContainer,
-  BotMessageControl,
   BotChoicesOverlay,
   BotChoicesContainer,
   CustomDivider,
   ChatLayout,
+  BotMessageControlWrapper,
 } from "./ChatPage.style";
 import { MessageDisplay } from "../components/MessageDisplay";
 import { ChatOptionMenu } from "../components/ChatOptionMenu/ChatOptionMenu";
@@ -304,7 +304,7 @@ export const ChatPage: React.FC = () => {
       if (choiceToKeep) {
         choiceToKeep.is_main = true;
 
-        // No await, lol
+        // No await, but this might failed sometime lol...
         chatService.updateMassage(chatId, choiceToKeep.id, {
           is_main: true,
         });
@@ -433,7 +433,10 @@ export const ChatPage: React.FC = () => {
                       user={canEdit ? profile?.name : "Anon"}
                       userAvatar={canEdit ? profile?.avatar : undefined}
                       showRegenerate={
-                        item.is_main && index === mainMessages.length - 1 && botChoices.length === 0
+                        item.is_main &&
+                        !item.is_bot &&
+                        index === mainMessages.length - 1 &&
+                        botChoices.length === 0
                       }
                       onRegenerate={() => swipe("regen")}
                       characterName={data.chat.characters.name}
@@ -449,27 +452,31 @@ export const ChatPage: React.FC = () => {
                 {botChoices.length > 0 && (
                   <BotChoicesContainer>
                     {!isGenerating && (
-                      <BotMessageControl>
+                      <>
                         {choiceIndex > 0 && (
+                          <BotMessageControlWrapper side="left">
+                            <Button
+                              type="text"
+                              shape="circle"
+                              size="large"
+                              onClick={() => swipe("left")}
+                            >
+                              <LeftOutlined />
+                            </Button>
+                          </BotMessageControlWrapper>
+                        )}
+                        <BotMessageControlWrapper side="right">
                           <Button
+                            style={{ marginLeft: "auto" }}
                             type="text"
                             shape="circle"
                             size="large"
-                            onClick={() => swipe("left")}
+                            onClick={() => swipe("right")}
                           >
-                            <LeftOutlined />
+                            <RightOutlined />
                           </Button>
-                        )}
-                        <Button
-                          style={{ marginLeft: "auto" }}
-                          type="text"
-                          shape="circle"
-                          size="large"
-                          onClick={() => swipe("right")}
-                        >
-                          <RightOutlined />
-                        </Button>
-                      </BotMessageControl>
+                        </BotMessageControlWrapper>
+                      </>
                     )}
 
                     <BotChoicesOverlay ref={botChoiceDivRef} index={choiceIndex}>

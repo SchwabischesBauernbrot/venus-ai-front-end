@@ -27,6 +27,9 @@ export const buildSystemInstruction = (
   includeExampleDialog = false
 ) => {
   const { summary, characters } = chat;
+
+  console.log({ chat });
+
   const { name = "", personality = "", scenario = "", example_dialogs = "" } = characters;
 
   const jailbreakPrompt = config.jailbreak_prompt;
@@ -45,4 +48,29 @@ export const buildSystemInstruction = (
   }`;
 
   return systemInstruction;
+};
+
+export const callOpenAI = async (
+  messages: OpenAIInputMessage[],
+  config: UserConfigAndLocalData
+) => {
+  const baseUrl =
+    config.open_ai_mode === "api_key" ? "https://api.openai.com/v1" : config.open_ai_reverse_proxy;
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    body: JSON.stringify({
+      model: config.model,
+      temperature: config.generation_settings.temperature,
+      max_tokens: config.generation_settings.max_new_token || undefined,
+      stream: shouldUseTextStreaming(config),
+      messages,
+    }),
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: config.open_ai_mode === "api_key" ? `Bearer ${config.openAIKey}` : "",
+    },
+  });
+
+  return response;
 };
