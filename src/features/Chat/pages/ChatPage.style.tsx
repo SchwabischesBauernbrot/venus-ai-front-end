@@ -10,16 +10,6 @@ export const ChatLayout = styled(Layout)`
   grid-template-rows: 3rem 1.75rem auto 6.5rem;
 `;
 
-export const ChatInputContainer = styled.div`
-  padding: 0 1rem;
-  margin: auto 0;
-  width: 100%;
-
-  textarea {
-    font-size: 1rem; // Safari fix lol
-  }
-`;
-
 export const ChatContainer = styled.div`
   overflow-y: scroll;
   padding: 0 0.5rem 0 1rem;

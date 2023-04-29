@@ -92,14 +92,19 @@ class OpenAIGenerate extends GenerateInterface {
     const result = await callOpenAI(input.messages!, config);
     let stream = shouldUseTextStreaming(config);
 
+    if (result.status !== 200) {
+      const response = await result.json();
+      if ("error" in response) {
+        const error = response as { error: OpenAIError | OpenAIProxyError };
+        throw new Error(error.error.message);
+      }
+    }
+
     if (!stream) {
       const response = await result.json();
       if ("choices" in response) {
         const openAIResponse = response as OpenAIResponse;
         yield openAIResponse.choices[0].message.content;
-      } else if ("error" in response) {
-        const error = response as { error: OpenAIError | OpenAIProxyError };
-        throw new Error(error.error.message);
       }
     } else {
       const openAIStream = result.body;

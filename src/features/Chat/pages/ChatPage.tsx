@@ -25,6 +25,7 @@ import { PrivateIndicator } from "../../../shared/components";
 import { UserConfigAndLocalData } from "../../../shared/services/user-config";
 import { GenerateInterface } from "../services/generate/generate-interface";
 import { koboldGenerateInstance } from "../services/generate/kobold-generate";
+import { ChatInput } from "../components/ChatInput";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -82,11 +83,10 @@ export const ChatPage: React.FC = () => {
   const { profile, config, localData } = useContext(AppContext);
   const { chatId } = useParams();
 
-  const inputRef = useRef<InputRef>(null);
   const messageDivRef = useRef<HTMLDivElement>(null);
   const botChoiceDivRef = useRef<HTMLDivElement>(null);
 
-  const [inputMessage, setInputMessage] = useState<string>("");
+  const [shouldFocus, setShouldFocus] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const [chatState, dispatch] = useReducer(dispatchFunction, initialChatState);
@@ -96,7 +96,6 @@ export const ChatPage: React.FC = () => {
 
   const isImmersiveMode = Boolean(config?.immersive_mode);
   const readyToChat = chatService.readyToChat(config, localData);
-  const canGenerateChat = readyToChat && inputMessage.length > 0 && !isGenerating;
 
   const fullConfig: UserConfigAndLocalData = useMemo(() => {
     return { ...localData, ...config! };
@@ -142,8 +141,7 @@ export const ChatPage: React.FC = () => {
     {
       enabled: false,
       onSuccess: () => {
-        inputRef.current?.focus();
-
+        setShouldFocus(true);
         scrollToBottom();
       },
       retry: 1,
@@ -217,8 +215,6 @@ export const ChatPage: React.FC = () => {
         scrollToTopChoice();
       }
 
-      let combined = "";
-
       // Simulate regenrate the massage
       const lastMessage = findLast(chatState.messages, (m) => !m.is_bot);
       const historyWithoutLastMessage = chatState.messages.filter(
@@ -238,16 +234,16 @@ export const ChatPage: React.FC = () => {
 
       if (direction === "right" || direction === "regen") {
         const oldHeight = botChoiceDivRef.current?.getBoundingClientRect().height || 0;
-
+        let streamingText = "";
         for await (const message of botMessages) {
-          combined += message;
+          streamingText += message;
           const newBotMessage: ChatMessageEntity = {
             id: -1,
             chat_id: 0,
             created_at: "",
             is_bot: true,
             is_main: false,
-            message: combined,
+            message: streamingText,
           };
           dispatch({ type: "new_client_messages", messages: [newBotMessage] });
 
@@ -256,12 +252,15 @@ export const ChatPage: React.FC = () => {
             scrollToBottom();
           }
         }
-        const botMessage = await chatService.createMessage(chatId, {
-          message: combined,
-          is_bot: true,
-          is_main: false,
-        });
-        dispatch({ type: "new_server_messages", messages: [botMessage] });
+
+        if (streamingText.length > 0) {
+          const botMessage = await chatService.createMessage(chatId, {
+            message: streamingText,
+            is_bot: true,
+            is_main: false,
+          });
+          dispatch({ type: "new_server_messages", messages: [botMessage] });
+        }
       }
     } catch (err) {
       const error = err as Error;
@@ -275,14 +274,14 @@ export const ChatPage: React.FC = () => {
     }
   };
 
-  const generateChat = async () => {
+  const generateChat = async (inputMessage: string) => {
     try {
+      const canGenerateChat = readyToChat && inputMessage.length > 0 && !isGenerating;
       if (!canGenerateChat) {
         return;
       }
 
       setIsGenerating(true);
-      setInputMessage("");
 
       const localUserMessage: ChatMessageEntity = {
         id: -2,
@@ -357,9 +356,10 @@ export const ChatPage: React.FC = () => {
       }
 
       // If failed to create bot message, no need to save
-      const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
-
-      dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
+      if (streamingText !== "") {
+        const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
+        dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
+      }
     } catch (err) {
       const error = err as Error;
       message.error(error.message, 3);
@@ -500,48 +500,12 @@ export const ChatPage: React.FC = () => {
       )}
 
       {!isLoading && canEdit && (
-        <ChatInputContainer>
-          <Row justify="center">
-            <Col {...CHAT_COLUMN_PROPS}>
-              <form onSubmit={generateChat}>
-                <div className="d-flex align-center">
-                  <Input.TextArea
-                    rows={3}
-                    disabled={!readyToChat}
-                    placeholder={
-                      readyToChat
-                        ? "Enter to chat. Shift + Enter for linebreak."
-                        : "Please setup the API on top right corner to start chating."
-                    }
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onPressEnter={(event) => {
-                      if (event.key === "Enter" && !event.shiftKey) {
-                        event.preventDefault(); // prevent the default line break behavior
-                        generateChat();
-                      }
-                    }}
-                    ref={inputRef}
-                  />
-                  <Button
-                    loading={isGenerating}
-                    disabled={!canGenerateChat}
-                    icon={<SendOutlined />}
-                    type="text"
-                    size="large"
-                    style={{
-                      color: isGenerating || canGenerateChat ? "#3498db" : "#ffffff40",
-                      fontSize: "1.5rem",
-                      height: "4rem",
-                      paddingLeft: "0.5rem",
-                    }}
-                    onClick={generateChat}
-                  />
-                </div>
-              </form>
-            </Col>
-          </Row>
-        </ChatInputContainer>
+        <ChatInput
+          shouldFocus={shouldFocus}
+          readyToChat={readyToChat}
+          isGenerating={isGenerating}
+          onGenerateChat={(message) => generateChat(message)}
+        />
       )}
     </ChatLayout>
   );

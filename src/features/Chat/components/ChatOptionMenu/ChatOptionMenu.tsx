@@ -20,6 +20,7 @@ import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import { ChatHistoryModal } from "./ChatHistoryModal";
 import { ChatSettingsModal } from "./ChatSettingsModal";
 import { ChatSummaryModal } from "./ChatSummaryModal";
+import { GenerationSettingsModal } from "./GenerationSettingsModal";
 
 interface ChatOptionMenuProps {
   chat: ChatEntityWithCharacter;
@@ -36,6 +37,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
   const [openChatHistoryModal, setOpenChatHistoryModal] = useState(false);
   const [openChatSettingsModal, setOpenChatSettingsModal] = useState(false); // For testing
   const [openChatSummaryModal, setOpenChatSummaryModal] = useState(false);
+  const [openGenerationSettingsModal, setOpenGenerationSettingsModal] = useState(false);
 
   const createChat = async () => {
     try {
@@ -137,7 +139,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                 <Tooltip title="Generation settings (For advanced users)" placement="right">
                   <div
                     onClick={() => {
-                      setOpenChatSettingsModal(true);
+                      setOpenGenerationSettingsModal(true);
                     }}
                   >
                     <SlidersOutlined /> Generation Settings
@@ -196,8 +198,12 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
             },
             {
               key: "share",
+              disabled: chat.is_public,
               label: (
-                <Tooltip title="Make this chat public and give you a link" placement="right">
+                <Tooltip
+                  title="Make this chat public and give you a link for sharing"
+                  placement="right"
+                >
                   <div
                     onClick={() => {
                       if (isSharingChat) {
@@ -267,6 +273,11 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
         chat={chat}
         open={openChatSummaryModal}
         onModalClose={() => setOpenChatSummaryModal(false)}
+      />
+
+      <GenerationSettingsModal
+        open={openGenerationSettingsModal}
+        onModalClose={() => setOpenGenerationSettingsModal(false)}
       />
     </>
   );

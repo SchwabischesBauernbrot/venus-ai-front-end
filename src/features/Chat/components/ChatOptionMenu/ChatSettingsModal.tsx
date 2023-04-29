@@ -2,7 +2,6 @@ import { SaveOutlined } from "@ant-design/icons";
 import { App, Button, Form, Input, Modal, Radio, Select, Space, Switch, Typography } from "antd";
 
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
 import { AppContext } from "../../../../appContext";
 import {
   KOBOLD_AI_DEFAULT_GENERATION_SETTING,
@@ -29,7 +28,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
   const [isCheckingKobol, setIsCheckingKobol] = useState(false);
   const [koboldModel, setKoboldModel] = useState("");
 
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [form] = Form.useForm<FormValues>();
 
   // This shouldn't happen because user should see config
@@ -148,7 +147,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
 
   return (
     <Modal
-      title="API & Generation Settings"
+      title="API Settings"
       open={open}
       okText={
         <span>
@@ -216,7 +215,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         platform.openai.com
                       </a>{" "}
                       and get this at{" "}
-                      <a href="https://beta.openai.com/account/api-keys">
+                      <a href="https://beta.openai.com/account/api-keys" target="_blank">
                         beta.openai.com/account/api-keys
                       </a>
                       .
@@ -252,9 +251,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                   label="Open AI Reverse Proxy"
                   help={
                     <span>
-                      These proxies are contributed by communities. It might be slow or unstable.{" "}
+                      These proxies are contributed by communities. Might be slow or unstable.{" "}
                       <br />
-                      Use at your own risk. <strong>Does NOT support text streaming.</strong>
+                      <strong>Does NOT support text streaming.</strong>
+                      <br />
+                      See{" "}
+                      <a href="https://rentry.co/Tavern4Retards#proxy-gpt-setup" target="_blank">
+                        this guide
+                      </a>{" "}
+                      on more details about where to find proxy.
                     </span>
                   }
                 >
@@ -361,11 +366,8 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
         </Form>
 
         <p className="mt-10">
-          For more advanced generation settings (temparature, max token), go to{" "}
-          <Link to="/settings" target="_blank">
-            Profile / Advanced Settings
-          </Link>
-          .
+          For more advanced settings (temparature, max token), go to{" "}
+          <strong>Generation Settings</strong>.
         </p>
       </div>
     </Modal>
