@@ -165,20 +165,6 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
               ),
             },
             {
-              key: "all_chat",
-              label: (
-                <Tooltip title="All your chats with this characters" placement="right">
-                  <div
-                    onClick={() => {
-                      setOpenChatHistoryModal(true);
-                    }}
-                  >
-                    <BookOutlined /> All Chats
-                  </div>
-                </Tooltip>
-              ),
-            },
-            {
               key: "new_chat",
               label: (
                 <Tooltip title="Create a new chat with the same character" placement="right">
@@ -196,6 +182,21 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
                 </Tooltip>
               ),
             },
+            {
+              key: "all_chat",
+              label: (
+                <Tooltip title="All your chats with this characters" placement="right">
+                  <div
+                    onClick={() => {
+                      setOpenChatHistoryModal(true);
+                    }}
+                  >
+                    <BookOutlined /> All Chats
+                  </div>
+                </Tooltip>
+              ),
+            },
+
             {
               key: "share",
               disabled: chat.is_public,
@@ -264,21 +265,28 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
         onModalClose={() => setOpenChatHistoryModal(false)}
       />
 
-      <ChatSettingsModal
-        open={openChatSettingsModal}
-        onModalClose={() => setOpenChatSettingsModal(false)}
-      />
+      {/* Hack so modal re-render when openning */}
+      {openChatSettingsModal && (
+        <ChatSettingsModal
+          open={openChatSettingsModal}
+          onModalClose={() => setOpenChatSettingsModal(false)}
+        />
+      )}
 
-      <ChatSummaryModal
-        chat={chat}
-        open={openChatSummaryModal}
-        onModalClose={() => setOpenChatSummaryModal(false)}
-      />
+      {openChatSummaryModal && (
+        <ChatSummaryModal
+          chat={chat}
+          open={openChatSummaryModal}
+          onModalClose={() => setOpenChatSummaryModal(false)}
+        />
+      )}
 
-      <GenerationSettingsModal
-        open={openGenerationSettingsModal}
-        onModalClose={() => setOpenGenerationSettingsModal(false)}
-      />
+      {openGenerationSettingsModal && (
+        <GenerationSettingsModal
+          open={openGenerationSettingsModal}
+          onModalClose={() => setOpenGenerationSettingsModal(false)}
+        />
+      )}
     </>
   );
 };

@@ -1,14 +1,16 @@
 export interface GenerationSetting {
   temperature: number;
-  max_new_token?: number; // undefined mean unlimited
+  max_new_token: number; // undefined or 0 mean unlimited
+  context_length?: number;
 
   // Only use for other models
-  context_length?: number;
   repetition_penalty?: number;
 }
 
 export const OPEN_AI_DEFAULT_GENERATION_SETTINGS: GenerationSetting = {
   temperature: 1,
+  max_new_token: 0,
+  context_length: 4096,
 };
 
 export const KOBOLD_AI_DEFAULT_GENERATION_SETTING: GenerationSetting = {

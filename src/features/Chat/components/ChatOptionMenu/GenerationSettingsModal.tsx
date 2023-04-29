@@ -1,29 +1,14 @@
 import { SaveOutlined } from "@ant-design/icons";
-import {
-  App,
-  Button,
-  Form,
-  Input,
-  Modal,
-  Radio,
-  Select,
-  Slider,
-  Space,
-  Switch,
-  Typography,
-} from "antd";
+import { App, Button, Form, Modal, Slider, Space, Typography } from "antd";
 
-import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useMemo } from "react";
 import { AppContext } from "../../../../appContext";
 import {
   GenerationSetting,
   KOBOLD_AI_DEFAULT_GENERATION_SETTING,
   OPEN_AI_DEFAULT_GENERATION_SETTINGS,
 } from "../../../../shared/services/generation-setting";
-import { UserConfig, UserConfigAndLocalData } from "../../../../shared/services/user-config";
-import { UserLocalData } from "../../../../shared/services/user-local-data";
-import { CheckInput, checkKoboldURL, checkOpenAIKeyOrProxy } from "../../services/check-service";
+import { UserConfig } from "../../../../shared/services/user-config";
 
 const { Title } = Typography;
 
@@ -33,8 +18,6 @@ interface ChatSettingsModalProps {
 }
 
 type FormValues = GenerationSetting;
-
-const OPEN_AI_MODELS = ["gpt-3.5-turbo", "text-davinci-003", "gpt-4"];
 
 export const GenerationSettingsModal: React.FC<ChatSettingsModalProps> = ({
   open,
@@ -50,7 +33,9 @@ export const GenerationSettingsModal: React.FC<ChatSettingsModalProps> = ({
     return null;
   }
 
-  const initialValues: FormValues = { ...config.generation_settings };
+  const initialValues: FormValues = useMemo(() => ({ ...config.generation_settings }), [config]);
+
+  console.log({ initialValues });
 
   const onFinish = (formValues: FormValues) => {
     const newConfig: Partial<UserConfig> = {
@@ -79,16 +64,7 @@ export const GenerationSettingsModal: React.FC<ChatSettingsModalProps> = ({
       onCancel={onModalClose}
       width={800}
     >
-      {/*
-temperature: This is a value used in Natural Language Processing (NLP) models like LLM (Language Model) to control the creativity of the model's responses. A temperature of 1 means the model will produce more unusual or unexpected responses, while a temperature of 0 will make the model produce only the most likely responses.
-
-max_new_token: This parameter sets an upper limit on the number of new words that can be added to the generated text by the model. It is an optional parameter, which means that it is not required to be provided to the LLM, and if not set, it defaults to 0.
-
-context_length: This parameter sets the number of previous words or tokens that the model uses to predict the next word or token. It determines how much context the model should consider before generating its response.
-
-repetition_penalty: This value is used to reduce the likelihood of the model producing repeated words or phrases in its generated text. The repetition_penalty is a penalty applied to the model's probability distribution over words, which encourages the model to produce more diverse output. */}
-
-      <div>
+      <div className="pb-1">
         <Form
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
@@ -96,14 +72,58 @@ repetition_penalty: This value is used to reduce the likelihood of the model pro
           onFinish={onFinish}
           initialValues={initialValues}
         >
+          <Form.Item label="Preset settings" className="mb-6 pt-2">
+            <Space.Compact block>
+              <Button onClick={() => form.setFieldsValue(OPEN_AI_DEFAULT_GENERATION_SETTINGS)}>
+                OpenAI default
+              </Button>
+              <Button onClick={() => form.setFieldsValue(KOBOLD_AI_DEFAULT_GENERATION_SETTING)}>
+                KoboldAI default
+              </Button>
+            </Space.Compact>
+          </Form.Item>
+
           <Form.Item
+            className="pb-2"
             name="temperature"
             label="Temparature"
-            rules={[{ required: true, message: "Please pick an item!" }]}
-            help="Control the creativity of the model's responses. A temperature of 1.5 means the model will produce more unusual or unexpected responses, while a temperature of 0 will make the model produce only the most likely responses."
+            help="The creativity of the answer. Lower value - the answers are more logical, but less creative. Higher value - the answers are more creative, but less logical."
           >
-            <Slider min={0} max={2} step={0.05} />
+            <Slider marks={{ 0: "0", 2: "2" }} min={0} max={2} step={0.05} />
           </Form.Item>
+
+          <Form.Item
+            className="pb-2"
+            name="max_new_token"
+            label="Max new token"
+            help="The maximum amount of tokens that a AI will generate to respond. One word is approximately 3-4 tokens. Set to 0 as unlimited."
+          >
+            <Slider marks={{ 0: "0", 1000: "1000" }} min={0} max={1000} step={5} />
+          </Form.Item>
+
+          <Form.Item
+            className="pb-2"
+            name="context_length"
+            label="Context Size"
+            help="How much will the AI remember. Context size also affects the speed of generation. Lower this if you get memory error!"
+          >
+            <Slider marks={{ 0: "0", 2048: "2048", 4096: "4096" }} min={0} max={4096} step={1} />
+          </Form.Item>
+
+          {config.api === "kobold" && (
+            <>
+              <Title level={5}>KoboldAI Settings</Title>
+
+              <Form.Item
+                className="pb-2"
+                name="repetition_penalty"
+                label="Repetition Penalty"
+                help="Repetition penalty is responsible for the penalty of repeated words. If the character is fixated on something or repeats the same phrase, then increasing this parameter will fix it. Do not set this to >1.2 for Pygmalion models."
+              >
+                <Slider marks={{ 1: "1", 1.5: "1.5" }} min={1} max={1.5} step={0.05} />
+              </Form.Item>
+            </>
+          )}
         </Form>
       </div>
     </Modal>

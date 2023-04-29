@@ -20,7 +20,7 @@ export const callOpenAI = async (
     body: JSON.stringify({
       model: config.model,
       temperature: config.generation_settings.temperature,
-      max_tokens: config.generation_settings.max_new_token,
+      max_tokens: config.generation_settings.max_new_token || undefined,
       stream: shouldUseTextStreaming(config),
       messages,
     }),

@@ -49,10 +49,10 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
           size="small"
           actions={[
             <span>
-              <Link to={`/chats/${chat.id}`}>
+              <a href={`/chats/${chat.id}`} target="_blank">
                 <WechatOutlined />
                 {"  "}Continue
-              </Link>
+              </a>
             </span>,
             <Popconfirm
               title="Delete this chat"
