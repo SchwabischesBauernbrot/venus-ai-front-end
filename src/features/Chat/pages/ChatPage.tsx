@@ -1,5 +1,5 @@
-import { Button, Col, Row, Spin, Input, InputRef, List, message, ColProps } from "antd";
-import { LeftCircleFilled, LeftOutlined, RightOutlined, SendOutlined } from "@ant-design/icons";
+import { Button, Col, Row, Spin, List, message, ColProps } from "antd";
+import { LeftCircleFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { findLast } from "lodash-es";
@@ -13,7 +13,6 @@ import { chatService } from "../services/chat-service";
 import {
   ChatContainer,
   BotMessageControl,
-  ChatInputContainer,
   BotChoicesOverlay,
   BotChoicesContainer,
   CustomDivider,
