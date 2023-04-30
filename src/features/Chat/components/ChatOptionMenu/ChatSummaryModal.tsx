@@ -1,6 +1,6 @@
 import { Modal, Input, Button, Tooltip, App, Space } from "antd";
 import { useContext, useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { AppContext } from "../../../../appContext";
 import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import React from "react";
@@ -12,11 +12,16 @@ import { last } from "lodash-es";
 interface ChatHistoryModalProps {
   chat: ChatEntityWithCharacter;
   open: boolean;
+  onReload: () => void;
   onModalClose: () => void;
 }
 
-export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({ open, chat, onModalClose }) => {
-  const queryClient = useQueryClient();
+export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
+  open,
+  chat,
+  onReload,
+  onModalClose,
+}) => {
   const { message } = App.useApp();
   const { config, localData } = useContext(AppContext);
 
@@ -34,7 +39,6 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({ open, chat, 
   const messagesSinceLastSave = React.useMemo(() => {
     const messages = [...(data?.chatMessages || [])].filter((message) => message.is_main).reverse();
 
-    // const result =
     return chat.summary_chat_id !== null
       ? messages.filter((message) => message.id > (chat.summary_chat_id ?? 0))
       : messages;
@@ -77,7 +81,8 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({ open, chat, 
 
     if (result.id) {
       message.success("Sucesfully update chat summary");
-      queryClient.invalidateQueries(["chat", chat.id]); // Refresh chat page
+
+      onReload(); // Refresh chat page, can not auto reload
 
       onModalClose();
       return result;
@@ -120,6 +125,7 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({ open, chat, 
               disabled={!canAutoGenerate || isGeneratingSummary}
               loading={isGeneratingSummary}
               icon={<CopyOutlined />}
+              style={{ whiteSpace: "normal", height: "auto" }}
               onClick={() => generateSummary("last")}
               type="primary"
               block
@@ -131,11 +137,12 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({ open, chat, 
           <Button
             disabled={!canAutoGenerate || isGeneratingSummary}
             loading={isGeneratingSummary}
+            style={{ whiteSpace: "normal", height: "auto" }}
             icon={<CopyOutlined />}
             onClick={() => generateSummary("full")}
             block
           >
-            Generate Summary (All)
+            Generate Summary (As far as possible)
           </Button>
         </Space.Compact>
       </Tooltip>

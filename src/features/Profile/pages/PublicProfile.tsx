@@ -8,6 +8,7 @@ import { CharacterView, ProfileResponse } from "../../../types/backend-alias";
 import { PageContainer } from "../../../shared/components/shared";
 import { getAvatarUrl } from "../../../shared/services/utils";
 import { CharacterList } from "../../../shared/components/CharacterList";
+import { MultiLineMarkdown } from "../../../shared/components";
 
 const { Title } = Typography;
 
@@ -36,7 +37,7 @@ export const PublicProfile: React.FC = () => {
 
       {data && (
         <Row>
-          <Col span={4} className="text-left pt-4">
+          <Col lg={4} xs={24} className="text-left pt-4">
             {data.profile.avatar ? (
               <Avatar shape="square" size={100} src={getAvatarUrl(data.profile.avatar)} />
             ) : (
@@ -46,10 +47,12 @@ export const PublicProfile: React.FC = () => {
             <Title level={3} className="my-2">
               @{data.profile.user_name || data.profile.name}
             </Title>
-            {data.profile.about_me && <p>{data.profile.about_me}</p>}
+            {data.profile.about_me && (
+              <MultiLineMarkdown>{data.profile.about_me}</MultiLineMarkdown>
+            )}
           </Col>
 
-          <Col span={20} className="text-left">
+          <Col lg={20} xs={24} className="text-left">
             <Title level={3} className="my-2">
               Public characters (Total: {data.characters.length} characters)
             </Title>

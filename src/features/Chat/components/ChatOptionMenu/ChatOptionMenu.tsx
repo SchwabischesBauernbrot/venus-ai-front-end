@@ -24,10 +24,11 @@ import { GenerationSettingsModal } from "./GenerationSettingsModal";
 
 interface ChatOptionMenuProps {
   chat: ChatEntityWithCharacter;
+  onReload: () => void;
   readyToChat: boolean;
 }
 
-export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToChat }) => {
+export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, readyToChat }) => {
   const { profile, config, updateConfig } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { modal } = App.useApp();
@@ -277,6 +278,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, readyToCha
         <ChatSummaryModal
           chat={chat}
           open={openChatSummaryModal}
+          onReload={onReload}
           onModalClose={() => setOpenChatSummaryModal(false)}
         />
       )}

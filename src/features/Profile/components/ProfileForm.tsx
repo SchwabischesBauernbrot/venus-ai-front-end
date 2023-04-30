@@ -101,7 +101,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           name="name"
           label="Name"
           rules={[{ required: true, message: "Please enter your name!" }]}
-          help="This will be used in your conversation with bot"
+          help="This will be used in your conversation with character"
         >
           <Input placeholder="Name" />
         </Form.Item>
@@ -140,7 +140,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           className="pb-4"
           name="about_me"
           label="About me"
-          help="This will be displayed in your profile. You can put link to your site or Discord..."
+          help="This will be displayed in your profile. Support Markdown..."
         >
           <Input.TextArea rows={4} />
         </Form.Item>

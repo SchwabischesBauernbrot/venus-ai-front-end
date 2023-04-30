@@ -409,7 +409,11 @@ export const ChatPage: React.FC = () => {
                 </Button>
               </Link>
 
-              <ChatOptionMenu readyToChat={readyToChat} chat={data.chat} />
+              <ChatOptionMenu
+                readyToChat={readyToChat}
+                chat={data.chat}
+                onReload={() => refreshChats()}
+              />
             </Col>
           </Row>
 

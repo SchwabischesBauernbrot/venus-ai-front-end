@@ -120,7 +120,13 @@ export const ViewCharacter: React.FC = () => {
             ) : null}
 
             <div className="mt-4">
-              <Button type="primary" block onClick={startChat} disabled={isStartingChat}>
+              <Button
+                type="primary"
+                block
+                onClick={startChat}
+                style={{ whiteSpace: "normal", height: "auto" }}
+                disabled={isStartingChat}
+              >
                 {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name}
               </Button>
             </div>

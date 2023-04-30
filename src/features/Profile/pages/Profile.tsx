@@ -4,6 +4,7 @@ import { Typography, Spin } from "antd";
 import { AppContext } from "../../../appContext";
 import { ProfileForm } from "../components/ProfileForm";
 import { PageContainer } from "../../../shared/components/shared";
+import { Link } from "react-router-dom";
 const { Title } = Typography;
 
 export const Profile = () => {
@@ -11,7 +12,9 @@ export const Profile = () => {
 
   return (
     <PageContainer>
-      <Title level={2}>My Profile</Title>
+      <Title level={2}>
+        My Profile <Link to={`/profiles/${profile?.id}`}>(Public Profile)</Link>
+      </Title>
 
       {profile ? <ProfileForm values={profile} /> : <Spin />}
     </PageContainer>
