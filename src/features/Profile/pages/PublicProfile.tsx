@@ -4,11 +4,12 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { axiosInstance } from "../../../config";
-import { CharacterView, ProfileResponse } from "../../../types/backend-alias";
+import { CharacterView, Paginated, ProfileResponse } from "../../../types/backend-alias";
 import { PageContainer } from "../../../shared/components/shared";
 import { getAvatarUrl } from "../../../shared/services/utils";
 import { CharacterList } from "../../../shared/components/CharacterList";
 import { MultiLineMarkdown } from "../../../shared/components";
+import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 
 const { Title } = Typography;
 
@@ -19,14 +20,12 @@ export const PublicProfile: React.FC = () => {
   const { data, isLoading } = useQuery(
     ["profile", profileId],
     async () => {
-      const [profileResponse, profileCharacterResponse] = await Promise.all([
+      const [profileResponse] = await Promise.all([
         axiosInstance.get<ProfileResponse>(`profiles/${profileId}`),
-        axiosInstance.get<CharacterView[]>(`profiles/${profileId}/characters`),
       ]);
 
       const profile = profileResponse.data;
-      const characters = profileCharacterResponse.data;
-      return { profile, characters };
+      return profile;
     },
     { enabled: !!profileId }
   );
@@ -38,26 +37,28 @@ export const PublicProfile: React.FC = () => {
       {data && (
         <Row>
           <Col lg={4} xs={24} className="text-left pt-4">
-            {data.profile.avatar ? (
-              <Avatar shape="square" size={100} src={getAvatarUrl(data.profile.avatar)} />
+            {data.avatar ? (
+              <Avatar shape="square" size={100} src={getAvatarUrl(data.avatar)} />
             ) : (
               <Avatar shape="square" size={100} icon={<UserOutlined />} />
             )}
 
             <Title level={3} className="my-2">
-              @{data.profile.user_name || data.profile.name}
+              @{data.user_name || data.name}
             </Title>
-            {data.profile.about_me && (
-              <MultiLineMarkdown>{data.profile.about_me}</MultiLineMarkdown>
-            )}
+            {data.about_me && <MultiLineMarkdown>{data.about_me}</MultiLineMarkdown>}
           </Col>
 
           <Col lg={20} xs={24} className="text-left">
             <Title level={3} className="my-2">
-              Public characters (Total: {data.characters.length} characters)
+              Public characters
             </Title>
 
-            <CharacterList characters={data.characters} />
+            <CharacterListWrapper
+              size="medium"
+              cachekey={`profile_chars_${profileId}`}
+              baseUrl={`profiles/${profileId}/characters`}
+            />
           </Col>
         </Row>
       )}

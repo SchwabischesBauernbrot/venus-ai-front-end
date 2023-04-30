@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { AppContext } from "../../../appContext";
 import { ChatList } from "../../../shared/components";
 import { Link } from "react-router-dom";
+import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 
 const { Title } = Typography;
 
@@ -33,11 +34,6 @@ export const Home: React.FC = () => {
     { enabled: !!profile }
   );
 
-  const { data, isLoading } = useQuery("main_page", async () => {
-    const response = await axiosInstance.get<CharacterView[]>("characters/home");
-    return response.data;
-  });
-
   return (
     <PageContainer align="left">
       {profile && (
@@ -45,13 +41,13 @@ export const Home: React.FC = () => {
           <Title level={2}>
             Continue Chats <Link to="/my_chats">(All Chats)</Link>
           </Title>
+          {isChatLoading && <Spin />}
           {chatData && <ChatList size="small" chats={chatData} />}
         </div>
       )}
 
       <Title level={2}>Latest characters</Title>
-      {isLoading && <Spin />}
-      {data && <CharacterList size="small" characters={data} />}
+      <CharacterListWrapper size="small" cachekey="main_page" baseUrl="characters/home" />
     </PageContainer>
   );
 };

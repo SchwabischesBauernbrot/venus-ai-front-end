@@ -25,3 +25,10 @@ export type SupaTag = Database["public"]["Tables"]["tags"]["Row"];
 export type CharacterWithProfileAndTag = SupaCharacter & { user_profiles: SupaUserProfile } & {
   tags: SupaTag[];
 };
+
+export interface Paginated<T> {
+  data: Array<T>;
+  total: number;
+  size: number;
+  page: number;
+}

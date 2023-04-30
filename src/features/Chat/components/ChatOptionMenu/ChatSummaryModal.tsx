@@ -124,7 +124,7 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
           </span>
         ) : (
           <span>
-            You have <strong>~{messagesToConsider.length}</strong> unsaved.
+            You have <strong>~{messagesToConsider.length} messages</strong> unsaved.
           </span>
         )}
       </p>
