@@ -25,7 +25,7 @@ const BotAvatar = styled.img`
 const ChatListContainer = styled.div<{ size: "small" | "medium" }>`
   margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
   grid-gap: ${(props) => (props.size === "small" ? "1rem" : "2rem")};
   align-items: stretch;
 
@@ -35,6 +35,10 @@ const ChatListContainer = styled.div<{ size: "small" | "medium" }>`
       .ant-card-body,
       .ant-card-meta-title {
         font-size: 0.8rem;
+      }
+
+      .ant-card-actions li {
+        margin: 0.25rem 0;
       }
     `}
 `;

@@ -36,20 +36,26 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
     enabled: Boolean(chat.id),
   });
 
-  const messagesSinceLastSave = React.useMemo(() => {
-    const messages = [...(data?.chatMessages || [])].filter((message) => message.is_main).reverse();
+  const messagesToConsider = React.useMemo(() => {
+    // Need to reverse because messages is sorted by created time on back-end lol
+    const messages = [...(data?.chatMessages || [])].reverse();
 
-    return chat.summary_chat_id !== null
-      ? messages.filter((message) => message.id > (chat.summary_chat_id ?? 0))
-      : messages;
+    const mainMessages = messages.filter((m) => m.is_main);
+    const lastMessage = messages.find((m) => !m.is_main); // Get the first non-main message
 
-    // return result;
+    const messagesToSummary = [...mainMessages];
+    if (lastMessage) {
+      messagesToSummary.push(lastMessage);
+    }
+
+    return messagesToSummary;
   }, [data]);
 
   const generateSummary = async (type: "full" | "last") => {
-    // Need to reverse because messages is sorted by created time on back-end lol
-    const messages = [...(data?.chatMessages || [])].filter((message) => message.is_main).reverse();
-    const messagesToSummary = type === "last" ? messagesSinceLastSave : messages;
+    const messagesToSummary =
+      type === "last"
+        ? messagesToConsider.filter((m) => m.id >= (data?.chat.summary_chat_id || 0))
+        : messagesToConsider;
 
     if (messagesToSummary.length === 0) {
       message.info("Nothing new to summary.");
@@ -76,7 +82,7 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
   const onSave = async () => {
     const result = await chatService.updateChat(chat.id, {
       summary,
-      summary_chat_id: last(messagesSinceLastSave)?.id,
+      summary_chat_id: last(messagesToConsider)?.id,
     });
 
     if (result.id) {
@@ -105,11 +111,15 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
         Enter a summary for your chat. This will be included into the prompt as long-term memory.
       </p>
 
-      {chat.summary_chat_id && (
-        <p>
-          You have updated the chat summary around ~ {messagesSinceLastSave?.length} messages ago.
-        </p>
-      )}
+      <p>
+        {chat.summary_chat_id ? (
+          <span>
+            You have updated the chat summary around ~ {messagesToConsider?.length} messages ago.
+          </span>
+        ) : (
+          <span>You have ~{messagesToConsider.length} unsaved.</span>
+        )}
+      </p>
 
       <Input.TextArea
         autoSize
@@ -124,13 +134,12 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
             <Button
               disabled={!canAutoGenerate || isGeneratingSummary}
               loading={isGeneratingSummary}
-              icon={<CopyOutlined />}
               style={{ whiteSpace: "normal", height: "auto" }}
               onClick={() => generateSummary("last")}
               type="primary"
               block
             >
-              Generate Summary (Since last save)
+              <CopyOutlined /> Generate Summary (Since last save)
             </Button>
           )}
 
@@ -138,11 +147,10 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
             disabled={!canAutoGenerate || isGeneratingSummary}
             loading={isGeneratingSummary}
             style={{ whiteSpace: "normal", height: "auto" }}
-            icon={<CopyOutlined />}
             onClick={() => generateSummary("full")}
             block
           >
-            Generate Summary (As far as possible)
+            <CopyOutlined /> Generate Summary (As far as possible)
           </Button>
         </Space.Compact>
       </Tooltip>
