@@ -185,6 +185,13 @@ export interface Database {
       }
     }
     Views: {
+      character_stats: {
+        Row: {
+          char_id: string | null
+          total_chat: number | null
+          total_message: number | null
+        }
+      }
       character_tags_view: {
         Row: {
           avatar: string | null
@@ -204,24 +211,11 @@ export interface Database {
           updated_at: string | null
         }
       }
-      view_chars: {
+      chat_message_count: {
         Row: {
-          avatar: string | null
-          description: string | null
-          id: string | null
-          name: string | null
-        }
-        Insert: {
-          avatar?: string | null
-          description?: string | null
-          id?: string | null
-          name?: string | null
-        }
-        Update: {
-          avatar?: string | null
-          description?: string | null
-          id?: string | null
-          name?: string | null
+          character_id: string | null
+          chat_id: number | null
+          message_count: number | null
         }
       }
     }

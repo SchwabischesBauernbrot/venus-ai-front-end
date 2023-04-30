@@ -8,6 +8,7 @@ import { CharacterList } from "../../../shared/components/CharacterList";
 import { useContext } from "react";
 import { AppContext } from "../../../appContext";
 import { ChatList } from "../../../shared/components";
+import { Link } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -41,7 +42,9 @@ export const Home: React.FC = () => {
     <PageContainer align="left">
       {profile && (
         <div className="mb-4">
-          <Title level={2}>Continue Chats</Title>
+          <Title level={2}>
+            Continue Chats <Link to="/my_chats">(All Chats)</Link>
+          </Title>
           {chatData && <ChatList size="small" chats={chatData} />}
         </div>
       )}

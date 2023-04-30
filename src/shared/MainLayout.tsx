@@ -10,7 +10,7 @@ import { UserAvatar } from "./components/UserAvatar";
 const { Header, Content, Footer } = Layout;
 
 export const MainLayout: React.FC = () => {
-  const { session, profile, updateLocalData, localData } = useContext(AppContext);
+  const { session, profile } = useContext(AppContext);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

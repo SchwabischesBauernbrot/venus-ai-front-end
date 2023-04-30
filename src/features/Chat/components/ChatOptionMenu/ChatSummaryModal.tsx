@@ -147,7 +147,9 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
               type="primary"
               block
             >
-              <CopyOutlined /> Generate Summary (Since last save)
+              <span>
+                <CopyOutlined /> Auto Summary (Since last updated)
+              </span>
             </Button>
           )}
 
@@ -158,7 +160,9 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
             onClick={() => generateSummary("full")}
             block
           >
-            <CopyOutlined /> Generate Summary (As far as possible)
+            <span>
+              <CopyOutlined /> Auto Summary (As far as possible)
+            </span>
           </Button>
         </Space.Compact>
       </Tooltip>

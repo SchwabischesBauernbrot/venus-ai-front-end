@@ -127,7 +127,7 @@ export const ViewCharacter: React.FC = () => {
                 style={{ whiteSpace: "normal", height: "auto" }}
                 disabled={isStartingChat}
               >
-                {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name}
+                {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name} 🔒
               </Button>
             </div>
           </Col>
