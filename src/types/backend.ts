@@ -144,6 +144,7 @@ export interface components {
       user_id: string;
       summary: string;
       created_at: string;
+      updated_at: string;
       is_public: boolean;
       summary_chat_id: number | null;
     };
@@ -158,6 +159,7 @@ export interface components {
       user_id: string;
       summary: string;
       created_at: string;
+      updated_at: string;
       is_public: boolean;
       summary_chat_id: number | null;
       characters: {

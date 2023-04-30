@@ -15,7 +15,7 @@ import { getLocalData, UserLocalData, saveLocalData } from "./shared/services/us
 import { getUserConfig, updateUserConfig, UserConfig } from "./shared/services/user-config";
 import { MainLayout } from "./shared/MainLayout";
 
-const Home = loadable(() => import("./features/Home"), {
+const Home = loadable(() => import("./features/Home/pages/Home"), {
   resolveComponent: (component) => component.Home,
 });
 

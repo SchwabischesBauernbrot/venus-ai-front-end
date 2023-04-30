@@ -1,8 +1,7 @@
 import { ChatEntityWithCharacter } from "../../types/backend-alias";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { WechatOutlined, DeleteOutlined, ClockCircleOutlined } from "@ant-design/icons";
-import { Card, Popconfirm } from "antd";
-import { Link } from "react-router-dom";
+import { Card, Popconfirm, Tooltip } from "antd";
 import { truncate } from "lodash-es";
 
 import { getBotAvatarUrl, getTimeAgo } from "../services/utils";
@@ -12,7 +11,7 @@ import { chatService } from "../../features/Chat/services/chat-service";
 interface ChatListProps {
   chats: ChatEntityWithCharacter[];
   size?: "small" | "medium";
-  onChatDeleted: () => {};
+  onChatDeleted?: () => {};
 }
 
 const BotAvatar = styled.img`
@@ -23,25 +22,31 @@ const BotAvatar = styled.img`
   border-radius: 1rem;
 `;
 
-const ChatContainer = styled.div<{ size: "small" | "medium" }>`
+const ChatListContainer = styled.div<{ size: "small" | "medium" }>`
   margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    ${(props) => (props.size === "small" ? "minmax(16rem, 1fr)" : "minmax(20rem, 1fr)")}
-  );
+  grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
   grid-gap: ${(props) => (props.size === "small" ? "1rem" : "2rem")};
   align-items: stretch;
+
+  ${(props) =>
+    props.size === "small" &&
+    css`
+      .ant-card-body,
+      .ant-card-meta-title {
+        font-size: 0.8rem;
+      }
+    `}
 `;
 
 export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size = "medium" }) => {
   const deleteChat = async (chatId: number) => {
     await chatService.deleteChat(chatId);
-    onChatDeleted();
+    onChatDeleted?.();
   };
 
   return (
-    <ChatContainer size={size}>
+    <ChatListContainer size={size}>
       {chats.map((chat) => (
         <Card
           key={chat.id}
@@ -54,16 +59,19 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
                 {"  "}Continue
               </a>
             </span>,
-            <Popconfirm
-              title="Delete this chat"
-              description="Are you sure to delete this chat?"
-              onConfirm={() => deleteChat(chat.id)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <DeleteOutlined /> Delete
-            </Popconfirm>,
-          ]}
+
+            onChatDeleted ? (
+              <Popconfirm
+                title="Delete this chat"
+                description="Are you sure to delete this chat?"
+                onConfirm={() => deleteChat(chat.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined /> Delete
+              </Popconfirm>
+            ) : undefined,
+          ].filter((a) => a)}
         >
           <Card.Meta
             avatar={<BotAvatar alt="" src={getBotAvatarUrl(chat.characters?.avatar || "")} />}
@@ -75,16 +83,21 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
             // Change to summary later
             description={
               <div>
-                {chat.summary && <p>Summary: {truncate(chat.summary, { length: 200 })}</p>}
-                <p>{truncate(chat.characters.description, { length: 200 })}</p>
+                {chat.summary ? (
+                  <Tooltip title={chat.summary}>
+                    <p>Summary: {truncate(chat.summary, { length: 150 })}</p>
+                  </Tooltip>
+                ) : (
+                  <p>{truncate(chat.characters.description, { length: 150 })}</p>
+                )}
                 <p>
-                  <ClockCircleOutlined /> {getTimeAgo(chat.created_at)} ago
+                  <ClockCircleOutlined /> {getTimeAgo(chat.updated_at)} ago
                 </p>
               </div>
             }
           />
         </Card>
       ))}
-    </ChatContainer>
+    </ChatListContainer>
   );
 };
