@@ -1,6 +1,6 @@
 import { Modal, Input, Button, Tooltip, App, Space } from "antd";
 import { useContext, useMemo, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { AppContext } from "../../../../appContext";
 import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import React from "react";
@@ -22,6 +22,7 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
   onReload,
   onModalClose,
 }) => {
+  const queryClient = useQueryClient();
   const { message } = App.useApp();
   const { config, localData } = useContext(AppContext);
 
@@ -41,21 +42,23 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
     const messages = [...(data?.chatMessages || [])].reverse();
 
     const mainMessages = messages.filter((m) => m.is_main);
-    const lastMessage = messages.find((m) => !m.is_main); // Get the first non-main message
+    // Get the first non-main message
+    const lastMessage = messages.find((m) => !m.is_main);
 
     const messagesToSummary = [...mainMessages];
-    if (lastMessage) {
+    if (lastMessage && lastMessage.id > last(mainMessages)!.id) {
       messagesToSummary.push(lastMessage);
     }
 
     return messagesToSummary;
   }, [data]);
 
+  const massagesSinceLastSave = messagesToConsider.filter(
+    (m) => m.id >= (data?.chat.summary_chat_id || 0)
+  );
+
   const generateSummary = async (type: "full" | "last") => {
-    const messagesToSummary =
-      type === "last"
-        ? messagesToConsider.filter((m) => m.id >= (data?.chat.summary_chat_id || 0))
-        : messagesToConsider;
+    const messagesToSummary = type === "last" ? massagesSinceLastSave : messagesToConsider;
 
     if (messagesToSummary.length === 0) {
       message.info("Nothing new to summary.");
@@ -88,7 +91,9 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
     if (result.id) {
       message.success("Sucesfully update chat summary");
 
-      onReload(); // Refresh chat page, can not auto reload
+      // Refresh ChatPage, can not auto reload because we set enable:false
+      queryClient.cancelQueries(["chat", chat.id]);
+      onReload();
 
       onModalClose();
       return result;
@@ -114,10 +119,13 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
       <p>
         {chat.summary_chat_id ? (
           <span>
-            You have updated the chat summary around ~ {messagesToConsider?.length} messages ago.
+            You have updated the chat summary around{" "}
+            <strong>~{massagesSinceLastSave.length} messages</strong> ago.
           </span>
         ) : (
-          <span>You have ~{messagesToConsider.length} unsaved.</span>
+          <span>
+            You have <strong>~{messagesToConsider.length}</strong> unsaved.
+          </span>
         )}
       </p>
 
