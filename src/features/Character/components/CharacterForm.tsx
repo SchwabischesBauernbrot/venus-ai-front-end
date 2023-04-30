@@ -323,8 +323,10 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         <Form.Item wrapperCol={RESPONSIVE_WRAPPER_COL} className="pt-4">
           <p>
             Total:{" "}
-            {countToken(personalityWatch + firstMessageWatch + scenarioWatch + exampleDialogWatch)}
+            {countToken(personalityWatch + firstMessageWatch + scenarioWatch + exampleDialogWatch)}.
+            Permanent: {countToken(personalityWatch + firstMessageWatch + scenarioWatch)}
           </p>
+          <p></p>
           <Button type="primary" htmlType="submit" block loading={isSubmitting}>
             {mode === "create" ? "Create Character" : "Update Character"}
           </Button>

@@ -10,7 +10,7 @@ export class Tokenizer {
   }
 
   static tokenCountFormat(input?: string) {
-    if (!input) return "0 character, 0 token";
-    return `${input.length} characters, ${Tokenizer.count(input)} tokens`;
+    if (!input) return "0 token";
+    return `${Tokenizer.count(input)} tokens`;
   }
 }
