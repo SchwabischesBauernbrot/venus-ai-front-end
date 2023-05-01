@@ -16,7 +16,8 @@ interface CharacterListProps {
 }
 
 const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
-  margin-top: 1rem;
+  margin: 1rem 0;
+
   display: grid;
   grid-template-columns: repeat(
     auto-fill,

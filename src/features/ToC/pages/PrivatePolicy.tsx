@@ -53,7 +53,7 @@ export const PrivatePolicy: React.FC = () => {
         </li>
         <li>
           <p>
-            <strong>Country</strong> refers to: Wyoming, United States
+            <strong>Country</strong> refers to: Bishui Plain, Liyue
           </p>
         </li>
         <li>

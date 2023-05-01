@@ -20,20 +20,21 @@ interface CharacterListWrapperProps {
 
   // show paging?
   cachekey: string;
-  ordering?: any; // created_time, popularity
-  query?: any; // search lol
-  filter?: any; // by tag or something
+  additionalParams?: { [key: string]: string | number | boolean | undefined };
 }
 
 export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
   baseUrl,
   cachekey,
   size,
+  additionalParams,
 }) => {
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery([cachekey, page], async () => {
-    const response = await axiosInstance.get<Paginated<CharacterView>>(`${baseUrl}?page=${page}`);
+  const { data } = useQuery([cachekey, additionalParams, page], async () => {
+    const response = await axiosInstance.get<Paginated<CharacterView>>(`${baseUrl}`, {
+      params: { page, ...additionalParams },
+    });
     return response.data;
   });
 
@@ -43,22 +44,32 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
 
   const { total, size: pageSize, data: characters } = data;
 
+  const pagination = (
+    <Pagination
+      total={total}
+      showTotal={(total) => `Total ${total} characters`}
+      defaultPageSize={pageSize}
+      defaultCurrent={1}
+      current={page}
+      responsive={true}
+      showSizeChanger={false} // Hide this as it will mess with the caching lol
+      onChange={(newPage) => {
+        setPage(newPage);
+      }}
+    />
+  );
+
   return (
-    <div>
-      <Pagination
-        total={total}
-        showTotal={(total) => `Total ${total} characters`}
-        defaultPageSize={pageSize}
-        defaultCurrent={1}
-        current={page}
-        responsive={true}
-        showSizeChanger={false} // Hide this as it will mess with the caching lol
-        onChange={(newPage) => {
-          setPage(newPage);
-        }}
-      />
+    <div className="mt-4">
+      <p>
+        Chats and messages count are updated <strong>every 5 minutes.</strong>
+      </p>
+
+      {pagination}
 
       <CharacterList size={size} characters={characters} />
+
+      {pagination}
     </div>
   );
 };

@@ -1,20 +1,53 @@
 import { useQuery } from "react-query";
-import { Typography, Spin } from "antd";
+import styled from "styled-components";
+import { Typography, Spin, Segmented } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
-import { axiosInstance, supabase } from "../../../config";
-import { CharacterView, ChatEntityWithCharacter } from "../../../types/backend-alias";
-import { CharacterList } from "../../../shared/components/CharacterList";
-import { useContext } from "react";
+import { supabase } from "../../../config";
+import { ChatEntityWithCharacter } from "../../../types/backend-alias";
+import { useContext, useMemo, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { ChatList } from "../../../shared/components";
 import { Link } from "react-router-dom";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
+import { useTags } from "../../../hooks/useTags";
 
 const { Title } = Typography;
 
+type Segment = "latest" | "popular" | "nsfw" | "female" | "male" | "anime";
+
+const SegmentContainer = styled.div`
+  max-width: 100%;
+  overflow-x: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 export const Home: React.FC = () => {
   const { profile } = useContext(AppContext);
+  const [segment, setSegment] = useState<Segment>("latest");
+
+  const params = useMemo(() => {
+    switch (segment) {
+      case "latest":
+        return undefined;
+      case "popular":
+        return { sort_by_popular: true };
+      case "nsfw":
+        return { only_nsfw: true };
+      // Lol hard code for now
+      case "female":
+        return { tag_id: 2 };
+      case "male":
+        return { tag_id: 1 };
+      case "anime":
+        return { tag_id: 9 };
+    }
+  }, [segment]);
 
   const { data: chatData, isLoading: isChatLoading } = useQuery(
     ["chats", profile?.id],
@@ -46,8 +79,45 @@ export const Home: React.FC = () => {
         </div>
       )}
 
-      <Title level={2}>Latest characters</Title>
-      <CharacterListWrapper size="small" cachekey="main_page" baseUrl="characters/home" />
+      <SegmentContainer>
+        <Segmented
+          value={segment}
+          onChange={(value) => setSegment(value as Segment)}
+          options={[
+            {
+              label: "⚡️ Latest",
+              value: "latest",
+            },
+            {
+              label: "🔥 Most Popular",
+              value: "popular",
+            },
+            {
+              label: "🔞 NSFW Only",
+              value: "nsfw",
+            },
+            {
+              label: "👩‍🦰 Female",
+              value: "female",
+            },
+            {
+              label: "👨‍🦰 Male",
+              value: "male",
+            },
+            {
+              label: "📺 Anime",
+              value: "anime",
+            },
+          ]}
+        />
+      </SegmentContainer>
+
+      <CharacterListWrapper
+        size="small"
+        cachekey="main_page"
+        baseUrl="characters/home"
+        additionalParams={params}
+      />
     </PageContainer>
   );
 };

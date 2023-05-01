@@ -91,7 +91,7 @@ export const MainLayout: React.FC = () => {
           </a>
           <span> - </span>
           <a
-            href="https://github.com/orgs/pyg-ai-unonfficial/discussions/categories/ideas"
+            href="https://github.com/orgs/venus-ai-team/discussions/categories/ideas"
             target="_blank"
           >
             💡Feedback & Idea

@@ -32,18 +32,7 @@ export const TermOfUse: React.FC = () => {
         revocable, limited license to access the Site solely for your own personal, noncommercial
         use.
       </p>
-      <p>
-        <strong>Certain Restrictions.</strong> The rights approved to you in these Terms are subject
-        to the following restrictions: (a) you shall not sell, rent, lease, transfer, assign,
-        distribute, host, or otherwise commercially exploit the Site; (b) you shall not change, make
-        derivative works of, disassemble, reverse compile or reverse engineer any part of the Site;
-        (c) you shall not access the Site in order to build a similar or competitive website; and
-        (d) except as expressly stated herein, no part of the Site may be copied, reproduced,
-        distributed, republished, downloaded, displayed, posted or transmitted in any form or by any
-        means unless otherwise indicated, any future release, update, or other addition to
-        functionality of the Site shall be subject to these Terms.&nbsp; All copyright and other
-        proprietary notices on the Site must be retained on all copies thereof.
-      </p>
+
       <p>
         We reserves the right to change, suspend, or cease the Site with or without notice to
         you.&nbsp; You approved that We will not be held liable to you or any third-party for any
@@ -73,14 +62,6 @@ export const TermOfUse: React.FC = () => {
         not obliged to backup any User Content that you post; also, your User Content may be deleted
         at any time without prior notice to you. You are solely responsible for making your own
         backup copies of your User Content if you desire.
-      </p>
-      <p>
-        You hereby grant to We an irreversible, nonexclusive, royalty-free and fully paid, worldwide
-        license to reproduce, distribute, publicly display and perform, prepare derivative works of,
-        incorporate into other works, and otherwise use and exploit your User Content, and to grant
-        sublicenses of the foregoing rights, solely for the purposes of including your User Content
-        in the Site.&nbsp; You hereby irreversibly waive any claims and assertions of moral rights
-        or attribution with respect to your User Content.
       </p>
       <p>
         <strong>Acceptable Use Policy.</strong> The following terms constitute our "Acceptable Use
@@ -227,16 +208,6 @@ export const TermOfUse: React.FC = () => {
         QUALITY, NON-INFRINGEMENT, AND QUIET ENJOYMENT, AND ANY WARRANTIES ARISING OUT OF ANY COURSE
         OF DEALING OR TRADE USAGE. WE DO NOT WARRANT THAT THE SERVICES WILL BE UNINTERRUPTED,
         ACCURATE OR ERROR FREE, OR THAT ANY CONTENT WILL BE SECURE OR NOT LOST OR ALTERED.
-      </p>
-      <p>
-        Limitations of Liability. NEITHER WE NOR ANY OF OUR AFFILIATES OR LICENSORS WILL BE LIABLE
-        FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES, INCLUDING DAMAGES
-        FOR LOSS OF PROFITS, GOODWILL, USE, OR DATA OR OTHER LOSSES, EVEN IF WE HAVE BEEN ADVISED OF
-        THE POSSIBILITY OF SUCH DAMAGES. OUR AGGREGATE LIABILITY UNDER THESE TERMS SHALL NOT EXCEED
-        &ZeroWidthSpace;&ZeroWidthSpace;THE GREATER OF THE AMOUNT YOU PAID FOR THE SERVICE THAT GAVE
-        RISE TO THE CLAIM DURING THE 12 MONTHS BEFORE THE LIABILITY AROSE OR ONE HUNDRED DOLLARS
-        ($100). THE LIMITATIONS IN THIS SECTION APPLY ONLY TO THE MAXIMUM EXTENT PERMITTED BY
-        APPLICABLE LAW.
       </p>
       <br />
       <h2>Copyright Policy.</h2>
