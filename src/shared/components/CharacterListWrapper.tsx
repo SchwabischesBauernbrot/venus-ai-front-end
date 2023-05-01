@@ -12,19 +12,20 @@ import { useQuery } from "react-query";
 import { axiosInstance } from "../../config";
 import { CharacterList } from "./CharacterList";
 import { useEffect, useState } from "react";
+import {
+  searchCharacter,
+  SearchCharactersParams,
+} from "../../features/Character/services/character-service";
+
+export type SearchParams = Omit<SearchCharactersParams, "page">;
 
 interface CharacterListWrapperProps {
-  // paging?
-  baseUrl: string;
   size: "small" | "medium";
-
-  // show paging?
   cachekey: string;
-  additionalParams?: { [key: string]: string | number | boolean | undefined };
+  additionalParams?: SearchParams;
 }
 
 export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
-  baseUrl,
   cachekey,
   size,
   additionalParams,
@@ -32,10 +33,8 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
   const [page, setPage] = useState(1);
 
   const { data } = useQuery([cachekey, additionalParams, page], async () => {
-    const response = await axiosInstance.get<Paginated<CharacterView>>(`${baseUrl}`, {
-      params: { page, ...additionalParams },
-    });
-    return response.data;
+    const response = await searchCharacter({ page, ...additionalParams });
+    return response;
   });
 
   useEffect(() => {
@@ -51,7 +50,11 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
   const pagination = (
     <Pagination
       total={total}
-      showTotal={(total) => `Total ${total} characters`}
+      showTotal={(total) => (
+        <span>
+          Total <strong>{total}</strong> characters
+        </span>
+      )}
       defaultPageSize={pageSize}
       defaultCurrent={1}
       current={page}

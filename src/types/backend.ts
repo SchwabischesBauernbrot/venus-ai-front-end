@@ -11,10 +11,8 @@ export interface paths {
   "/test-profile-jwt": {
     get: operations["AppController_getProfileJwt"];
   };
-  "/characters/home": {
-    get: operations["CharacterController_getCharactersForHome"];
-  };
   "/characters": {
+    get: operations["CharacterController_getCharactersForHome"];
     post: operations["CharacterController_createCharacter"];
   };
   "/characters/{id}": {
@@ -23,9 +21,6 @@ export interface paths {
   };
   "/profiles/{id}": {
     get: operations["ProfileController_getProfile"];
-  };
-  "/profiles/{id}/characters": {
-    get: operations["ProfileController_getProfileCharacters"];
   };
   "/profiles/mine": {
     patch: operations["ProfileController_updateProfile"];
@@ -240,6 +235,16 @@ export interface operations {
     };
   };
   CharacterController_getCharactersForHome: {
+    parameters: {
+      query: {
+        user_id?: string;
+        tag_id?: number;
+        page: number;
+        only_nsfw?: boolean;
+        sort?: string;
+        search?: string;
+      };
+    };
     responses: {
       200: never;
       default: {
@@ -326,21 +331,6 @@ export interface operations {
       default: {
         content: {
           "application/json": components["schemas"]["ProfileResponse"];
-        };
-      };
-    };
-  };
-  ProfileController_getProfileCharacters: {
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-    responses: {
-      200: never;
-      default: {
-        content: {
-          "application/json": components["schemas"]["Paginated"];
         };
       };
     };

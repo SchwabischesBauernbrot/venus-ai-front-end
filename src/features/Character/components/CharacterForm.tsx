@@ -232,7 +232,18 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         <Form.Item
           label="Tags"
           name="tag_ids"
-          help="Tag your character, maximum 5 tags only"
+          help={
+            <div>
+              <span>Tag your character, maximum 5 tags only.</span> <br />
+              <span>
+                Don't see the tag you need? Visit{" "}
+                <a href="https://discord.gg/wFPemXeEUf" target="_blank">
+                  our Discord
+                </a>{" "}
+                and let us know.
+              </span>
+            </div>
+          }
           className="pb-4"
         >
           <Select

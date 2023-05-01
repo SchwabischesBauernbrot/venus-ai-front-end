@@ -118,12 +118,7 @@ export const Home: React.FC = () => {
         />
       </SegmentContainer>
 
-      <CharacterListWrapper
-        size="small"
-        cachekey="main_page"
-        baseUrl="characters"
-        additionalParams={params}
-      />
+      <CharacterListWrapper size="small" cachekey="main_page" additionalParams={params} />
     </PageContainer>
   );
 };

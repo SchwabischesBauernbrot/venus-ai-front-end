@@ -34,6 +34,7 @@ export interface Database {
           description: string
           example_dialogs: string
           first_message: string
+          fts: unknown | null
           id: string
           is_nsfw: boolean
           is_public: boolean
@@ -49,6 +50,7 @@ export interface Database {
           description: string
           example_dialogs: string
           first_message: string
+          fts?: unknown | null
           id?: string
           is_nsfw?: boolean
           is_public?: boolean
@@ -64,6 +66,7 @@ export interface Database {
           description?: string
           example_dialogs?: string
           first_message?: string
+          fts?: unknown | null
           id?: string
           is_nsfw?: boolean
           is_public?: boolean
@@ -185,6 +188,28 @@ export interface Database {
       }
     }
     Views: {
+      character_search: {
+        Row: {
+          avatar: string | null
+          created_at: string | null
+          creator_id: string | null
+          creator_name: string | null
+          description: string | null
+          example_dialogs: string | null
+          first_message: string | null
+          fts: unknown | null
+          id: string | null
+          is_nsfw: boolean | null
+          is_public: boolean | null
+          name: string | null
+          personality: string | null
+          scenario: string | null
+          tag_ids: number[] | null
+          total_chat: number | null
+          total_message: number | null
+          updated_at: string | null
+        }
+      }
       character_stats: {
         Row: {
           char_id: string | null
@@ -201,6 +226,7 @@ export interface Database {
           description: string | null
           example_dialogs: string | null
           first_message: string | null
+          fts: unknown | null
           id: string | null
           is_nsfw: boolean | null
           is_public: boolean | null
