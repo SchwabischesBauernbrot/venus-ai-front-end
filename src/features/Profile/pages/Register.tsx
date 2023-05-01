@@ -71,7 +71,11 @@ export const Register = () => {
       <Form form={form} onFinish={onSubmit}>
         <Title level={2}>Register</Title>
 
-        <Form.Item name="email" rules={[{ required: true, message: "Please enter your email." }]}>
+        <Form.Item
+          name="email"
+          rules={[{ required: true, message: "Please enter your email." }]}
+          help=""
+        >
           <Input prefix={<MailOutlined />} placeholder="Email" />
         </Form.Item>
 
@@ -90,9 +94,11 @@ export const Register = () => {
           </a>
           <span> and </span>
           <a href="/term" target="_blank">
-            🤝 Term of Use
+            🤝 Term of Use.
           </a>
         </p>
+
+        <p>We do not confirm your email. Feel free to just use a burner email or something, lol.</p>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block>

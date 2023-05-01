@@ -31,6 +31,9 @@ const MyCharacters = loadable(() => import("./features/Character"), {
 const ViewCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.ViewCharacter,
 });
+const SearchCharacter = loadable(() => import("./features/Character"), {
+  resolveComponent: (component) => component.SearchCharacter,
+});
 
 const Register = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Register,
@@ -95,6 +98,10 @@ const router = createBrowserRouter([
       },
 
       // Characters
+      {
+        path: "/search",
+        element: <SearchCharacter />,
+      },
       {
         path: "/create_character",
         element: <CreateCharacter />,

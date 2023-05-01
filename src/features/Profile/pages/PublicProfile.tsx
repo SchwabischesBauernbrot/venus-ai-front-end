@@ -56,7 +56,8 @@ export const PublicProfile: React.FC = () => {
             <CharacterListWrapper
               size="medium"
               cachekey={`profile_chars_${profileId}`}
-              baseUrl={`profiles/${profileId}/characters`}
+              baseUrl="characters"
+              additionalParams={{ user_id: profileId }}
             />
           </Col>
         </Row>

@@ -14,7 +14,7 @@ import { useTags } from "../../../hooks/useTags";
 
 const { Title } = Typography;
 
-type Segment = "latest" | "popular" | "nsfw" | "female" | "male" | "anime";
+type Segment = "latest" | "popular" | "nsfw" | "female" | "male" | "anime" | "game";
 
 const SegmentContainer = styled.div`
   max-width: 100%;
@@ -46,6 +46,8 @@ export const Home: React.FC = () => {
         return { tag_id: 1 };
       case "anime":
         return { tag_id: 9 };
+      case "anime":
+        return { tag_id: 8 };
     }
   }, [segment]);
 
@@ -108,6 +110,10 @@ export const Home: React.FC = () => {
               label: "📺 Anime",
               value: "anime",
             },
+            {
+              label: "🎮 Game",
+              value: "game",
+            },
           ]}
         />
       </SegmentContainer>
@@ -115,7 +121,7 @@ export const Home: React.FC = () => {
       <CharacterListWrapper
         size="small"
         cachekey="main_page"
-        baseUrl="characters/home"
+        baseUrl="characters"
         additionalParams={params}
       />
     </PageContainer>
