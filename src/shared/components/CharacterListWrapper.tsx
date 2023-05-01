@@ -52,6 +52,7 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
         defaultCurrent={1}
         current={page}
         responsive={true}
+        showSizeChanger={false} // Hide this as it will mess with the caching lol
         onChange={(newPage) => {
           setPage(newPage);
         }}
