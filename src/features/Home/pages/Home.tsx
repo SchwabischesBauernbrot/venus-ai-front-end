@@ -36,7 +36,7 @@ export const Home: React.FC = () => {
       case "latest":
         return undefined;
       case "popular":
-        return { sort_by_popular: true };
+        return { sort: "popular" };
       case "nsfw":
         return { only_nsfw: true };
       // Lol hard code for now
@@ -46,7 +46,7 @@ export const Home: React.FC = () => {
         return { tag_id: 1 };
       case "anime":
         return { tag_id: 9 };
-      case "anime":
+      case "game":
         return { tag_id: 8 };
     }
   }, [segment]);

@@ -28,8 +28,6 @@ export const buildSystemInstruction = (
 ) => {
   const { summary, characters } = chat;
 
-  console.log({ chat });
-
   const { name = "", personality = "", scenario = "", example_dialogs = "" } = characters;
 
   const jailbreakPrompt = config.jailbreak_prompt;

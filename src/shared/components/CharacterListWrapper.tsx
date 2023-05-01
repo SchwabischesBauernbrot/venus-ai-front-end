@@ -11,7 +11,7 @@ import { PrivateIndicator } from "./PrivateIndicator";
 import { useQuery } from "react-query";
 import { axiosInstance } from "../../config";
 import { CharacterList } from "./CharacterList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CharacterListWrapperProps {
   // paging?
@@ -37,6 +37,10 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
     });
     return response.data;
   });
+
+  useEffect(() => {
+    setPage(1);
+  }, [additionalParams]);
 
   if (!data) {
     return <Spin />;

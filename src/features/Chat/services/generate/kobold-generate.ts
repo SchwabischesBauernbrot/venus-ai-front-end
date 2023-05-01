@@ -123,7 +123,6 @@ class KoboldGenerate extends GenerateInterface {
       },
     });
     const data = (await response.json()) as KoboldResponse | KoboldError;
-    console.log(data);
 
     const stopToken = config.use_pygmalion_format ? "You:" : `${this.userName}:`;
 
