@@ -56,24 +56,11 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
-    TagEntity: {
-      id: number;
-      description: string;
-      name: string;
-      slug: string;
-      created_at: string;
-    };
-    CharacterView: {
-      id: string;
-      name: string;
-      avatar: string;
-      description: string;
-      created_at: string;
-      is_public: boolean;
-      is_nsfw: boolean;
-      creator_id: string;
-      creator_name: string;
-      tags?: (components["schemas"]["TagEntity"])[];
+    Paginated: {
+      data: (string)[];
+      total: number;
+      size: number;
+      page: number;
     };
     CharacterDto: {
       avatar: string;
@@ -102,6 +89,30 @@ export interface components {
       scenario: string;
       updated_at: string;
     };
+    TagEntity: {
+      id: number;
+      description: string;
+      name: string;
+      slug: string;
+      created_at: string;
+    };
+    CharacterStats: {
+      chat: number;
+      message: number;
+    };
+    CharacterView: {
+      id: string;
+      name: string;
+      avatar: string;
+      description: string;
+      created_at: string;
+      is_public: boolean;
+      is_nsfw: boolean;
+      creator_id: string;
+      creator_name: string;
+      tags?: (components["schemas"]["TagEntity"])[];
+      stats?: components["schemas"]["CharacterStats"];
+    };
     FullCharacterView: {
       id: string;
       name: string;
@@ -113,6 +124,7 @@ export interface components {
       creator_id: string;
       creator_name: string;
       tags?: (components["schemas"]["TagEntity"])[];
+      stats?: components["schemas"]["CharacterStats"];
       example_dialogs: string;
       first_message: string;
       personality: string;
@@ -232,7 +244,7 @@ export interface operations {
       200: never;
       default: {
         content: {
-          "application/json": (components["schemas"]["CharacterView"])[];
+          "application/json": components["schemas"]["Paginated"];
         };
       };
     };
@@ -263,7 +275,11 @@ export interface operations {
       };
     };
     responses: {
-      200: never;
+      200: {
+        content: {
+          "application/json": components["schemas"]["CharacterView"];
+        };
+      };
       default: {
         content: {
           "application/json": components["schemas"]["FullCharacterView"];
@@ -324,7 +340,7 @@ export interface operations {
       200: never;
       default: {
         content: {
-          "application/json": (components["schemas"]["CharacterView"])[];
+          "application/json": components["schemas"]["Paginated"];
         };
       };
     };

@@ -6,7 +6,7 @@ import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
 import React from "react";
 import { CopyOutlined, SaveOutlined } from "@ant-design/icons";
 import { chatService } from "../../services/chat-service";
-import { summaryUsingOpenAI } from "../../services/summary-service";
+import { countMessagesToken, summaryUsingOpenAI } from "../../services/summary-service";
 import { last } from "lodash-es";
 
 interface ChatHistoryModalProps {
@@ -120,11 +120,20 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
         {chat.summary_chat_id ? (
           <span>
             You have updated the chat summary around{" "}
-            <strong>~{massagesSinceLastSave.length} messages</strong> ago.
+            <strong>
+              ~{massagesSinceLastSave.length} messages ({countMessagesToken(massagesSinceLastSave)}{" "}
+              tokens)
+            </strong>{" "}
+            ago.
           </span>
         ) : (
           <span>
-            You have <strong>~{messagesToConsider.length} messages</strong> unsaved.
+            You have{" "}
+            <strong>
+              ~{messagesToConsider.length} messages ({countMessagesToken(messagesToConsider)}{" "}
+              tokens)
+            </strong>{" "}
+            unsaved.
           </span>
         )}
       </p>

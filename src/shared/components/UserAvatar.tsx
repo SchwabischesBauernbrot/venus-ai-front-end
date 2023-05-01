@@ -19,7 +19,7 @@ export const UserAvatar: React.FC = () => {
   }, []);
 
   return (
-    <Menu.Item className="no-padding" style={{ marginLeft: "auto" }} key="profile">
+    <Menu.Item className="no-padding" key="profile">
       <Dropdown
         menu={{
           items: [

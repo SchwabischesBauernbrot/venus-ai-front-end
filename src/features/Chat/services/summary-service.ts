@@ -28,7 +28,7 @@ const buildSummaryPrompt = (
     role: "user",
     content: SUMMARY_PROMPT,
   };
-  let chatCopy = chatHistory.filter((message) => message).map(chatToMessage);
+  let chatCopy = chatHistory.map(chatToMessage);
   let messages: OpenAIInputMessage[] = [sytemMessage, ...chatCopy, userMessage];
   let promptTokenLength = getTokenLength(messages);
   if (promptTokenLength < maxContentLength) {
@@ -45,6 +45,11 @@ const buildSummaryPrompt = (
   }
 
   return { messages };
+};
+
+export const countMessagesToken = (chatHistory: SupaChatMessage[]) => {
+  const inputMessages = chatHistory.map(chatToMessage);
+  return getTokenLength(inputMessages);
 };
 
 // Separate this into a service, so later we can use different model

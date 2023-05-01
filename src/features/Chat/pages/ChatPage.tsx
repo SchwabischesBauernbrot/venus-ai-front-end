@@ -139,9 +139,12 @@ export const ChatPage: React.FC = () => {
     async () => chatService.getChatById(chatId),
     {
       enabled: false,
-      onSuccess: () => {
-        setShouldFocus(true);
-        scrollToBottom();
+      onSuccess: (chatData) => {
+        // Only scroll and focus for own chat, not public chat lol
+        if (chatData.chat.user_id === profile?.id) {
+          setShouldFocus(true);
+          scrollToBottom();
+        }
       },
       retry: 1,
     }
@@ -149,12 +152,14 @@ export const ChatPage: React.FC = () => {
   const canEdit = Boolean(profile && profile.id === data?.chat.user_id);
 
   const refreshChats = async () => {
-    const data = await refetch();
-    const messages = data.data?.chatMessages || [];
+    const newData = await refetch();
+    const messages = newData.data?.chatMessages || [];
     messages.sort((a, b) => a.id - b.id);
     dispatch({ type: "set_messages", messages });
 
-    scrollToBottom();
+    if (profile && profile?.id === newData.data?.chat.user_id) {
+      scrollToBottom();
+    }
   };
 
   useEffect(() => {

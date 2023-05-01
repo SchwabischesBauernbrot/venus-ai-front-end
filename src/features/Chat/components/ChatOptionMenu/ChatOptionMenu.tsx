@@ -7,8 +7,9 @@ import {
   SaveOutlined,
   LoadingOutlined,
   ToolOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
-import { Tag, Dropdown, Tooltip, Switch, Button, message, App, Input } from "antd";
+import { Tag, Dropdown, Tooltip, Switch, Button, App, Input, Space } from "antd";
 import { AxiosError } from "axios";
 
 import { useContext, useState } from "react";
@@ -21,6 +22,7 @@ import { ChatHistoryModal } from "./ChatHistoryModal";
 import { ChatSettingsModal } from "./ChatSettingsModal";
 import { ChatSummaryModal } from "./ChatSummaryModal";
 import { GenerationSettingsModal } from "./GenerationSettingsModal";
+import { copyToClipboard } from "../../../../shared/services/utils";
 
 interface ChatOptionMenuProps {
   chat: ChatEntityWithCharacter;
@@ -31,7 +33,7 @@ interface ChatOptionMenuProps {
 export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, readyToChat }) => {
   const { profile, config, updateConfig } = useContext(AppContext);
   const queryClient = useQueryClient();
-  const { modal } = App.useApp();
+  const { modal, message } = App.useApp();
 
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [isSharingChat, setIsSharingChat] = useState(false);
@@ -76,10 +78,20 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, 
         modal.success({
           title: "Chat ready for sharing!",
           content: (
-            <span>
-              Your can share your chat using this link:
-              <Input value={currentUrl} />
-            </span>
+            <div>
+              <p>Your can share your chat using this link:</p>
+              <Space.Compact className="my-2" block>
+                <Input value={currentUrl} />
+                <Button
+                  onClick={() => {
+                    copyToClipboard(currentUrl);
+                    message.info("Link copied to clipboard!");
+                  }}
+                >
+                  <CopyOutlined /> Copy
+                </Button>
+              </Space.Compact>
+            </div>
           ),
         });
       }
@@ -200,7 +212,6 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, 
 
             {
               key: "share",
-              disabled: chat.is_public,
               label: (
                 <Tooltip
                   title="Make this chat public and give you a link for sharing"

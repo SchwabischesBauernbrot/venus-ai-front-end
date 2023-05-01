@@ -4,10 +4,9 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { axiosInstance } from "../../../config";
-import { CharacterView, Paginated, ProfileResponse } from "../../../types/backend-alias";
+import { ProfileResponse } from "../../../types/backend-alias";
 import { PageContainer } from "../../../shared/components/shared";
 import { getAvatarUrl } from "../../../shared/services/utils";
-import { CharacterList } from "../../../shared/components/CharacterList";
 import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 

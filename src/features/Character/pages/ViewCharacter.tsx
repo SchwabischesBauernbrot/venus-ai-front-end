@@ -14,7 +14,7 @@ import {
   message,
 } from "antd";
 import { useCallback, useContext, useState } from "react";
-import { LoadingOutlined, WechatOutlined } from "@ant-design/icons";
+import { BookOutlined, LoadingOutlined, WechatOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -135,11 +135,11 @@ export const ViewCharacter: React.FC = () => {
           <Col lg={18} xs={24} className="text-left">
             <Collapse>
               <Collapse.Panel
-                header={`Character definition (Total ${Tokenizer.tokenCountFormat(
+                header={`Character definition - May contains spoiler (Total ${Tokenizer.tokenCountFormat(
                   data.personality + data.first_message + data.scenario + data.example_dialogs
                 )}. Permanent: ${Tokenizer.tokenCountFormat(
                   data.personality + data.first_message + data.scenario
-                )}) - May contains spoiler`}
+                )})`}
                 key="1"
               >
                 <Descriptions bordered size="small" layout="vertical">
@@ -168,6 +168,14 @@ export const ViewCharacter: React.FC = () => {
                     <MultiLine>{data.example_dialogs}</MultiLine>
                   </Descriptions.Item>
                 </Descriptions>
+              </Collapse.Panel>
+              <Collapse.Panel
+                header={`Stats: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+                key="2"
+              >
+                <Title level={3} className="my-2">
+                  Public chats (coming soon)
+                </Title>
               </Collapse.Panel>
             </Collapse>
           </Col>

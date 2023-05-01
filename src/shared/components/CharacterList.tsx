@@ -1,5 +1,5 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Card, Space, Tooltip, Tag } from "antd";
+import { BookOutlined, EditOutlined, WechatOutlined } from "@ant-design/icons";
+import { Card, Space, Tooltip, Tag, Badge } from "antd";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
@@ -28,6 +28,9 @@ const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
   .ant-card-cover {
     position: relative;
   }
+  .ant-ribbon-wrapper {
+    height: 100%;
+  }
 
   ${(props) =>
     props.size === "small" &&
@@ -47,6 +50,11 @@ const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
         font-size: 0.75rem;
         line-height: 1rem;
       }
+
+      .ant-ribbon {
+        padding: 0 0.3rem;
+        line-height: 1.1rem;
+      }
     `}
 `;
 
@@ -55,6 +63,62 @@ const CharacterImage = styled.img`
   object-fit: cover;
   object-position: top;
 `;
+
+const CharacterStats = styled.span`
+  font-size: 0.8rem;
+`;
+
+const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> = ({
+  character,
+  editable,
+}) => {
+  return (
+    <Card
+      hoverable
+      size="small"
+      style={{ height: "100%" }}
+      className="d-flex flex-column"
+      key={character.id}
+      title={
+        <span>
+          <PrivateIndicator isPublic={character.is_public} /> {character.name}
+        </span>
+      }
+      // Add bot statistics in cover here
+      cover={<CharacterImage alt={character.name} src={getBotAvatarUrl(character.avatar)} />}
+      actions={
+        editable
+          ? [
+              <Link to={`/edit_character/${character.id}`}>
+                <EditOutlined /> Edit Character
+              </Link>,
+            ]
+          : undefined
+      }
+    >
+      {!editable && (
+        <Link to={`/profiles/${character.creator_id}`}>
+          <p>@{character.creator_name}</p>
+        </Link>
+      )}
+      <Meta
+        description={
+          <Tooltip title={character.description}>
+            {truncate(character.description, { length: 100 })}
+          </Tooltip>
+        }
+      />
+      <Space className="mt-4 " size={[0, 4]} wrap>
+        {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
+        {character.tags?.slice(0, 4).map((tag) => (
+          <Tooltip key={tag.id} title={tag.description}>
+            <Tag>{tag.name}</Tag>
+          </Tooltip>
+        ))}
+      </Space>
+    </Card>
+  );
+};
 
 export const CharacterList: React.FC<CharacterListProps> = ({
   characters,
@@ -68,52 +132,28 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   return (
     <CharacterContainer size={size}>
       {characters.map((character) => (
-        <Link key={character.id} to={`/characters/${character.id}`} className="mb-4">
-          <Card
-            hoverable
-            size="small"
-            style={{ height: "100%" }}
-            className="d-flex flex-column"
-            key={character.id}
-            title={
-              <span>
-                <PrivateIndicator isPublic={character.is_public} /> {character.name}
-              </span>
-            }
-            // Add bot statistics in cover here
-            cover={<CharacterImage alt={character.name} src={getBotAvatarUrl(character.avatar)} />}
-            actions={
-              editable
-                ? [
-                    <Link to={`/edit_character/${character.id}`}>
-                      <EditOutlined /> Edit Character
-                    </Link>,
-                  ]
-                : undefined
-            }
-          >
-            {!editable && (
-              <Link to={`/profiles/${character.creator_id}`}>
-                <p>@{character.creator_name}</p>
-              </Link>
-            )}
-            <Meta
-              description={
-                <Tooltip title={character.description}>
-                  {truncate(character.description, { length: 100 })}
-                </Tooltip>
+        <Link key={character.id} to={`/characters/${character.id}`}>
+          {character.stats ? (
+            <Badge.Ribbon
+              text={
+                character.stats && (
+                  <Tooltip
+                    title={`Total: ${character.stats?.chat} chats, ${character.stats?.message} messages`}
+                  >
+                    <CharacterStats>
+                      <BookOutlined />
+                      {character.stats?.chat} <WechatOutlined />
+                      {character.stats?.message}
+                    </CharacterStats>
+                  </Tooltip>
+                )
               }
-            />
-
-            <Space className="mt-4 " size={[0, 4]} wrap>
-              {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-              {character.tags?.slice(0, 4).map((tag) => (
-                <Tooltip key={tag.id} title={tag.description}>
-                  <Tag>{tag.name}</Tag>
-                </Tooltip>
-              ))}
-            </Space>
-          </Card>
+            >
+              <CharacterCard character={character} editable={editable} />
+            </Badge.Ribbon>
+          ) : (
+            <CharacterCard character={character} editable={editable} />
+          )}
         </Link>
       ))}
     </CharacterContainer>

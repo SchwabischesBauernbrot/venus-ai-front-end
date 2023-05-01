@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { UserAddOutlined } from "@ant-design/icons";
+import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
 
 import { AppContext } from "../appContext";
 
@@ -25,10 +25,15 @@ export const MainLayout: React.FC = () => {
               />
             </Link>
           </Menu.Item>
+          <Menu.Item key="search">
+            <Link to="/search">
+              <SearchOutlined /> Search
+            </Link>
+          </Menu.Item>
 
           {session && profile ? (
             <>
-              <Menu.Item key="create">
+              <Menu.Item key="create" style={{ marginLeft: "auto" }}>
                 <Link to="/create_character">
                   <UserAddOutlined /> Create Character
                 </Link>
