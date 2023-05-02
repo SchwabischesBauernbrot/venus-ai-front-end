@@ -154,9 +154,7 @@ export const ViewCharacter: React.FC = () => {
               <Collapse.Panel
                 header={`Character definition - May contains spoiler (Total ${Tokenizer.tokenCountFormat(
                   data.personality + data.first_message + data.scenario + data.example_dialogs
-                )}. Permanent: ${Tokenizer.tokenCountFormat(
-                  data.personality + data.first_message + data.scenario
-                )})`}
+                )}. Permanent: ${Tokenizer.tokenCountFormat(data.personality + data.scenario)})`}
                 key="1"
               >
                 <Descriptions bordered size="small" layout="vertical">

@@ -335,7 +335,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           <p>
             Total:{" "}
             {countToken(personalityWatch + firstMessageWatch + scenarioWatch + exampleDialogWatch)}.
-            Permanent: {countToken(personalityWatch + firstMessageWatch + scenarioWatch)}
+            Permanent: {countToken(personalityWatch + scenarioWatch)}
           </p>
           <p></p>
           <Button type="primary" htmlType="submit" block loading={isSubmitting}>
