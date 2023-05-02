@@ -103,9 +103,25 @@ export const GenerationSettingsModal: React.FC<ChatSettingsModalProps> = ({
             className="pb-2"
             name="context_length"
             label="Context Size"
-            help="How much will the AI remember. Context size also affects the speed of generation. Lower this if you get memory error!"
+            help={
+              <>
+                <span>
+                  How much will the AI remember. Context size also affects the speed of generation.
+                  Lower this if you get memory error!
+                </span>
+                <br />
+                <span>
+                  GPT-3.5 support maximum 4096 context. GPT-4 and Claude supports up-to 8k context.
+                </span>
+              </>
+            }
           >
-            <Slider marks={{ 0: "0", 2048: "2048", 4096: "4096" }} min={0} max={4096} step={1} />
+            <Slider
+              marks={{ 0: "0", 2048: "2048", 4096: "4096", 8192: "8192" }}
+              min={0}
+              max={8192}
+              step={1}
+            />
           </Form.Item>
 
           {config.api === "kobold" && (

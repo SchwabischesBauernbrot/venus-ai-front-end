@@ -266,6 +266,11 @@ export const ChatPage: React.FC = () => {
             is_main: false,
           });
           dispatch({ type: "new_server_messages", messages: [botMessage] });
+        } else {
+          dispatch({
+            type: "new_server_messages",
+            messages: [],
+          });
         }
       }
     } catch (err) {
@@ -361,10 +366,17 @@ export const ChatPage: React.FC = () => {
         scrollToBottom();
       }
 
+      console.log({ streamingText });
+
       // If failed to create bot message, no need to save
       if (streamingText !== "") {
         const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
         dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
+      } else {
+        dispatch({
+          type: "new_server_messages",
+          messages: [serverUserMassage],
+        });
       }
     } catch (err) {
       const error = err as Error;
