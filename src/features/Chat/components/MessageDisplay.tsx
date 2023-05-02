@@ -152,6 +152,7 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
             width={55}
             style={{ borderRadius: "0.5rem" }}
             src={message.is_bot ? getBotAvatarUrl(characterAvatar) : getAvatarUrl(userAvatar)}
+            fallback="https://i.pravatar.cc/150?u=anon@anon.com"
           />
         }
         title={message.is_bot ? characterName : user || "You"}

@@ -12,6 +12,7 @@ import {
   Collapse,
   Descriptions,
   message,
+  Badge,
 } from "antd";
 import { useCallback, useContext, useState } from "react";
 import { BookOutlined, LoadingOutlined, WechatOutlined } from "@ant-design/icons";
@@ -99,7 +100,23 @@ export const ViewCharacter: React.FC = () => {
               <PrivateIndicator isPublic={data.is_public} /> {data.name}
             </Title>
 
-            <Image src={getBotAvatarUrl(data.avatar)} />
+            <Badge.Ribbon
+              text={
+                data.stats && (
+                  <Tooltip
+                    title={`Total: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+                  >
+                    <span>
+                      <BookOutlined />
+                      {data.stats?.chat} <WechatOutlined />
+                      {data.stats?.message}
+                    </span>
+                  </Tooltip>
+                )
+              }
+            >
+              <Image src={getBotAvatarUrl(data.avatar)} />
+            </Badge.Ribbon>
 
             <div className="mt-2">
               <Link target="_blank" to={`/profiles/${data.creator_id}`}>
@@ -169,10 +186,7 @@ export const ViewCharacter: React.FC = () => {
                   </Descriptions.Item>
                 </Descriptions>
               </Collapse.Panel>
-              <Collapse.Panel
-                header={`Stats: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
-                key="2"
-              >
+              <Collapse.Panel header="Shared public chats (coming soon)" key="2">
                 <Title level={3} className="my-2">
                   Public chats (coming soon)
                 </Title>
