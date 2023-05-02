@@ -100,7 +100,7 @@ const readyToChat = (config: UserConfig | undefined, localData: UserLocalData) =
   return false;
 };
 
-export const formatChat = (inputMessage: string, user = "you", characterName = "") => {
+export const formatChat = (inputMessage: string, user = "Anon", characterName = "") => {
   return inputMessage
     .replace(/{{char}}:/gi, "")
 
