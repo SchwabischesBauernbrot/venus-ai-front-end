@@ -77,7 +77,7 @@ export const Home: React.FC = () => {
       {profile && (
         <div>
           {isChatLoading && <Spin />}
-          {chatData && (
+          {chatData && chatData.length > 0 && (
             <div className="mb-4">
               <Title level={2}>
                 Continue Chats <Link to="/my_chats">(All Chats)</Link>

@@ -26,7 +26,7 @@ export const OPEN_AI_DEFAULT_CONFIG: Pick<
   UserConfig,
   "open_ai_mode" | "open_ai_reverse_proxy" | "model" | "jailbreak_prompt"
 > = {
-  open_ai_mode: "proxy",
+  open_ai_mode: "api_key", // Use API key for now, until reverse proxy is back
   open_ai_reverse_proxy: "https://whocars123-oai-proxy.hf.space/proxy/openai",
   model: "gpt-3.5-turbo",
   jailbreak_prompt:

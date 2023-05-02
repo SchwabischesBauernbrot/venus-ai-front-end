@@ -116,27 +116,29 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
         Enter a summary for your chat. This will be included into the prompt as long-term memory.
       </p>
 
-      <p>
-        {chat.summary_chat_id ? (
-          <span>
-            You have updated the chat summary around{" "}
-            <strong>
-              ~{massagesSinceLastSave.length} messages ({countMessagesToken(massagesSinceLastSave)}{" "}
-              tokens)
-            </strong>{" "}
-            ago.
-          </span>
-        ) : (
-          <span>
-            You have{" "}
-            <strong>
-              ~{messagesToConsider.length} messages ({countMessagesToken(messagesToConsider)}{" "}
-              tokens)
-            </strong>{" "}
-            unsaved.
-          </span>
-        )}
-      </p>
+      {data && (
+        <p>
+          {chat.summary_chat_id ? (
+            <span>
+              You have updated the chat summary around{" "}
+              <strong>
+                ~{massagesSinceLastSave.length} messages (
+                {countMessagesToken(massagesSinceLastSave)} tokens)
+              </strong>{" "}
+              ago.
+            </span>
+          ) : (
+            <span>
+              You have{" "}
+              <strong>
+                ~{messagesToConsider.length} messages ({countMessagesToken(messagesToConsider)}{" "}
+                tokens)
+              </strong>{" "}
+              unsaved.
+            </span>
+          )}
+        </p>
+      )}
 
       <Input.TextArea
         autoSize
