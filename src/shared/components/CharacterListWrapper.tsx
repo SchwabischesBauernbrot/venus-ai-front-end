@@ -42,7 +42,7 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
   }, [additionalParams]);
 
   if (!data) {
-    return <Spin />;
+    return <Spin className="mt-4" />;
   }
 
   const { total, size: pageSize, data: characters } = data;
