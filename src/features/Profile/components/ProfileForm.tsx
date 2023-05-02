@@ -8,6 +8,7 @@ import { FormContainer } from "../../../shared/components/shared";
 import { useQueryClient } from "react-query";
 import { getAvatarUrl, randomID } from "../../../shared/services/utils";
 import { profileService } from "../services/profile-service";
+import { useState } from "react";
 
 interface FormValues {
   id: string;
@@ -23,9 +24,13 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
   const queryClient = useQueryClient();
   const { message } = App.useApp();
   const [form] = Form.useForm<FormValues>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const avatarPayloadWatch = Form.useWatch("avatar_payload", form);
 
   const onFinish = async ({ avatar_payload, name, user_name, profile, about_me }: FormValues) => {
     try {
+      setIsSubmitting(true);
       const avatarImg = avatar_payload?.file;
       let newAvatar = null;
       if (avatarImg) {
@@ -57,11 +62,14 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
       console.error("auth error", err);
       const backEndError = (err as AxiosError).response?.data;
       message.error(JSON.stringify(backEndError, null, 2));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const avatarSection = () => {
-    const avatarPayload = form.getFieldValue("avatar_payload")?.file as File | undefined;
+  const avatarSection = (avatar: { file: File } | undefined) => {
+    const avatarPayload = avatar?.file as File | undefined;
+
     if (avatarPayload) {
       return (
         <img
@@ -101,7 +109,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           name="name"
           label="Name"
           rules={[{ required: true, message: "Please enter your name!" }]}
-          help="This will be used in your conversation with character"
+          help="This will be used in your chat with characters"
         >
           <Input placeholder="Name" />
         </Form.Item>
@@ -117,7 +125,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
                 return false;
               }}
             >
-              {avatarSection()}
+              {avatarSection(avatarPayloadWatch)}
             </Upload>
           </Form.Item>
         </Form.Item>
@@ -160,7 +168,13 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           }}
           className="pt-4"
         >
-          <Button type="primary" htmlType="submit" block>
+          <Button
+            loading={isSubmitting}
+            disabled={isSubmitting}
+            type="primary"
+            htmlType="submit"
+            block
+          >
             Update profile
           </Button>
         </Form.Item>

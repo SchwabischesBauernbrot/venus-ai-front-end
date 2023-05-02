@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Typography, Space, Input, Select, Tag, Tooltip, Switch, Row, Col, Radio } from "antd";
+import { Typography, Space, Input, Select, Tag, Tooltip, Row, Col, Radio } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { useTags } from "../../../hooks/useTags";

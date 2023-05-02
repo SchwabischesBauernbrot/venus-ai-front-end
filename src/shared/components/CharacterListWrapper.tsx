@@ -1,15 +1,6 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Card, Space, Tooltip, Tag, Spin, Pagination } from "antd";
-import Meta from "antd/es/card/Meta";
-import { Link } from "react-router-dom";
-import styled, { css } from "styled-components";
-import { truncate } from "lodash-es";
+import { Spin, Pagination } from "antd";
 
-import { getBotAvatarUrl } from "../services/utils";
-import { CharacterView, Paginated } from "../../types/backend-alias";
-import { PrivateIndicator } from "./PrivateIndicator";
 import { useQuery } from "react-query";
-import { axiosInstance } from "../../config";
 import { CharacterList } from "./CharacterList";
 import { useEffect, useState } from "react";
 import {

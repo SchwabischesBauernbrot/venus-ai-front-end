@@ -1,5 +1,4 @@
 import { useCallback, useContext, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { Form, Input, Upload, Select, Button, message, Typography, Radio, ColProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
@@ -53,6 +52,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
   const [form] = Form.useForm<FormValues>();
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
 
+  const avatarPayloadWatch = Form.useWatch("avatar_payload", form);
   const personalityWatch = Form.useWatch<string>("personality", form);
   const scenarioWatch = Form.useWatch<string>("scenario", form);
   const exampleDialogWatch = Form.useWatch<string>("example_dialogs", form);
@@ -123,8 +123,11 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
     }
   };
 
-  const avatarSection = () => {
-    const avatarPayload = form.getFieldValue("avatar_payload")?.file as File | undefined;
+  const avatarSection = (payload: { file?: File } | undefined) => {
+    const avatarPayload = payload?.file;
+
+    console.log({ avatarPayload });
+
     if (avatarPayload) {
       return (
         <img
@@ -196,7 +199,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
               return false;
             }}
           >
-            {avatarSection()}
+            {avatarSection(avatarPayloadWatch)}
           </Upload>
         </Form.Item>
 
