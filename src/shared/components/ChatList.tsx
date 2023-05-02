@@ -1,6 +1,6 @@
 import { ChatEntityWithCharacter } from "../../types/backend-alias";
 import styled, { css } from "styled-components";
-import { WechatOutlined, DeleteOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { WechatOutlined, DeleteOutlined, ClockCircleOutlined, EyeFilled } from "@ant-design/icons";
 import { Card, Popconfirm, Tooltip } from "antd";
 import { truncate } from "lodash-es";
 
@@ -11,6 +11,7 @@ import { chatService, formatChat } from "../../features/Chat/services/chat-servi
 interface ChatListProps {
   chats: ChatEntityWithCharacter[];
   size?: "small" | "medium";
+  mode?: "view" | "manage";
   onChatDeleted?: () => {};
 }
 
@@ -43,7 +44,12 @@ const ChatListContainer = styled.div<{ size: "small" | "medium" }>`
     `}
 `;
 
-export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size = "medium" }) => {
+export const ChatList: React.FC<ChatListProps> = ({
+  chats,
+  onChatDeleted,
+  size = "medium",
+  mode = "manage",
+}) => {
   const deleteChat = async (chatId: number) => {
     await chatService.deleteChat(chatId);
     onChatDeleted?.();
@@ -59,8 +65,15 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
           actions={[
             <span>
               <a href={`/chats/${chat.id}`} target="_blank">
-                <WechatOutlined />
-                {"  "}Continue
+                {mode === "manage" ? (
+                  <span>
+                    <WechatOutlined /> Continue
+                  </span>
+                ) : (
+                  <span>
+                    <EyeFilled /> View
+                  </span>
+                )}
               </a>
             </span>,
 

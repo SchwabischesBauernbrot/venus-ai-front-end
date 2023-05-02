@@ -22,13 +22,14 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../../../shared/components/shared";
 import { axiosInstance, supabase } from "../../../config";
 import { getBotAvatarUrl } from "../../../shared/services/utils";
-import { FullCharacterView } from "../../../types/backend-alias";
+import { ChatEntityWithCharacter, FullCharacterView } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { MultiLine } from "../../../shared/components/MultiLine";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../shared/components/PrivateIndicator";
 import { chatService } from "../../Chat/services/chat-service";
 import { Helmet } from "react-helmet";
+import { ChatList } from "../../../shared/components";
 
 const { Title } = Typography;
 
@@ -46,6 +47,24 @@ export const ViewCharacter: React.FC = () => {
     async () => {
       const response = await axiosInstance.get<FullCharacterView>(`/characters/${characterId}`);
       return response.data;
+    },
+    { enabled: !!characterId }
+  );
+
+  const { data: chatData, isLoading: isChatLoading } = useQuery(
+    ["public_chats", characterId],
+    async () => {
+      const responses = await supabase
+        .from("chats")
+        .select("*, characters(name, description, avatar)")
+        .order("updated_at", { ascending: false })
+        .order("created_at", { ascending: false })
+        .eq("is_public", true)
+        .eq("character_id", characterId)
+        .returns<ChatEntityWithCharacter[]>();
+
+      const chats = responses.data;
+      return chats;
     },
     { enabled: !!characterId }
   );
@@ -202,11 +221,13 @@ export const ViewCharacter: React.FC = () => {
                   </Descriptions.Item>
                 </Descriptions>
               </Collapse.Panel>
-              <Collapse.Panel header="Shared public chats (coming soon)" key="2">
-                <Title level={3} className="my-2">
-                  Public chats (coming soon)
-                </Title>
-              </Collapse.Panel>
+              {chatData && (
+                <Collapse.Panel header={`Shared Public chats - ${chatData.length} chats`} key="2">
+                  <Title level={3} className="my-2">
+                    <ChatList chats={chatData} size="small" mode="view" />
+                  </Title>
+                </Collapse.Panel>
+              )}
             </Collapse>
           </Col>
         </Row>
