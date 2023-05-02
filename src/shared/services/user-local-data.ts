@@ -1,4 +1,5 @@
 export interface UserLocalData {
+  character_view: "sfw" | "nsfw" | "all";
   theme: "light" | "dark";
   openAIKey?: string;
 }
@@ -6,6 +7,7 @@ export interface UserLocalData {
 const LOCAL_DATA_KEY = "local-data";
 
 export const defaultUserLocalData: UserLocalData = {
+  character_view: "sfw",
   theme: "dark",
 };
 

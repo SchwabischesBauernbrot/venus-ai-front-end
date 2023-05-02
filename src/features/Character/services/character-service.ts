@@ -6,8 +6,8 @@ export interface SearchCharactersParams {
   tag_id?: number;
 
   page: number;
-  only_nsfw?: boolean;
-  sort?: string;
+  mode?: "sfw" | "all" | "nsfw";
+  sort?: "latest" | "popular";
   search?: string;
 }
 

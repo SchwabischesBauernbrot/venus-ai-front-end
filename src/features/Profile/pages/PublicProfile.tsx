@@ -34,8 +34,8 @@ export const PublicProfile: React.FC = () => {
       {isLoading && <Spin />}
 
       {data && (
-        <Row>
-          <Col lg={4} xs={24} className="text-left pt-4">
+        <Row gutter={16}>
+          <Col lg={6} xs={24} className="text-left pt-4">
             {data.avatar ? (
               <Avatar shape="square" size={100} src={getAvatarUrl(data.avatar)} />
             ) : (
@@ -48,14 +48,14 @@ export const PublicProfile: React.FC = () => {
             {data.about_me && <MultiLineMarkdown>{data.about_me}</MultiLineMarkdown>}
           </Col>
 
-          <Col lg={20} xs={24} className="text-left">
+          <Col lg={18} xs={24} className="text-left">
             <Title level={3} className="my-2">
               Public characters
             </Title>
 
             <CharacterListWrapper
               size="medium"
-              cachekey={`profile_chars_${profileId}`}
+              cacheKey={`profile_chars_${profileId}`}
               additionalParams={{ user_id: profileId }}
             />
           </Col>

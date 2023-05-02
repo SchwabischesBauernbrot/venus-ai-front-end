@@ -21,18 +21,18 @@ export type SearchParams = Omit<SearchCharactersParams, "page">;
 
 interface CharacterListWrapperProps {
   size: "small" | "medium";
-  cachekey: string;
+  cacheKey: string;
   additionalParams?: SearchParams;
 }
 
 export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
-  cachekey,
+  cacheKey,
   size,
   additionalParams,
 }) => {
   const [page, setPage] = useState(1);
 
-  const { data } = useQuery([cachekey, additionalParams, page], async () => {
+  const { data } = useQuery([cacheKey, additionalParams, page], async () => {
     const response = await searchCharacter({ page, ...additionalParams });
     return response;
   });

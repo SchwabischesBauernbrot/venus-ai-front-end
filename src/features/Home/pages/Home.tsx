@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { Typography, Spin, Segmented } from "antd";
+import { Typography, Spin, Segmented, Radio } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { supabase } from "../../../config";
@@ -9,8 +9,11 @@ import { useContext, useMemo, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { ChatList } from "../../../shared/components";
 import { Link } from "react-router-dom";
-import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
-import { useTags } from "../../../hooks/useTags";
+import {
+  CharacterListWrapper,
+  SearchParams,
+} from "../../../shared/components/CharacterListWrapper";
+import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -28,28 +31,28 @@ const SegmentContainer = styled.div`
 `;
 
 export const Home: React.FC = () => {
-  const { profile } = useContext(AppContext);
+  const { profile, localData, updateLocalData } = useContext(AppContext);
   const [segment, setSegment] = useState<Segment>("latest");
 
-  const params = useMemo(() => {
+  const params: SearchParams | undefined = useMemo(() => {
+    const modeParams = { mode: localData.character_view || "sfw" };
+
     switch (segment) {
       case "latest":
-        return undefined;
+        return modeParams;
       case "popular":
-        return { sort: "popular" };
-      case "nsfw":
-        return { only_nsfw: true };
+        return { sort: "popular", ...modeParams };
       // Lol hard code for now
       case "female":
-        return { tag_id: 2 };
+        return { tag_id: 2, ...modeParams };
       case "male":
-        return { tag_id: 1 };
+        return { tag_id: 1, ...modeParams };
       case "anime":
-        return { tag_id: 9 };
+        return { tag_id: 9, ...modeParams };
       case "game":
-        return { tag_id: 8 };
+        return { tag_id: 8, ...modeParams };
     }
-  }, [segment]);
+  }, [segment, localData]);
 
   const { data: chatData, isLoading: isChatLoading } = useQuery(
     ["chats", profile?.id],
@@ -72,15 +75,35 @@ export const Home: React.FC = () => {
   return (
     <PageContainer align="left">
       {profile && (
-        <div className="mb-4">
-          <Title level={2}>
-            Continue Chats <Link to="/my_chats">(All Chats)</Link>
-          </Title>
+        <div>
           {isChatLoading && <Spin />}
-          {chatData && <ChatList size="small" chats={chatData} />}
+          {chatData && (
+            <div className="mb-4">
+              <Title level={2}>
+                Continue Chats <Link to="/my_chats">(All Chats)</Link>
+              </Title>
+
+              <ChatList size="small" chats={chatData} />
+            </div>
+          )}
         </div>
       )}
 
+      <Radio.Group
+        className="mb-4"
+        defaultValue={localData.character_view || "sfw"}
+        onChange={(e) => updateLocalData({ character_view: e.target.value })}
+      >
+        <Radio.Button value="all">
+          <EyeFilled /> All
+        </Radio.Button>
+        <Radio.Button value="sfw">
+          <EyeInvisibleFilled /> SFW Only
+        </Radio.Button>
+        <Radio.Button value="nsfw">
+          <HeartFilled /> NSFW Only
+        </Radio.Button>
+      </Radio.Group>
       <SegmentContainer>
         <Segmented
           value={segment}
@@ -93,10 +116,6 @@ export const Home: React.FC = () => {
             {
               label: "🔥 Most Popular",
               value: "popular",
-            },
-            {
-              label: "🔞 NSFW Only",
-              value: "nsfw",
             },
             {
               label: "👩‍🦰 Female",
@@ -118,7 +137,7 @@ export const Home: React.FC = () => {
         />
       </SegmentContainer>
 
-      <CharacterListWrapper size="small" cachekey="main_page" additionalParams={params} />
+      <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
     </PageContainer>
   );
 };

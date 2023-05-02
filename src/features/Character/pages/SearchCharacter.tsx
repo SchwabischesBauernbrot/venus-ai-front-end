@@ -1,34 +1,23 @@
-import { useQuery } from "react-query";
 import styled from "styled-components";
-import {
-  Typography,
-  Spin,
-  Space,
-  Input,
-  Button,
-  Select,
-  Tag,
-  Tooltip,
-  Switch,
-  Row,
-  Col,
-} from "antd";
+import { Typography, Space, Input, Select, Tag, Tooltip, Switch, Row, Col, Radio } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { useTags } from "../../../hooks/useTags";
-import { useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import {
   CharacterListWrapper,
   SearchParams,
 } from "../../../shared/components/CharacterListWrapper";
 import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
+import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
+import { AppContext } from "../../../appContext";
 
 const { Title } = Typography;
 
 const TagContainer = styled.div`
   .ant-tag {
     font-size: 1.25rem;
-    line-height: 2.5rem;
+    line-height: 2rem;
 
     ${MOBILE_BREAKPOINT_CSS} {
       font-size: 0.8rem;
@@ -38,11 +27,12 @@ const TagContainer = styled.div`
 `;
 
 export const SearchCharacter: React.FC = () => {
+  const { localData } = useContext(AppContext);
   const tags = useTags();
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     search: "",
-    only_nsfw: false,
+    mode: localData.character_view || "sfw",
     sort: "latest",
   });
 
@@ -58,7 +48,23 @@ export const SearchCharacter: React.FC = () => {
         Search for characters
       </Title>
 
-      <Row>
+      <Row gutter={[0, 16]}>
+        <Col xs={24} lg={7} className="text-left">
+          <Radio.Group
+            defaultValue={searchParams.mode}
+            onChange={(e) => updateSearchParams({ mode: e.target.value })}
+          >
+            <Radio.Button value="all">
+              <EyeFilled /> All
+            </Radio.Button>
+            <Radio.Button value="sfw">
+              <EyeInvisibleFilled /> SFW Only
+            </Radio.Button>
+            <Radio.Button value="nsfw">
+              <HeartFilled /> NSFW Only
+            </Radio.Button>
+          </Radio.Group>
+        </Col>
         <Col xs={24} lg={12}>
           <Input.Search
             defaultValue=""
@@ -68,15 +74,8 @@ export const SearchCharacter: React.FC = () => {
             onSearch={(value) => updateSearchParams({ search: value })}
           />
         </Col>
-        <Col xs={24} lg={6} className="text-center">
-          <Switch
-            className="mr-2"
-            defaultChecked={searchParams.only_nsfw}
-            onChange={(checked) => updateSearchParams({ only_nsfw: checked })}
-          />
-          <span style={{ position: "relative", top: "2px" }}>🔞 NSFW Only</span>
-        </Col>
-        <Col xs={24} lg={6}>
+
+        <Col xs={24} lg={5}>
           <Select
             style={{ width: "100%" }}
             value={searchParams.sort}
@@ -90,7 +89,7 @@ export const SearchCharacter: React.FC = () => {
 
       {tags && (
         <TagContainer>
-          <Space className="mt-4 " size={[2, 4]} wrap>
+          <Space className="mt-4 " size={[2, 8]} wrap>
             {tags?.map((tag) => (
               <Tooltip key={tag.id} title={tag.description}>
                 <Tag.CheckableTag
@@ -112,7 +111,7 @@ export const SearchCharacter: React.FC = () => {
         </TagContainer>
       )}
 
-      <CharacterListWrapper size="small" cachekey="search" additionalParams={searchParams} />
+      <CharacterListWrapper size="small" cacheKey="search" additionalParams={searchParams} />
     </PageContainer>
   );
 };
