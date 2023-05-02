@@ -9,11 +9,24 @@ export interface CheckInput {
   mode: OpenAIMode;
   apiKey?: string;
   proxy?: string;
+  proxyKey?: string;
 }
 
-export const checkOpenAIKeyOrProxy = async ({ mode, apiKey, proxy }: CheckInput) => {
+export const checkOpenAIKeyOrProxy = async ({ mode, apiKey, proxy, proxyKey }: CheckInput) => {
   try {
     const baseUrl = mode === "api_key" ? "https://api.openai.com/v1" : proxy;
+
+    const authorizationHeader = (() => {
+      if (mode === "api_key" && apiKey) {
+        return `Bearer ${apiKey}`;
+      }
+
+      if (mode === "proxy" && proxyKey) {
+        return `Bearer ${proxyKey}`;
+      }
+
+      return "";
+    })();
 
     const response = await axios.post<OpenAIResponse>(
       `${baseUrl}/chat/completions`,
@@ -25,13 +38,16 @@ export const checkOpenAIKeyOrProxy = async ({ mode, apiKey, proxy }: CheckInput)
       },
       {
         headers: {
-          Authorization: apiKey ? `Bearer ${apiKey}` : "",
+          Authorization: authorizationHeader,
         },
       }
     );
     return response.data;
   } catch (err) {
     const axiosError = err as AxiosError<{ error: OpenAIError }>;
+
+    console.log(axiosError.response?.data);
+
     const error = axiosError.response?.data?.error;
     if (error) {
       return { error };

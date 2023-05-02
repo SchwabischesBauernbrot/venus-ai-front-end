@@ -23,6 +23,7 @@ export interface OpenAIError {
   message: string;
   param: object | null;
   type: string;
+  error?: string;
 }
 
 export interface OpenAIProxyError {

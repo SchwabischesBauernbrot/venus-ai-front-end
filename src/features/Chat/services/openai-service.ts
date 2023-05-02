@@ -55,6 +55,18 @@ export const callOpenAI = async (
   const baseUrl =
     config.open_ai_mode === "api_key" ? "https://api.openai.com/v1" : config.open_ai_reverse_proxy;
 
+  const authorizationHeader = (() => {
+    if (config.open_ai_mode === "api_key" && config.openAIKey) {
+      return `Bearer ${config.openAIKey}`;
+    }
+
+    if (config.open_ai_mode === "proxy" && config.reverseProxyKey) {
+      return `Bearer ${config.reverseProxyKey}`;
+    }
+
+    return "";
+  })();
+
   const response = await fetch(`${baseUrl}/chat/completions`, {
     body: JSON.stringify({
       model: config.model,
@@ -66,7 +78,7 @@ export const callOpenAI = async (
     method: "POST",
     headers: {
       "content-type": "application/json",
-      Authorization: config.open_ai_mode === "api_key" ? `Bearer ${config.openAIKey}` : "",
+      Authorization: authorizationHeader,
     },
   });
 

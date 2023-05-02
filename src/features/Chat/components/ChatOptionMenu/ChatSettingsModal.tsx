@@ -76,6 +76,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
     const newLocalData: Partial<UserLocalData> = {
       ...localData,
       openAIKey: formValues.openAIKey,
+      reverseProxyKey: formValues.reverseProxyKey,
     };
     updateLocalData(newLocalData);
 
@@ -222,6 +223,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                 <Form.Item
                   name="openAIKey"
                   label="OpenAI Key"
+                  rules={[{ required: true, message: "Enter OpenAI API key." }]}
                   help={
                     <span>
                       Sign up at{" "}
@@ -260,39 +262,65 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                   </Space.Compact>
                 </Form.Item>
               ) : (
-                <Form.Item
-                  name="open_ai_reverse_proxy"
-                  label="Open AI Reverse Proxy"
-                  help={
-                    <span>
-                      These proxies are contributed by communities. Might be slow or unstable.{" "}
-                      <br />
-                      <strong>Does NOT support text streaming.</strong>
-                      <br />
-                      See{" "}
-                      <a href="https://rentry.co/Tavern4Retards#proxy-gpt-setup" target="_blank">
-                        this guide
-                      </a>{" "}
-                      on more details about where to find proxy.
-                    </span>
-                  }
-                >
-                  <Space.Compact style={{ width: "100%" }}>
-                    {/* BUG with Form.Item LOL */}
-                    <Input
-                      value={openAIProxyWatch || ""}
-                      onChange={(e) => form.setFieldValue("open_ai_reverse_proxy", e.target.value)}
-                      placeholder="https://whocars123-oai-proxy.hf.space/proxy/openai"
-                    />
-                    <Button
-                      loading={isCheckingOpenAI}
-                      disabled={isCheckingOpenAI || !openAIProxyWatch}
-                      onClick={() => checkOpenAI({ mode: "proxy", proxy: openAIProxyWatch })}
-                    >
-                      Check Proxy
-                    </Button>
-                  </Space.Compact>
-                </Form.Item>
+                <>
+                  <Form.Item
+                    name="open_ai_reverse_proxy"
+                    label="Open AI Reverse Proxy"
+                    rules={[{ required: true, message: "Enter reverse proxy url." }]}
+                    help={
+                      <span>
+                        These proxies are contributed by communities. Might be slow or unstable.{" "}
+                        <br />
+                        <strong>Does NOT support text streaming.</strong>
+                        <br />
+                        See{" "}
+                        <a href="https://rentry.co/Tavern4Retards#proxy-gpt-setup" target="_blank">
+                          this guide
+                        </a>{" "}
+                        on more details about where to find proxy.
+                      </span>
+                    }
+                  >
+                    <Space.Compact style={{ width: "100%" }}>
+                      {/* BUG with Form.Item LOL */}
+                      <Input
+                        value={openAIProxyWatch || ""}
+                        onChange={(e) =>
+                          form.setFieldValue("open_ai_reverse_proxy", e.target.value)
+                        }
+                        placeholder="https://whocars123-oai-proxy.hf.space/proxy/openai"
+                      />
+                      <Button
+                        loading={isCheckingOpenAI}
+                        disabled={isCheckingOpenAI || !openAIProxyWatch}
+                        onClick={() =>
+                          checkOpenAI({
+                            mode: "proxy",
+                            proxy: openAIProxyWatch,
+                            proxyKey: form.getFieldValue("reverseProxyKey"),
+                          })
+                        }
+                      >
+                        Check Proxy
+                      </Button>
+                    </Space.Compact>
+                  </Form.Item>
+                  <Form.Item
+                    className="pt-4"
+                    name="reverseProxyKey"
+                    label="Reverse Proxy Key"
+                    help={
+                      <span>
+                        Key of the reverse proxy. Leave this empty if you don't know what it is.
+                        <br />
+                        <strong>DO NOT put your OpenAI API key here.</strong>
+                        <br />
+                      </span>
+                    }
+                  >
+                    <Input placeholder="Some reverse proxy key, do not put OpenAI API key here" />
+                  </Form.Item>
+                </>
               )}
 
               <Form.Item
