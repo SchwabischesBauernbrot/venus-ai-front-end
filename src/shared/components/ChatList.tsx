@@ -6,7 +6,7 @@ import { truncate } from "lodash-es";
 
 import { getBotAvatarUrl, getTimeAgo } from "../services/utils";
 import { PrivateIndicator } from "./PrivateIndicator";
-import { chatService } from "../../features/Chat/services/chat-service";
+import { chatService, formatChat } from "../../features/Chat/services/chat-service";
 
 interface ChatListProps {
   chats: ChatEntityWithCharacter[];
@@ -88,8 +88,13 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, onChatDeleted, size =
             description={
               <div>
                 {chat.summary ? (
-                  <Tooltip title={chat.summary}>
-                    <p>Summary: {truncate(chat.summary, { length: 150 })}</p>
+                  <Tooltip title={formatChat(chat.summary, "you", chat.characters.name)}>
+                    <p>
+                      Summary:{" "}
+                      {truncate(formatChat(chat.summary, "you", chat.characters.name), {
+                        length: 150,
+                      })}
+                    </p>
                   </Tooltip>
                 ) : (
                   <p>{truncate(chat.characters.description, { length: 150 })}</p>

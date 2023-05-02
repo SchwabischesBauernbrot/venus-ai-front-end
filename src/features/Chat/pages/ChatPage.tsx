@@ -439,7 +439,7 @@ export const ChatPage: React.FC = () => {
                       key={item.id}
                       canEdit={canEdit && index > 0 && !isImmersiveMode}
                       message={item}
-                      user={canEdit ? profile?.name : "Anon"}
+                      user={canEdit ? profile?.name : "You"}
                       userAvatar={canEdit ? profile?.avatar : undefined}
                       showRegenerate={
                         item.is_main &&
@@ -494,7 +494,7 @@ export const ChatPage: React.FC = () => {
                           key={item.id}
                           message={item}
                           canEdit={canEdit && !isImmersiveMode}
-                          user={canEdit ? profile?.name : "Anon"}
+                          user={canEdit ? profile?.name : "You"}
                           userAvatar={canEdit ? profile?.avatar : undefined}
                           showRegenerate={false}
                           characterName={data.chat.characters.name}

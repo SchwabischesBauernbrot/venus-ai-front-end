@@ -11,6 +11,7 @@ import { MultiLineMarkdown } from "../../../shared/components/MultiLineMarkdown"
 import { getAvatarUrl, getBotAvatarUrl } from "../../../shared/services/utils";
 import { SupaChatMessage } from "../../../types/backend-alias";
 import { useRef, useState } from "react";
+import { formatChat } from "../services/chat-service";
 
 interface MessageDisplayProps {
   message: SupaChatMessage;
@@ -27,19 +28,6 @@ interface MessageDisplayProps {
 
   showRegenerate: boolean;
 }
-
-// Some logic to replace {{bot}} and {{user}} on client side
-const format = (inputMessage: string, user = "", characterName = "") => {
-  return inputMessage
-    .replace(/{{char}}:/gi, "")
-
-    .replace(/{{user}}/gi, user)
-    .replace(/<user>/gi, user)
-    .replace(/{{bot}}/gi, characterName)
-    .replace(/{{char}}/gi, characterName)
-    .replace(/<bot>/gi, characterName)
-    .replace(/<START>/gi, "");
-};
 
 export const ChatControl = styled.div`
   opacity: 0.75;
@@ -167,7 +155,9 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
               onChange={(e) => setEditMessage(e.target.value)}
             />
           ) : (
-            <MultiLineMarkdown>{format(message.message, user, characterName)}</MultiLineMarkdown>
+            <MultiLineMarkdown>
+              {formatChat(message.message, user, characterName)}
+            </MultiLineMarkdown>
           )
         }
       />

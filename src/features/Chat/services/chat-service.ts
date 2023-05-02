@@ -100,6 +100,18 @@ const readyToChat = (config: UserConfig | undefined, localData: UserLocalData) =
   return false;
 };
 
+export const formatChat = (inputMessage: string, user = "you", characterName = "") => {
+  return inputMessage
+    .replace(/{{char}}:/gi, "")
+
+    .replace(/{{user}}/gi, user)
+    .replace(/<user>/gi, user)
+    .replace(/{{bot}}/gi, characterName)
+    .replace(/{{char}}/gi, characterName)
+    .replace(/<bot>/gi, characterName)
+    .replace(/<START>/gi, "");
+};
+
 export const chatService = {
   createChat,
   deleteChat,
@@ -109,4 +121,5 @@ export const chatService = {
   updateMassage,
   deleteMessages,
   readyToChat,
+  formatChat,
 };
