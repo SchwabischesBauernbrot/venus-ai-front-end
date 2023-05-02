@@ -3,9 +3,10 @@ import { Spin, Typography } from "antd";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 
-import { supabase } from "../../../config";
+import { SITE_NAME, supabase } from "../../../config";
 import { PageContainer } from "../../../shared/components/shared";
 import { CharacterForm } from "../components/CharacterForm";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -40,6 +41,9 @@ export const EditCharacter: React.FC = () => {
 
   return (
     <PageContainer>
+      <Helmet>
+        <title>{SITE_NAME} - Edit character</title>
+      </Helmet>
       <Title level={2}>
         Edit Character <Link to={`/characters/${characterId}`}>(View Character)</Link>
       </Title>

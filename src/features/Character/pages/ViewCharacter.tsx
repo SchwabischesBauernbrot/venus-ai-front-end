@@ -28,6 +28,7 @@ import { MultiLine } from "../../../shared/components/MultiLine";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../shared/components/PrivateIndicator";
 import { chatService } from "../../Chat/services/chat-service";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -93,6 +94,23 @@ export const ViewCharacter: React.FC = () => {
       {isLoading && <Spin />}
       {!isLoading && !data && <p>Can not view this character. It might be deleted or private.</p>}
 
+      {data && (
+        <Helmet>
+          <title>
+            {`Chat with ${data.name} - Total: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+          </title>
+          <meta
+            property="og:title"
+            content={`Chat with ${data.name} - Total: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+          />
+          <meta
+            property="og:description"
+            content={`Chat with ${data.name} - ${data.description}`}
+          />
+          <meta property="og:image" content={getBotAvatarUrl(data.avatar)} />
+          <meta name="description" content={`Chat with ${data.name} - ${data.description}`} />
+        </Helmet>
+      )}
       {data && (
         <Row gutter={16}>
           <Col lg={6} xs={24} className="text-left pt-2 pb-2 mb-2">

@@ -1,7 +1,7 @@
 import { Typography, Spin, Button } from "antd";
 import { PageContainer } from "../../../shared/components/shared";
 import { useQuery } from "react-query";
-import { supabase } from "../../../config";
+import { SITE_NAME, supabase } from "../../../config";
 import { useContext } from "react";
 import { AppContext } from "../../../appContext";
 import {
@@ -13,6 +13,7 @@ import {
 import { CharacterList } from "../../../shared/components/CharacterList";
 import { Link } from "react-router-dom";
 import { UserAddOutlined } from "@ant-design/icons";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -55,6 +56,10 @@ export const MyCharacters: React.FC = () => {
 
   return (
     <PageContainer align="left">
+      <Helmet>
+        <title>{SITE_NAME} - My characters</title>
+      </Helmet>
+
       <Title level={2}>
         My Characters{" "}
         {data && (

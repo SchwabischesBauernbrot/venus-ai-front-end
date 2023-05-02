@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Helmet } from "react-helmet";
 import { Typography, Space, Input, Select, Tag, Tooltip, Row, Col, Radio } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
@@ -11,6 +12,7 @@ import {
 import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
 import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
 import { AppContext } from "../../../appContext";
+import { SITE_NAME } from "../../../config";
 
 const { Title } = Typography;
 
@@ -44,6 +46,10 @@ export const SearchCharacter: React.FC = () => {
 
   return (
     <PageContainer align="left">
+      <Helmet>
+        <title>{SITE_NAME} - Search for characters</title>
+      </Helmet>
+
       <Title level={3} className="mb-4">
         Search for characters
       </Title>

@@ -69,6 +69,12 @@ const CharacterStats = styled.span`
   font-size: 0.8rem;
 `;
 
+const CreatorName = styled.p`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
 const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> = ({
   character,
   editable,
@@ -99,7 +105,7 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
     >
       {!editable && (
         <Link to={`/profiles/${character.creator_id}`}>
-          <p>@{character.creator_name}</p>
+          <CreatorName>@{character.creator_name}</CreatorName>
         </Link>
       )}
       <Meta

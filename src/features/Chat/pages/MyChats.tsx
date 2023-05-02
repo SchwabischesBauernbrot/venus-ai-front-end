@@ -3,10 +3,11 @@ import { Typography, Spin } from "antd";
 import { useQuery } from "react-query";
 
 import { PageContainer } from "../../../shared/components/shared";
-import { supabase } from "../../../config";
+import { SITE_NAME, supabase } from "../../../config";
 import { AppContext } from "../../../appContext";
 import { ChatEntityWithCharacter } from "../../../types/backend-alias";
 import { ChatList } from "../../../shared/components/ChatList";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -33,6 +34,9 @@ export const MyChats: React.FC = () => {
 
   return (
     <PageContainer align="left">
+      <Helmet>
+        <title>{SITE_NAME} - My Chats</title>
+      </Helmet>
       <Title level={2}>
         My Chats{" "}
         {data && (

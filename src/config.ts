@@ -12,3 +12,5 @@ export const supabase = createClient<Database>(SUPABASE_ENDPOINT, SUPABASE_ANON_
 export const axiosInstance = axios.create({
   baseURL: BACKEND_ENDPOINT,
 });
+
+export const SITE_NAME = "Venus AI";

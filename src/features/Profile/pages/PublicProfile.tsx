@@ -9,6 +9,7 @@ import { PageContainer } from "../../../shared/components/shared";
 import { getAvatarUrl } from "../../../shared/services/utils";
 import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -32,6 +33,29 @@ export const PublicProfile: React.FC = () => {
   return (
     <PageContainer>
       {isLoading && <Spin />}
+
+      {data && (
+        <Helmet>
+          <title>{`Creator Profile @${data.user_name || data.name}. Bot made by ${
+            data.user_name || data.name
+          }.`}</title>
+          <meta
+            property="og:title"
+            content={`Creator Profile @${data.user_name || data.name}. Bots made by ${
+              data.user_name || data.name
+            }.`}
+          />
+          <meta
+            property="og:description"
+            content={`Creator Profile @${data.user_name || data.name} - ${data.about_me}`}
+          />
+          <meta
+            name="description"
+            content={`Creator Profile @${data.user_name || data.name} - ${data.about_me}`}
+          />
+          <meta property="og:image" content={getAvatarUrl(data.avatar)} />
+        </Helmet>
+      )}
 
       {data && (
         <Row gutter={16}>

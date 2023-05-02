@@ -14,6 +14,7 @@ import {
   SearchParams,
 } from "../../../shared/components/CharacterListWrapper";
 import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -74,6 +75,30 @@ export const Home: React.FC = () => {
 
   return (
     <PageContainer align="left">
+      <Helmet>
+        <title>Venus AI - Weeb Chat (for degenerate, and normal people too)</title>
+
+        <meta
+          name="description"
+          content="Venus AI - Weeb Chat (for degenerate, and normal people too) at venusai.chat"
+        />
+        <meta
+          property="og:title"
+          content="Venus AI - Weeb Chat (for degenerate, and normal people too) at venusai.chat"
+        />
+        <meta
+          property="og:description"
+          content="Venus AI - Weeb Chat (for degenerate, and normal people too) at venusai.chat"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://venusai.chat" />
+        <meta property="og:image" content="https://venusai.chat/logo.png" />
+        <meta property="og:locale" content="en_EN" />
+        <meta property="og:site_name" content="VenusAI" />
+
+        <link rel="canonical" href="https://venusai.chat" />
+      </Helmet>
+
       {profile && (
         <div>
           {isChatLoading && <Spin />}

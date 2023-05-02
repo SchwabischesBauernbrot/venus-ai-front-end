@@ -25,6 +25,8 @@ import { UserConfigAndLocalData } from "../../../shared/services/user-config";
 import { GenerateInterface } from "../services/generate/generate-interface";
 import { koboldGenerateInstance } from "../services/generate/kobold-generate";
 import { ChatInput } from "../components/ChatInput";
+import { Helmet } from "react-helmet";
+import { getBotAvatarUrl } from "../../../shared/services/utils";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -406,6 +408,29 @@ export const ChatPage: React.FC = () => {
 
       {data && (
         <>
+          {data.chat.is_public ? (
+            <Helmet>
+              <title>{`A public chat with ${data.chat.characters.name}`}</title>
+              <meta
+                property="og:title"
+                content={`A public chat with ${data.chat.characters.name}`}
+              />
+              <meta
+                property="og:description"
+                content={`A public chat with ${data.chat.characters.name}. ${data.chat.characters.description}`}
+              />
+              <meta
+                name="description"
+                content={`A public chat with ${data.chat.characters.name}. ${data.chat.characters.description}`}
+              />
+              <meta property="og:image" content={getBotAvatarUrl(data.chat.characters.avatar)} />
+            </Helmet>
+          ) : (
+            <Helmet>
+              <title>{`A private chat with ${data.chat.characters.name}`}</title>
+            </Helmet>
+          )}
+
           <Row justify="center">
             <Col {...CHAT_COLUMN_PROPS} className="d-flex justify-space-between align-center">
               <Link to={`/characters/${data.chat.characters.id}`}>
