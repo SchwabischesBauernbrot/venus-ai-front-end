@@ -5,7 +5,9 @@ import { SUPABASE_BUCKET_URL } from "../../config";
 export const randomID = () => Math.random().toString(36).substring(2, 8);
 
 export const getAvatarUrl = (avatar?: string) =>
-  avatar ? `${SUPABASE_BUCKET_URL}/avatars/${avatar}` : "";
+  avatar
+    ? `${SUPABASE_BUCKET_URL}/avatars/${avatar}`
+    : `${SUPABASE_BUCKET_URL}/bot-avatars/anon.jpg`;
 
 export const getBotAvatarUrl = (avatar?: string) =>
   avatar ? `${SUPABASE_BUCKET_URL}/bot-avatars/${avatar}` : "";
