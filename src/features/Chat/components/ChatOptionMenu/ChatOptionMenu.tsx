@@ -214,7 +214,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, 
               key: "share",
               label: (
                 <Tooltip
-                  title="Make this chat public and give you a link for sharing"
+                  title="Make this chat public (your account name will be hidden) and give you a link for sharing"
                   placement="right"
                 >
                   <div

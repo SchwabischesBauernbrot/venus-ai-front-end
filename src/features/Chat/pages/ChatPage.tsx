@@ -497,7 +497,7 @@ export const ChatPage: React.FC = () => {
 
                 {botChoices.length > 0 && (
                   <BotChoicesContainer>
-                    {!isGenerating && (
+                    {!isGenerating && canEdit && (
                       <>
                         {choiceIndex > 0 && (
                           <BotMessageControlWrapper side="left">
