@@ -1,3 +1,4 @@
+import { FullCharacterView } from "../../../../types/backend-alias";
 import { Tokenizer } from "./tokenizer";
 
 interface CaiCharacterJson {
@@ -40,6 +41,22 @@ export class Character {
   first_message: string;
   example_dialogs: string;
 
+  constructor(
+    name: string,
+    description: string,
+    personality: string,
+    scenario: string,
+    first_message: string,
+    example_dialogs: string
+  ) {
+    this.name = name;
+    this.personality = personality;
+    this.description = description;
+    this.scenario = scenario;
+    this.first_message = first_message;
+    this.example_dialogs = example_dialogs;
+  }
+
   get tokens() {
     return Tokenizer.count(
       this.name +
@@ -51,64 +68,86 @@ export class Character {
     );
   }
 
-  #valid(object: CharacterJsonObject, key: CharacterJsonObjKey) {
+  static valid(object: CharacterJsonObject, key: CharacterJsonObjKey) {
     if (!object || !object.hasOwnProperty(key)) return false;
 
     return true;
   }
 
-  #sanitize(object: Partial<CharacterJsonObject & CaiCharacterJson>, key: CharacterJsonObjKey) {
+  static sanitize(
+    object: Partial<CharacterJsonObject & CaiCharacterJson>,
+    key: CharacterJsonObjKey
+  ) {
     return ((object[key] as string) || "").trim();
   }
 
-  constructor(json: CharacterJsonObject | null) {
+  static fromCharacterView(character: FullCharacterView) {
+    return new Character(
+      character.name,
+      // Swapped on purpose lol
+      character.description,
+      character.personality,
+      character.scenario,
+      character.first_message,
+      character.example_dialogs
+    );
+  }
+
+  static fromJsonObject(json: CharacterJsonObject | null) {
     if (!json) return;
 
+    console.log(json);
+
+    let name = "",
+      personality = "",
+      description = "",
+      scenario = "",
+      first_message = "",
+      example_dialogs = "";
+
     // Text Generation
-    if (this.#valid(json, "char_name")) this.name = this.#sanitize(json, "char_name");
-    if (this.#valid(json, "char_persona")) this.personality = this.#sanitize(json, "char_persona");
-    if (this.#valid(json, "world_scenario")) this.scenario = this.#sanitize(json, "world_scenario");
-    if (this.#valid(json, "char_greeting"))
-      this.first_message = this.#sanitize(json, "char_greeting");
-    if (this.#valid(json, "example_dialogue"))
-      this.example_dialogs = this.#sanitize(json, "example_dialogue");
+    if (this.valid(json, "char_name")) name = this.sanitize(json, "char_name");
+    if (this.valid(json, "char_persona")) personality = this.sanitize(json, "char_persona");
+    if (this.valid(json, "world_scenario")) scenario = this.sanitize(json, "world_scenario");
+    if (this.valid(json, "char_greeting")) first_message = this.sanitize(json, "char_greeting");
+    if (this.valid(json, "example_dialogue"))
+      example_dialogs = this.sanitize(json, "example_dialogue");
 
     // TavernAI
-    if (this.#valid(json, "name")) this.name = this.#sanitize(json, "name");
-    if (this.#valid(json, "personality")) this.description = this.#sanitize(json, "personality");
-    if (this.#valid(json, "description")) this.personality = this.#sanitize(json, "description");
-
-    if (this.#valid(json, "scenario")) this.scenario = this.#sanitize(json, "scenario");
-
-    if (this.#valid(json, "first_mes")) this.first_message = this.#sanitize(json, "first_mes");
-    if (this.#valid(json, "mes_example"))
-      this.example_dialogs = this.#sanitize(json, "mes_example");
+    if (this.valid(json, "name")) name = this.sanitize(json, "name");
+    // These two are swapped on purpose lol
+    if (this.valid(json, "personality")) description = this.sanitize(json, "personality");
+    if (this.valid(json, "description")) personality = this.sanitize(json, "description");
+    if (this.valid(json, "scenario")) scenario = this.sanitize(json, "scenario");
+    if (this.valid(json, "first_mes")) first_message = this.sanitize(json, "first_mes");
+    if (this.valid(json, "mes_example")) example_dialogs = this.sanitize(json, "mes_example");
 
     // CIA Character
     if (json.character) {
-      if (this.#valid(json.character, "name")) this.name = this.#sanitize(json.character, "name");
-      if (this.#valid(json.character, "title"))
-        this.description = this.#sanitize(json.character, "title");
-      if (this.#valid(json.character, "description"))
-        this.personality = this.#sanitize(json.character, "description");
-      if (this.#valid(json.character, "greeting"))
-        this.first_message = this.#sanitize(json.character, "greeting");
-      if (this.#valid(json.character, "definition"))
-        this.example_dialogs = this.#sanitize(json.character, "definition");
+      if (this.valid(json.character, "name")) name = this.sanitize(json.character, "name");
+      if (this.valid(json.character, "title")) description = this.sanitize(json.character, "title");
+      if (this.valid(json.character, "description"))
+        personality = this.sanitize(json.character, "description");
+      if (this.valid(json.character, "greeting"))
+        first_message = this.sanitize(json.character, "greeting");
+      if (this.valid(json.character, "definition"))
+        example_dialogs = this.sanitize(json.character, "definition");
     }
 
     // CIA History
     if (json.info && json.info.character) {
-      if (this.#valid(json.info.character, "name"))
-        this.name = this.#sanitize(json.info.character, "name");
-      if (this.#valid(json.info.character, "title"))
-        this.description = this.#sanitize(json.info.character, "title");
-      if (this.#valid(json.info.character, "description"))
-        this.personality = this.#sanitize(json.info.character, "description");
-      if (this.#valid(json.info.character, "greeting"))
-        this.first_message = this.#sanitize(json.info.character, "greeting");
-      if (this.#valid(json.info.character, "definition"))
-        this.example_dialogs = this.#sanitize(json.info.character, "definition");
+      if (this.valid(json.info.character, "name"))
+        name = this.sanitize(json.info.character, "name");
+      if (this.valid(json.info.character, "title"))
+        description = this.sanitize(json.info.character, "title");
+      if (this.valid(json.info.character, "description"))
+        personality = this.sanitize(json.info.character, "description");
+      if (this.valid(json.info.character, "greeting"))
+        first_message = this.sanitize(json.info.character, "greeting");
+      if (this.valid(json.info.character, "definition"))
+        example_dialogs = this.sanitize(json.info.character, "definition");
     }
+
+    return new Character(name, description, personality, scenario, first_message, example_dialogs);
   }
 }

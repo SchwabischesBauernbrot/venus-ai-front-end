@@ -23,6 +23,16 @@ export const formatTime = (dateTimeString: string) => {
   return formattedDateTimeString;
 };
 
+export const formatNumber = (number: number) => {
+  if (number < 1000) {
+    return number.toString();
+  } else if (number < 1000000) {
+    return (number / 1000).toFixed(1) + "k";
+  } else {
+    return (number / 1000000).toFixed(1) + "m";
+  }
+};
+
 export const copyToClipboard = (text: string) => {
   const tempElement = document.createElement("textarea");
   tempElement.value = text;

@@ -3,7 +3,7 @@ import { Form, Input, Upload, Select, Button, message, Typography, Radio, ColPro
 import { UploadOutlined } from "@ant-design/icons";
 
 import { axiosInstance, supabase } from "../../../config";
-import { parseCharacter } from "../services/character-parse";
+import { parseCharacter } from "../services/character-service";
 import { compressImage } from "../../../shared/services/image-utils";
 import { useTags } from "../../../hooks/useTags";
 import { getBotAvatarUrl } from "../../../shared/services/utils";
@@ -125,8 +125,6 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
 
   const avatarSection = (payload: { file?: File } | undefined) => {
     const avatarPayload = payload?.file;
-
-    console.log({ avatarPayload });
 
     if (avatarPayload) {
       return (
@@ -301,7 +299,19 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           name="personality"
           extra={countToken(personalityWatch)}
           rules={[{ required: true, message: "Define the personality for your character." }]}
-          help="Describe the character's persona here. Think of this as CharacterAI's description + definitions in one box."
+          help={
+            <div>
+              <span>
+                Describe the character's persona here. Think of this as CharacterAI's description +
+                definitions in one box.
+              </span>
+              <br />
+              <span>
+                This field is called <strong>Description</strong> in TavernAI and
+                <strong>Personality</strong> in Character Editor.
+              </span>
+            </div>
+          }
         >
           <Input.TextArea rows={4} autoSize placeholder="Personality" />
         </Form.Item>

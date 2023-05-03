@@ -7,6 +7,7 @@ const MarkdownContainer = styled.div<{ theme: "light" | "dark" }>`
   p {
     color: ${(props) => (props.theme === "light" ? "black" : "rgb(229, 224, 216)")};
     margin-bottom: 0.7rem;
+    word-wrap: break-word;
   }
 
   code {

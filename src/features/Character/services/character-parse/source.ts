@@ -14,7 +14,7 @@ export class Source {
   file: File | null;
   json: CharacterJsonObject | null;
   image: HTMLImageElement | null;
-  character: Character;
+  character: Character | undefined;
   format: JsonFormat | undefined;
 
   #detectFormats(json: CharacterJsonObject) {
@@ -73,7 +73,7 @@ export class Source {
     if (json) this.json = json;
     if (image) this.image = image;
 
-    this.character = new Character(this.json);
+    this.character = Character.fromJsonObject(this.json);
 
     if (this.json) {
       this.#detectFormats(this.json);

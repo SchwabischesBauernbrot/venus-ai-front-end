@@ -13,9 +13,16 @@ import {
   Descriptions,
   message,
   Badge,
+  Dropdown,
 } from "antd";
 import { useCallback, useContext, useState } from "react";
-import { BookOutlined, LoadingOutlined, WechatOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  DownloadOutlined,
+  LoadingOutlined,
+  UserOutlined,
+  WechatOutlined,
+} from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -30,6 +37,8 @@ import { PrivateIndicator } from "../../../shared/components/PrivateIndicator";
 import { chatService } from "../../Chat/services/chat-service";
 import { Helmet } from "react-helmet";
 import { ChatList } from "../../../shared/components";
+import { exportCharacter } from "../services/character-service";
+import { Character } from "../services/character-parse/character";
 
 const { Title } = Typography;
 
@@ -183,6 +192,35 @@ export const ViewCharacter: React.FC = () => {
               >
                 {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name} 🔒
               </Button>
+
+              <Dropdown
+                trigger={["click"]}
+                className="mt-4"
+                menu={{
+                  items: [
+                    {
+                      label: "TavernAI Character Card",
+                      key: "card",
+                      icon: <UserOutlined />,
+                    },
+                    {
+                      label: "Character JSON file",
+                      key: "json",
+                      icon: <UserOutlined />,
+                    },
+                  ],
+                  onClick: (e) => {
+                    const imgSrc = getBotAvatarUrl(data.avatar);
+                    const character = Character.fromCharacterView(data);
+                    exportCharacter(e.key as "card" | "json", imgSrc, character);
+                  },
+                }}
+              >
+                <Button block>
+                  <DownloadOutlined />
+                  Export character
+                </Button>
+              </Dropdown>
             </div>
           </Col>
 
