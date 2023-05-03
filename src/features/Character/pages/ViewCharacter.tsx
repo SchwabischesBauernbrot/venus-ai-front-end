@@ -28,7 +28,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { axiosInstance, supabase } from "../../../config";
-import { getBotAvatarUrl, getRealId } from "../../../shared/services/utils";
+import { getBotAvatarUrl, getRealId, toSlug } from "../../../shared/services/utils";
 import { ChatEntityWithCharacter, FullCharacterView } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { MultiLine } from "../../../shared/components/MultiLine";
@@ -39,6 +39,7 @@ import { Helmet } from "react-helmet";
 import { ChatList } from "../../../shared/components";
 import { exportCharacter } from "../services/character-service";
 import { Character } from "../services/character-parse/character";
+import { TagLink } from "../../../shared/components/TagLink";
 
 const { Title } = Typography;
 
@@ -166,7 +167,10 @@ export const ViewCharacter: React.FC = () => {
             </Badge.Ribbon>
 
             <div className="mt-2">
-              <Link target="_blank" to={`/profiles/${data.creator_id}`}>
+              <Link
+                target="_blank"
+                to={`/profiles/${data.creator_id}_profile-of-${toSlug(data.creator_name)}`}
+              >
                 <span>@{data.creator_name}</span>
               </Link>
               <p>{data.description}</p>
@@ -176,9 +180,7 @@ export const ViewCharacter: React.FC = () => {
               <Space size={[0, 8]} wrap>
                 {data.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
                 {data.tags?.map((tag) => (
-                  <Tooltip key={tag.id} title={tag.description}>
-                    <Tag>{tag.name}</Tag>
-                  </Tooltip>
+                  <TagLink tag={tag} />
                 ))}
               </Space>
             ) : null}

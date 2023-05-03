@@ -8,6 +8,7 @@ import { truncate } from "lodash-es";
 import { getBotAvatarUrl, toSlug } from "../services/utils";
 import { CharacterView } from "../../types/backend-alias";
 import { PrivateIndicator } from "./PrivateIndicator";
+import { TagLink } from "./TagLink";
 
 interface CharacterListProps {
   characters: CharacterView[];
@@ -104,7 +105,7 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
       }
     >
       {!editable && (
-        <Link to={`/profiles/${character.creator_id}_profile-of-${character.creator_name}`}>
+        <Link to={`/profiles/${character.creator_id}_profile-of-${toSlug(character.creator_name)}`}>
           <CreatorName>@{character.creator_name}</CreatorName>
         </Link>
       )}
@@ -118,9 +119,7 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
       <Space className="mt-4 " size={[0, 4]} wrap>
         {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
         {character.tags?.slice(0, 4).map((tag) => (
-          <Tooltip key={tag.id} title={tag.description}>
-            <Tag>{tag.name}</Tag>
-          </Tooltip>
+          <TagLink tag={tag} />
         ))}
       </Space>
     </Card>

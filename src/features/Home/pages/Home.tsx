@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { Typography, Spin, Segmented, Radio } from "antd";
+import { Typography, Spin, Segmented, Radio, Space } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { supabase } from "../../../config";
@@ -15,10 +15,13 @@ import {
 } from "../../../shared/components/CharacterListWrapper";
 import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
+import { useTags } from "../../../hooks/useTags";
+import { TagLink } from "../../../shared/components/TagLink";
+import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
 
 const { Title } = Typography;
 
-type Segment = "latest" | "popular" | "nsfw" | "female" | "male" | "anime" | "game";
+type Segment = "latest" | "popular" | "nsfw" | "female" | "male" | "anime" | "game" | "tags";
 
 const SegmentContainer = styled.div`
   max-width: 100%;
@@ -31,9 +34,22 @@ const SegmentContainer = styled.div`
   }
 `;
 
+const TagContainer = styled.div`
+  .ant-tag {
+    font-size: 1.25rem;
+    line-height: 2rem;
+
+    ${MOBILE_BREAKPOINT_CSS} {
+      font-size: 0.8rem;
+      line-height: 1.25rem;
+    }
+  }
+`;
+
 export const Home: React.FC = () => {
   const { profile, localData, updateLocalData } = useContext(AppContext);
   const [segment, setSegment] = useState<Segment>("latest");
+  const tags = useTags();
 
   const params: SearchParams | undefined = useMemo(() => {
     const modeParams = { mode: localData.character_view || "sfw" };
@@ -158,11 +174,25 @@ export const Home: React.FC = () => {
               label: "🎮 Game",
               value: "game",
             },
+            {
+              label: "🌠 All Tags/Categories",
+              value: "tags",
+            },
           ]}
         />
       </SegmentContainer>
 
-      <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
+      {segment === "tags" ? (
+        <TagContainer>
+          <Space className="mt-4 " size={[2, 8]} wrap>
+            {tags?.map((tag) => (
+              <TagLink tag={tag} />
+            ))}
+          </Space>
+        </TagContainer>
+      ) : (
+        <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
+      )}
     </PageContainer>
   );
 };

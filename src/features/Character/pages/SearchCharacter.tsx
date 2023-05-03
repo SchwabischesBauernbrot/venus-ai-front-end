@@ -13,6 +13,8 @@ import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
 import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
 import { AppContext } from "../../../appContext";
 import { SITE_NAME } from "../../../config";
+import { useParams } from "react-router-dom";
+import { getRealId } from "../../../shared/services/utils";
 
 const { Title } = Typography;
 
@@ -29,13 +31,17 @@ const TagContainer = styled.div`
 `;
 
 export const SearchCharacter: React.FC = () => {
-  const { localData } = useContext(AppContext);
+  const { tagId: seoFriendlyId } = useParams();
+  const tagId = getRealId(seoFriendlyId);
+
   const tags = useTags();
+  const { localData } = useContext(AppContext);
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     search: "",
     mode: localData.character_view || "sfw",
     sort: "latest",
+    tag_id: tagId ? parseInt(tagId, 10) : undefined,
   });
 
   const updateSearchParams = (params: SearchParams) => {
@@ -44,14 +50,21 @@ export const SearchCharacter: React.FC = () => {
 
   const [search, setSearch] = useState("");
 
+  let title = "Search for characters";
+  if (tags && tagId) {
+    title = `Characters with tag ${tags.find((tag) => tag.id === parseInt(tagId, 10))?.name}`;
+  }
+
   return (
     <PageContainer align="left">
       <Helmet>
-        <title>{SITE_NAME} - Search for characters</title>
+        <title>
+          {SITE_NAME} - {title}
+        </title>
       </Helmet>
 
       <Title level={3} className="mb-4">
-        Search for characters
+        {title}
       </Title>
 
       <Row gutter={[0, 16]}>

@@ -26,7 +26,7 @@ const BotAvatar = styled.img`
 const ChatListContainer = styled.div<{ size: "small" | "medium" }>`
   margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   grid-gap: ${(props) => (props.size === "small" ? "1rem" : "2rem")};
   align-items: stretch;
 

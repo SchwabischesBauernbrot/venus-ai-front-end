@@ -103,6 +103,10 @@ const router = createBrowserRouter([
         element: <SearchCharacter />,
       },
       {
+        path: "/tags/:tagId",
+        element: <SearchCharacter />,
+      },
+      {
         path: "/create_character",
         element: <CreateCharacter />,
       },
