@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start:dev": "vite",
-    "build": "tsc && vite build && gen:sitemap",
+    "build": "tsc && vite build && yarn gen:sitemap",
     "preview": "vite preview",
     "analyze": "npx vite-bundle-visualizer",
     "gen:sitemap": "curl -o ./dist/sitemap.xml https://api.venusai.chat/sitemap/sitemap.xml",
