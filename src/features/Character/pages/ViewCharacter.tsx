@@ -28,7 +28,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { axiosInstance, supabase } from "../../../config";
-import { getBotAvatarUrl } from "../../../shared/services/utils";
+import { getBotAvatarUrl, getRealId } from "../../../shared/services/utils";
 import { ChatEntityWithCharacter, FullCharacterView } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { MultiLine } from "../../../shared/components/MultiLine";
@@ -43,7 +43,8 @@ import { Character } from "../services/character-parse/character";
 const { Title } = Typography;
 
 export const ViewCharacter: React.FC = () => {
-  const { characterId } = useParams();
+  const { characterId: seoFriendlyId } = useParams();
+  const characterId = getRealId(seoFriendlyId);
   const { modal } = App.useApp();
 
   const navigate = useNavigate();

@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { axiosInstance } from "../../../config";
 import { ProfileResponse } from "../../../types/backend-alias";
 import { PageContainer } from "../../../shared/components/shared";
-import { getAvatarUrl } from "../../../shared/services/utils";
+import { getAvatarUrl, getRealId } from "../../../shared/services/utils";
 import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 import { Helmet } from "react-helmet";
@@ -14,7 +14,8 @@ import { Helmet } from "react-helmet";
 const { Title } = Typography;
 
 export const PublicProfile: React.FC = () => {
-  const { profileId } = useParams();
+  const { profileId: seoFriendlyId } = useParams();
+  const profileId = getRealId(seoFriendlyId || "");
 
   // Get character
   const { data, isLoading } = useQuery(

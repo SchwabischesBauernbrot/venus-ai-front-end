@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { truncate } from "lodash-es";
 
-import { getBotAvatarUrl } from "../services/utils";
+import { getBotAvatarUrl, toSlug } from "../services/utils";
 import { CharacterView } from "../../types/backend-alias";
 import { PrivateIndicator } from "./PrivateIndicator";
 
@@ -104,7 +104,7 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
       }
     >
       {!editable && (
-        <Link to={`/profiles/${character.creator_id}`}>
+        <Link to={`/profiles/${character.creator_id}_profile-of-${character.creator_name}`}>
           <CreatorName>@{character.creator_name}</CreatorName>
         </Link>
       )}
@@ -139,7 +139,10 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   return (
     <CharacterContainer size={size}>
       {characters.map((character) => (
-        <Link key={character.id} to={`/characters/${character.id}`}>
+        <Link
+          key={character.id}
+          to={`/characters/${character.id}_character-${toSlug(character.name)}`}
+        >
           {character.stats ? (
             <Badge.Ribbon
               text={

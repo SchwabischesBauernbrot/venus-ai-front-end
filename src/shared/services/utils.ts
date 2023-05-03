@@ -1,6 +1,7 @@
 import { formatDistance, parseISO, format } from "date-fns";
 
 import { SUPABASE_BUCKET_URL } from "../../config";
+import { kebabCase } from "lodash-es";
 
 export const randomID = () => Math.random().toString(36).substring(2, 8);
 
@@ -42,4 +43,23 @@ export const copyToClipboard = (text: string) => {
   // https://stackoverflow.com/questions/60581285/execcommand-is-now-obsolete-whats-the-alternative
   document.execCommand("copy");
   document.body.removeChild(tempElement);
+};
+
+// Input: [id/uuid]_[seo_friendly_part]
+// Output: [id/uuid]
+export const getRealId = (seoFriendlyId?: string) => {
+  if (!seoFriendlyId) {
+    return undefined;
+  }
+
+  const underscoreIndex = seoFriendlyId.indexOf("_");
+  if (underscoreIndex === -1) {
+    return seoFriendlyId;
+  }
+
+  return seoFriendlyId.substring(0, underscoreIndex);
+};
+
+export const toSlug = (input: string) => {
+  return kebabCase(input).trim();
 };
