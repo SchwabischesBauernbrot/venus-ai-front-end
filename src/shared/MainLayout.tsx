@@ -104,6 +104,10 @@ export const MainLayout: React.FC = () => {
           <a href="/term" target="_blank">
             🤝 Term of Use
           </a>
+          <span> - </span>
+          <a href="/faq" target="_blank">
+            🙋 FAQ
+          </a>
         </span>
       </Footer>
     </Layout>

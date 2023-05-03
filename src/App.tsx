@@ -64,6 +64,9 @@ const TermOfUse = loadable(() => import("./features/ToC"), {
 const PrivatePolicy = loadable(() => import("./features/ToC"), {
   resolveComponent: (component) => component.PrivatePolicy,
 });
+const FAQ = loadable(() => import("./features/ToC"), {
+  resolveComponent: (component) => component.FAQ,
+});
 
 const router = createBrowserRouter([
   {
@@ -137,6 +140,10 @@ const router = createBrowserRouter([
       {
         path: "/policy",
         element: <PrivatePolicy />,
+      },
+      {
+        path: "/faq",
+        element: <FAQ />,
       },
     ],
   },

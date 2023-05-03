@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "start:dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && gen:sitemap",
     "preview": "vite preview",
     "analyze": "npx vite-bundle-visualizer",
+    "gen:sitemap": "curl -o ./dist/sitemap.xml https://api.venusai.chat/sitemap/sitemap.xml",
     "gen:types-supa": "npx supabase gen types typescript --project-id cvochnalpmpanziphini --schema public > src/types/supabase.ts",
     "gen:types-nest": "npx openapi-typescript http://localhost:3000/api-json --output src/types/backend.ts",
     "gen:types": "yarn gen:types-nest && yarn gen:types-supa"
