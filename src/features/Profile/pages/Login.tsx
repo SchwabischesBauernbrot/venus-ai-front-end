@@ -12,8 +12,9 @@ import {
   TwitterOutlined,
 } from "@ant-design/icons";
 import { AppContext } from "../../../appContext";
-import { supabase } from "../../../config";
+import { SITE_NAME, supabase } from "../../../config";
 import { Provider } from "@supabase/supabase-js";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -68,6 +69,11 @@ export const Login = () => {
 
   return (
     <LoginFormContainer>
+      <Helmet>
+        <title>{`${SITE_NAME} - Login`}</title>
+        <meta name="description" content="Login into your account" />
+      </Helmet>
+
       <Title level={2}>Login</Title>
 
       <Form form={form} onFinish={onFinish}>

@@ -1,7 +1,13 @@
+import { Helmet } from "react-helmet";
+import { SITE_NAME } from "../../../config";
+
 export const PrivatePolicy: React.FC = () => {
   return (
-    <div>
-      <br />
+    <div className="mt-4">
+      <Helmet>
+        <title>{`${SITE_NAME} - Privacy Policy`}</title>
+        <meta name="description" content="Privacy Policy" />
+      </Helmet>
 
       <h2>Privacy Policy</h2>
       <p>

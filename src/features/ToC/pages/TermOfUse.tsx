@@ -1,6 +1,14 @@
+import { Helmet } from "react-helmet";
+import { SITE_NAME } from "../../../config";
+
 export const TermOfUse: React.FC = () => {
   return (
-    <div>
+    <div className="mt-4">
+      <Helmet>
+        <title>{`${SITE_NAME} - Terms of use`}</title>
+        <meta name="description" content="Terms of Use" />
+      </Helmet>
+
       <h2>Website Terms of Use</h2>
       <br />
       <p>Version 1.0</p>

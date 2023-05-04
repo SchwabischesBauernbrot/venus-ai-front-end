@@ -12,7 +12,8 @@ import {
 } from "@ant-design/icons";
 import { Provider } from "@supabase/supabase-js";
 import { AppContext } from "../../../appContext";
-import { supabase } from "../../../config";
+import { SITE_NAME, supabase } from "../../../config";
+import { Helmet } from "react-helmet";
 
 const { Title } = Typography;
 
@@ -68,6 +69,11 @@ export const Register = () => {
 
   return (
     <RegisterFormContainer>
+      <Helmet>
+        <title>{`${SITE_NAME} - Register`}</title>
+        <meta name="description" content="Register a new account" />
+      </Helmet>
+
       <Form form={form} onFinish={onSubmit}>
         <Title level={2}>Register</Title>
 

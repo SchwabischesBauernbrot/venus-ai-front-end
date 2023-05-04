@@ -1,10 +1,17 @@
 import { Descriptions, Typography } from "antd";
+import { Helmet } from "react-helmet";
+import { SITE_NAME } from "../../../config";
 
 const { Title } = Typography;
 
 export const FAQ: React.FC = () => {
   return (
     <div className="my-4">
+      <Helmet>
+        <title>{`${SITE_NAME} - FAQs`}</title>
+        <meta name="description" content="Frequently Asked Questions" />
+      </Helmet>
+
       <Title level={3}>FAQs</Title>
 
       <Descriptions bordered size="small" layout="vertical">
