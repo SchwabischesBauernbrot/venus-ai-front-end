@@ -47,9 +47,6 @@ const PublicProfile = loadable(() => import("./features/Profile"), {
 const ProfilePage = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Profile,
 });
-const Settings = loadable(() => import("./features/Profile"), {
-  resolveComponent: (component) => component.Settings,
-});
 
 const MyChats = loadable(() => import("./features/Chat"), {
   resolveComponent: (component) => component.MyChats,
@@ -90,10 +87,6 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />,
-      },
-      {
-        path: "/settings",
-        element: <Settings />,
       },
       {
         path: "/profiles/:profileId",
