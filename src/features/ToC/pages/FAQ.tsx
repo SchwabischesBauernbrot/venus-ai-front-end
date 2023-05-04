@@ -77,7 +77,28 @@ export const FAQ: React.FC = () => {
           makers to upload themselves (or maybe give us permission to do it for them). You can use
           the card you download from anywhere, just make it a private bot.
         </Descriptions.Item>
-        <Descriptions.Item label="Where does the cards/character come from?" span={3}>
+        <Descriptions.Item
+          label="My bots are stolen and posted here without my permission. Help me remove please?"
+          span={3}
+        >
+          <span>
+            Sure, I would love to help. Please send me an email to{" "}
+            <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>, with some evidences that
+            you are the original creator (link in booru, 4chan, discord, chracterhub...)
+          </span>
+          <br />
+          <span>
+            The stolen bots will then be set to privated and remove from our main page. We will
+            create a tool to report invalid/stolen bot later.
+          </span>
+
+          <br />
+          <span>
+            We also suggest you create an account here and post your own bots. We will check when
+            the bot is created, so you don't have to report stolen one anymore ( ͡° ͜ʖ ͡°).
+          </span>
+        </Descriptions.Item>
+        <Descriptions.Item label="Roadmap? Plan for new features?" span={3}>
           Yeah, you can check out roadmap here:{" "}
           <a href="https://github.com/orgs/venus-ai-team/projects/1">
             https://github.com/orgs/venus-ai-team/projects/1

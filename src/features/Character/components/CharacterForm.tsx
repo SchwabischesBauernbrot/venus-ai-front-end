@@ -266,7 +266,25 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Type" name="is_public" className="mb-2">
+        <Form.Item
+          label="Type"
+          name="is_public"
+          className="mb-4"
+          help={
+            mode === "create" && (
+              <div>
+                <span>
+                  If you are not the creator of this bot, please kindly{" "}
+                  <strong>set it as Private.</strong>
+                </span>{" "}
+                <br />
+                <span>
+                  We will need to set your bot to private if the bot's original creator request it.
+                </span>
+              </div>
+            )
+          }
+        >
           <Radio.Group>
             <Radio value={true}>🌟 Public Bot </Radio>
             <Radio value={false}>🔒 Private Bot (only you can see it)</Radio>

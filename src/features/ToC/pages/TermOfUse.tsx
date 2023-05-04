@@ -447,7 +447,9 @@ export const TermOfUse: React.FC = () => {
       </p>
       <br />
       <h2>Contact Information</h2>
-      <p>Email: anonydev96@proton.me</p>
+      <p>
+        Email: <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>
+      </p>
       <br />
       <br />
     </div>
