@@ -7,12 +7,19 @@ type OpenAIMode = Required<UserConfig>["open_ai_mode"];
 
 export interface CheckInput {
   mode: OpenAIMode;
+  model?: "gpt-3.5-turbo" | "gpt-4"; //gpt-4
   apiKey?: string;
   proxy?: string;
   proxyKey?: string;
 }
 
-export const checkOpenAIKeyOrProxy = async ({ mode, apiKey, proxy, proxyKey }: CheckInput) => {
+export const checkOpenAIKeyOrProxy = async ({
+  mode,
+  apiKey,
+  model = "gpt-3.5-turbo",
+  proxy,
+  proxyKey,
+}: CheckInput) => {
   try {
     const baseUrl = mode === "api_key" ? "https://api.openai.com/v1" : proxy;
 
@@ -31,7 +38,7 @@ export const checkOpenAIKeyOrProxy = async ({ mode, apiKey, proxy, proxyKey }: C
     const response = await axios.post<OpenAIResponse>(
       `${baseUrl}/chat/completions`,
       {
-        model: "gpt-3.5-turbo",
+        model,
         temperature: 0,
         max_tokens: 10,
         messages: [{ role: "user", content: "Just say TEST" }],

@@ -273,6 +273,8 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         <br />
                         <strong>Does NOT support text streaming.</strong>
                         <br />
+                        If you are using Toddbot, set <strong>OpenAI Model to gpt-4.</strong>
+                        <br />
                         See{" "}
                         <a href="https://rentry.co/Tavern4Retards#proxy-gpt-setup" target="_blank">
                           this guide
@@ -288,18 +290,21 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         onChange={(e) =>
                           form.setFieldValue("open_ai_reverse_proxy", e.target.value)
                         }
-                        placeholder="https://whocars123-oai-proxy.hf.space/proxy/openai"
+                        placeholder="https://toddbot.net/v1"
                       />
                       <Button
                         loading={isCheckingOpenAI}
                         disabled={isCheckingOpenAI || !openAIProxyWatch}
-                        onClick={() =>
+                        onClick={() => {
+                          console.log(form.getFieldValue("model"));
+
                           checkOpenAI({
                             mode: "proxy",
                             proxy: openAIProxyWatch,
+                            model: form.getFieldValue("model"),
                             proxyKey: form.getFieldValue("reverseProxyKey"),
-                          })
-                        }
+                          });
+                        }}
                       >
                         Check Proxy
                       </Button>
