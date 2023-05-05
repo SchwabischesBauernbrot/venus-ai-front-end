@@ -219,7 +219,7 @@ export const ViewCharacter: React.FC = () => {
                     const character = Character.fromCharacterView(data);
                     const author = {
                       id: data.creator_id,
-                      name: data.creator_name,
+                      username: data.creator_name,
                       link: `https://venusai.chat/profiles/${data.creator_id}_profile-of-${toSlug(
                         data.creator_name
                       )}`,
