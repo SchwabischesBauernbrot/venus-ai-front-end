@@ -45,6 +45,7 @@ export const MyCharacters: React.FC = () => {
           ...character,
           creator_id: user_profiles.id,
           creator_name: user_profiles.user_name || user_profiles.name,
+          creator_verified: user_profiles.is_verified,
           tags,
         };
       });
