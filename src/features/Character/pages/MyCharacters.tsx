@@ -26,7 +26,7 @@ export const MyCharacters: React.FC = () => {
     async () => {
       const responses = await supabase
         .from("characters")
-        .select("*, tags(*), user_profiles(*)")
+        .select("*, tags(*), user_profiles!characters_creator_id_fkey(*)")
         .eq("creator_id", profile?.id)
         .order("updated_at", { ascending: false })
         .order("created_at", { ascending: false })
