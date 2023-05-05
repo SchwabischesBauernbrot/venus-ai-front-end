@@ -284,7 +284,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           name="is_public"
           className="pb-4"
           help={
-            mode === "create" && (
+            mode === "create" ? (
               <div>
                 <span>
                   If you are not the creator of this bot, please kindly{" "}
@@ -295,17 +295,17 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
                   We will need to set your bot to private if the bot's original creator request it.
                 </span>
               </div>
-            )
+            ) : undefined
           }
           extra={
-            values.is_force_remove && (
+            values.is_force_remove ? (
               <Alert
                 message="Bot set to private!"
                 description="Your bot was set to private due to original's creator request. You can still chat or modify it."
                 type="warning"
                 showIcon
               />
-            )
+            ) : undefined
           }
         >
           <Radio.Group disabled={values.is_force_remove}>
