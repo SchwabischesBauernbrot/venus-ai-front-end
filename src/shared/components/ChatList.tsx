@@ -112,13 +112,13 @@ export const ChatList: React.FC<ChatListProps> = ({
                       </p>
                     </Tooltip>
                   ) : (
-                    <p>This character is private/removed. You can still continue you chat.</p>
+                    <p>This character is private or removed. You can still continue your chat.</p>
                   )
                 ) : (
                   <p>
                     {truncate(
                       chat.characters?.description ||
-                        "This character is private/removed. You can still continue you chat.",
+                        "This character is private or removed. You can still continue your chat.",
                       { length: 150 }
                     )}
                   </p>

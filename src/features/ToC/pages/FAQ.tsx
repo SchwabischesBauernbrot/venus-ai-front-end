@@ -62,8 +62,11 @@ export const FAQ: React.FC = () => {
         <Descriptions.Item label="I found some bug/feedbacks?" span={3}>
           Please create a ticket{" "}
           <a href="https://github.com/pyg-ai-unonfficial/front-end/issues">on Github</a> or{" "}
-          <a href="https://discord.gg/wFPemXeEUf">visit our Discord</a>. We will find a way for
-          easier report later.
+          <a href="https://discord.gg/wFPemXeEUf">visit our Discord</a>. You can also{" "}
+          <a href="https://tawk.to/chat/64545dc4ad80445890eb347b/1gvkosibs" target="blank">
+            use this link
+          </a>{" "}
+          to send me an anonymous chat massage.
         </Descriptions.Item>
         <Descriptions.Item
           label="I found something wrong, suspicious in the ToS and Privacy Policy?"
@@ -84,7 +87,12 @@ export const FAQ: React.FC = () => {
           <span>
             Sure, I would love to help. Please send me an email to{" "}
             <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>, with some evidences that
-            you are the original creator (link in booru, 4chan, discord, chracterhub...)
+            you are the original creator (link in booru, 4chan, discord, chracterhub...). You can
+            also{" "}
+            <a href="https://tawk.to/chat/64545dc4ad80445890eb347b/1gvkosibs" target="blank">
+              use this link
+            </a>{" "}
+            to send me an anonymous chat massage.
           </span>
           <br />
           <span>
