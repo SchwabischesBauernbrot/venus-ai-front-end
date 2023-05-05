@@ -11,8 +11,11 @@ export interface paths {
   "/test-profile-jwt": {
     get: operations["AppController_getProfileJwt"];
   };
+  "/sitemap/sitemap.xml": {
+    get: operations["SitemapController_getSitemap"];
+  };
   "/characters": {
-    get: operations["CharacterController_getCharactersForHome"];
+    get: operations["CharacterController_searchCharacters"];
     post: operations["CharacterController_createCharacter"];
   };
   "/characters/{id}": {
@@ -234,14 +237,19 @@ export interface operations {
       };
     };
   };
-  CharacterController_getCharactersForHome: {
+  SitemapController_getSitemap: {
+    responses: {
+      200: never;
+    };
+  };
+  CharacterController_searchCharacters: {
     parameters: {
       query: {
         user_id?: string;
         tag_id?: number;
         page: number;
-        only_nsfw?: boolean;
-        sort?: string;
+        mode?: "sfw" | "all" | "nsfw";
+        sort?: "latest" | "popular";
         search?: string;
       };
     };

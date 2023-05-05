@@ -36,6 +36,7 @@ export interface Database {
           first_message: string
           fts: unknown | null
           id: string
+          is_force_remove: boolean
           is_nsfw: boolean
           is_public: boolean
           name: string
@@ -52,6 +53,7 @@ export interface Database {
           first_message: string
           fts?: unknown | null
           id?: string
+          is_force_remove?: boolean
           is_nsfw?: boolean
           is_public?: boolean
           name: string
@@ -68,6 +70,7 @@ export interface Database {
           first_message?: string
           fts?: unknown | null
           id?: string
+          is_force_remove?: boolean
           is_nsfw?: boolean
           is_public?: boolean
           name?: string

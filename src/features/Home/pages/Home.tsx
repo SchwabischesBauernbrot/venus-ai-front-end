@@ -84,7 +84,7 @@ export const Home: React.FC = () => {
         .returns<ChatEntityWithCharacter[]>();
 
       const chats = responses.data;
-      return chats?.filter((chat) => chat.characters); // Character can be null if deleted or privated
+      return chats;
     },
     { enabled: !!profile }
   );

@@ -1,5 +1,16 @@
 import { useCallback, useContext, useState } from "react";
-import { Form, Input, Upload, Select, Button, message, Typography, Radio, ColProps } from "antd";
+import {
+  Form,
+  Input,
+  Upload,
+  Select,
+  Button,
+  message,
+  Typography,
+  Radio,
+  ColProps,
+  Alert,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { axiosInstance, supabase } from "../../../config";
@@ -31,6 +42,8 @@ interface FormValues {
   is_nsfw: boolean;
   is_public: boolean;
   tag_ids: number[];
+
+  is_force_remove: boolean;
 }
 
 export interface CharacterFormProps {
@@ -269,7 +282,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         <Form.Item
           label="Type"
           name="is_public"
-          className="mb-4"
+          className="pb-4"
           help={
             mode === "create" && (
               <div>
@@ -284,8 +297,18 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
               </div>
             )
           }
+          extra={
+            values.is_force_remove && (
+              <Alert
+                message="Bot set to private!"
+                description="Your bot was set to private due to original's creator request. You can still chat or modify it."
+                type="warning"
+                showIcon
+              />
+            )
+          }
         >
-          <Radio.Group>
+          <Radio.Group disabled={values.is_force_remove}>
             <Radio value={true}>🌟 Public Bot </Radio>
             <Radio value={false}>🔒 Private Bot (only you can see it)</Radio>
           </Radio.Group>

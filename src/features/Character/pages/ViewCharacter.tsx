@@ -59,7 +59,7 @@ export const ViewCharacter: React.FC = () => {
       const response = await axiosInstance.get<FullCharacterView>(`/characters/${characterId}`);
       return response.data;
     },
-    { enabled: !!characterId }
+    { enabled: !!characterId, retry: 1 }
   );
 
   const { data: chatData, isLoading: isChatLoading } = useQuery(
@@ -122,7 +122,9 @@ export const ViewCharacter: React.FC = () => {
   return (
     <PageContainer>
       {isLoading && <Spin />}
-      {!isLoading && !data && <p>Can not view this character. It might be deleted or private.</p>}
+      {!isLoading && !data && (
+        <p>Can not find this character. It might be deleted or set to private.</p>
+      )}
 
       {data && (
         <Helmet>

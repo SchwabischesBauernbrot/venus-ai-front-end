@@ -94,23 +94,34 @@ export const ChatList: React.FC<ChatListProps> = ({
             avatar={<BotAvatar alt="" src={getBotAvatarUrl(chat.characters?.avatar || "")} />}
             title={
               <span>
-                <PrivateIndicator isPublic={chat.is_public} /> {chat.characters.name}
+                <PrivateIndicator isPublic={chat.is_public} />{" "}
+                {chat.characters?.name || "Private bot"}
               </span>
             }
             // Change to summary later
             description={
               <div>
                 {chat.summary ? (
-                  <Tooltip title={formatChat(chat.summary, "you", chat.characters.name)}>
-                    <p>
-                      Summary:{" "}
-                      {truncate(formatChat(chat.summary, "you", chat.characters.name), {
-                        length: 150,
-                      })}
-                    </p>
-                  </Tooltip>
+                  chat.characters ? (
+                    <Tooltip title={formatChat(chat.summary, "you", chat.characters.name)}>
+                      <p>
+                        Summary:{" "}
+                        {truncate(formatChat(chat.summary, "you", chat.characters.name), {
+                          length: 150,
+                        })}
+                      </p>
+                    </Tooltip>
+                  ) : (
+                    <p>This character is private/removed. You can still continue you chat.</p>
+                  )
                 ) : (
-                  <p>{truncate(chat.characters.description, { length: 150 })}</p>
+                  <p>
+                    {truncate(
+                      chat.characters?.description ||
+                        "This character is private/removed. You can still continue you chat.",
+                      { length: 150 }
+                    )}
+                  </p>
                 )}
                 <p>
                   <ClockCircleOutlined /> {getTimeAgo(chat.updated_at)} ago
