@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import * as Sentry from "@sentry/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ConfigProvider, App as AntdApp, theme } from "antd";
+import { ConfigProvider, App as AntdApp, theme, Spin } from "antd";
 import loadable from "@loadable/component";
 import { isEqual } from "lodash-es";
 import { Session } from "@supabase/supabase-js";
@@ -17,52 +17,67 @@ import { MainLayout } from "./shared/MainLayout";
 
 const Home = loadable(() => import("./features/Home/pages/Home"), {
   resolveComponent: (component) => component.Home,
+  fallback: <Spin />,
 });
 
 const CreateCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.CreateCharacter,
+  fallback: <Spin />,
 });
 const EditCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.EditCharacter,
+  fallback: <Spin />,
 });
 const MyCharacters = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.MyCharacters,
+  fallback: <Spin />,
 });
 const ViewCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.ViewCharacter,
+  fallback: <Spin />,
 });
 const SearchCharacter = loadable(() => import("./features/Character"), {
   resolveComponent: (component) => component.SearchCharacter,
+  fallback: <Spin />,
 });
 
 const Register = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Register,
+  fallback: <Spin />,
 });
 const Login = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Login,
+  fallback: <Spin />,
 });
 const PublicProfile = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.PublicProfile,
+  fallback: <Spin />,
 });
 const ProfilePage = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Profile,
+  fallback: <Spin />,
 });
 
 const MyChats = loadable(() => import("./features/Chat"), {
   resolveComponent: (component) => component.MyChats,
+  fallback: <Spin />,
 });
 const ChatPage = loadable(() => import("./features/Chat"), {
   resolveComponent: (component) => component.ChatPage,
+  fallback: <Spin />,
 });
 
 const TermOfUse = loadable(() => import("./features/ToC"), {
   resolveComponent: (component) => component.TermOfUse,
+  fallback: <Spin />,
 });
 const PrivatePolicy = loadable(() => import("./features/ToC"), {
   resolveComponent: (component) => component.PrivatePolicy,
+  fallback: <Spin />,
 });
 const FAQ = loadable(() => import("./features/ToC"), {
   resolveComponent: (component) => component.FAQ,
+  fallback: <Spin />,
 });
 
 const router = createBrowserRouter([
