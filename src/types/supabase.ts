@@ -166,6 +166,7 @@ export interface Database {
           avatar: string
           config: Json
           id: string
+          is_verified: boolean
           name: string
           profile: string
           user_name: string | null
@@ -175,6 +176,7 @@ export interface Database {
           avatar?: string
           config?: Json
           id: string
+          is_verified?: boolean
           name?: string
           profile?: string
           user_name?: string | null
@@ -184,6 +186,7 @@ export interface Database {
           avatar?: string
           config?: Json
           id?: string
+          is_verified?: boolean
           name?: string
           profile?: string
           user_name?: string | null
@@ -197,11 +200,13 @@ export interface Database {
           created_at: string | null
           creator_id: string | null
           creator_name: string | null
+          creator_verified: boolean | null
           description: string | null
           example_dialogs: string | null
           first_message: string | null
           fts: unknown | null
           id: string | null
+          is_force_remove: boolean | null
           is_nsfw: boolean | null
           is_public: boolean | null
           name: string | null

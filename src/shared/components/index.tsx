@@ -5,3 +5,4 @@ export { MultiLineMarkdown } from "./MultiLineMarkdown";
 export { UserAvatar } from "./UserAvatar";
 export { PrivateIndicator } from "./PrivateIndicator";
 export { ChatList } from "./ChatList";
+export { VerifiedMark, PageContainer, FormContainer } from "./shared";

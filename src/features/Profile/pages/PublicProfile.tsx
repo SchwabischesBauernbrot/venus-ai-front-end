@@ -1,11 +1,11 @@
-import { Typography, Spin, Col, Row, Avatar } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Typography, Spin, Col, Row, Avatar, Tooltip } from "antd";
+import { SafetyCertificateTwoTone, UserOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { axiosInstance } from "../../../config";
 import { ProfileResponse } from "../../../types/backend-alias";
-import { PageContainer } from "../../../shared/components/shared";
+import { PageContainer, VerifiedMark } from "../../../shared/components/shared";
 import { getAvatarUrl, getRealId } from "../../../shared/services/utils";
 import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
@@ -68,7 +68,7 @@ export const PublicProfile: React.FC = () => {
             )}
 
             <Title level={3} className="my-2">
-              @{data.user_name || data.name}
+              @{data.user_name || data.name} {data.is_verified && <VerifiedMark />}
             </Title>
             {data.about_me && <MultiLineMarkdown>{data.about_me}</MultiLineMarkdown>}
           </Col>

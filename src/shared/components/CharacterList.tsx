@@ -9,6 +9,7 @@ import { getBotAvatarUrl, toSlug } from "../services/utils";
 import { CharacterView } from "../../types/backend-alias";
 import { PrivateIndicator } from "./PrivateIndicator";
 import { TagLink } from "./TagLink";
+import { VerifiedMark } from "./shared";
 
 interface CharacterListProps {
   characters: CharacterView[];
@@ -106,7 +107,9 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
     >
       {!editable && (
         <Link to={`/profiles/${character.creator_id}_profile-of-${toSlug(character.creator_name)}`}>
-          <CreatorName>@{character.creator_name}</CreatorName>
+          <CreatorName>
+            @{character.creator_name} {character.creator_verified && <VerifiedMark size="small" />}
+          </CreatorName>
         </Link>
       )}
       <Meta

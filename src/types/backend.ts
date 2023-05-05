@@ -108,6 +108,7 @@ export interface components {
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
+      creator_verified: boolean;
       tags?: (components["schemas"]["TagEntity"])[];
       stats?: components["schemas"]["CharacterStats"];
     };
@@ -121,6 +122,7 @@ export interface components {
       is_nsfw: boolean;
       creator_id: string;
       creator_name: string;
+      creator_verified: boolean;
       tags?: (components["schemas"]["TagEntity"])[];
       stats?: components["schemas"]["CharacterStats"];
       example_dialogs: string;
@@ -136,6 +138,7 @@ export interface components {
       profile: string;
       user_name: string;
       config: Record<string, never>;
+      is_verified: boolean;
     };
     ProfileUpdateDto: {
       about_me?: string;

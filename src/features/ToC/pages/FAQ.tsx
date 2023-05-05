@@ -1,6 +1,7 @@
 import { Descriptions, Typography } from "antd";
 import { Helmet } from "react-helmet";
 import { SITE_NAME } from "../../../config";
+import { VerifiedMark } from "../../../shared/components";
 
 const { Title } = Typography;
 
@@ -112,6 +113,11 @@ export const FAQ: React.FC = () => {
           <span>
             We also suggest you create an account here and post your own bots. We will check when
             the bot is created, so you don't have to report stolen one anymore ( ͡° ͜ʖ ͡°).
+          </span>
+          <br />
+          <span>
+            After you verified using chracterhub or booru.plus, you can get the verify mark next to
+            your name in your profile page. <VerifiedMark />
           </span>
         </Descriptions.Item>
         <Descriptions.Item label="Roadmap? Plan for new features?" span={3}>

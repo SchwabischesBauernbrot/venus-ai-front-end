@@ -26,7 +26,7 @@ import {
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { PageContainer } from "../../../shared/components/shared";
+import { PageContainer, VerifiedMark } from "../../../shared/components/shared";
 import { axiosInstance, supabase } from "../../../config";
 import { getBotAvatarUrl, getRealId, toSlug } from "../../../shared/services/utils";
 import { ChatEntityWithCharacter, FullCharacterView } from "../../../types/backend-alias";
@@ -173,7 +173,9 @@ export const ViewCharacter: React.FC = () => {
                 target="_blank"
                 to={`/profiles/${data.creator_id}_profile-of-${toSlug(data.creator_name)}`}
               >
-                <span>@{data.creator_name}</span>
+                <p>
+                  @{data.creator_name} <VerifiedMark size="small" />
+                </p>
               </Link>
               <p>{data.description}</p>
             </div>
