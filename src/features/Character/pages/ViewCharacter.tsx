@@ -217,7 +217,14 @@ export const ViewCharacter: React.FC = () => {
                   onClick: (e) => {
                     const imgSrc = getBotAvatarUrl(data.avatar);
                     const character = Character.fromCharacterView(data);
-                    exportCharacter(e.key as "card" | "json", imgSrc, character);
+                    const author = {
+                      id: data.creator_id,
+                      name: data.creator_name,
+                      link: `https://venusai.chat/profiles/${data.creator_id}_profile-of-${toSlug(
+                        data.creator_name
+                      )}`,
+                    };
+                    exportCharacter(e.key as "card" | "json", imgSrc, character, author);
                   },
                 }}
               >

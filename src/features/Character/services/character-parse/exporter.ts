@@ -2,21 +2,27 @@ import { Character } from "./character";
 import { Loader } from "./loader";
 import { Png } from "./png";
 
+export interface Author {
+  id: string;
+  username: string;
+  link: string;
+}
+
 // Credit to: https://github.com/ZoltanAI/character-editor/blob/main/index.html#L1855
 export class Exporter {
-  static #metadata = {
+  static #metadata = (author: Author) => ({
     metadata: {
       version: 1,
       created: Date.now(),
       modified: Date.now(),
-      source: null,
       tool: {
         name: "VenusAI",
         version: "1.0.0",
         url: "https://venusai.chat",
       },
+      author,
     },
-  };
+  });
 
   static #downloadFile(file: File) {
     const link = window.URL.createObjectURL(file);
@@ -39,10 +45,10 @@ export class Exporter {
     };
   }
 
-  static Json(data: { name: string }) {
+  static Json(data: { name: string }, author: Author) {
     const object = {
       ...data,
-      ...Exporter.#metadata,
+      ...Exporter.#metadata(author),
     };
 
     const file = new File(
@@ -68,10 +74,10 @@ export class Exporter {
     return image;
   }
 
-  static async Png(imageSrc: string, data: { name: string }) {
+  static async Png(imageSrc: string, data: { name: string }, author: Author) {
     const object = {
       ...data,
-      ...Exporter.#metadata,
+      ...Exporter.#metadata(author),
     };
 
     const image = await Loader.image(imageSrc);

@@ -53,7 +53,7 @@ export const checkOpenAIKeyOrProxy = async ({
   } catch (err) {
     const axiosError = err as AxiosError<{ error: OpenAIError }>;
 
-    console.log(axiosError.response?.data);
+    console.error(axiosError.response?.data);
 
     const error = axiosError.response?.data?.error;
     if (error) {

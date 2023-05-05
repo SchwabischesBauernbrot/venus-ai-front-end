@@ -96,8 +96,6 @@ export class Character {
   static fromJsonObject(json: CharacterJsonObject | null) {
     if (!json) return;
 
-    console.log(json);
-
     let name = "",
       personality = "",
       description = "",

@@ -296,8 +296,6 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         loading={isCheckingOpenAI}
                         disabled={isCheckingOpenAI || !openAIProxyWatch}
                         onClick={() => {
-                          console.log(form.getFieldValue("model"));
-
                           checkOpenAI({
                             mode: "proxy",
                             proxy: openAIProxyWatch,

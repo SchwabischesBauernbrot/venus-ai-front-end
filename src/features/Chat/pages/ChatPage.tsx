@@ -366,8 +366,6 @@ export const ChatPage: React.FC = () => {
         scrollToBottom();
       }
 
-      console.log({ streamingText });
-
       // If failed to create bot message, no need to save
       if (streamingText !== "") {
         const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);

@@ -1,7 +1,7 @@
 import { axiosInstance } from "../../../config";
 import { Paginated, CharacterView } from "../../../types/backend-alias";
 import { Character } from "./character-parse/character";
-import { Exporter } from "./character-parse/exporter";
+import { Author, Exporter } from "./character-parse/exporter";
 import { Source } from "./character-parse/source";
 
 export interface SearchCharactersParams {
@@ -23,15 +23,16 @@ export const parseCharacter = async (file: File) => {
 export const exportCharacter = async (
   type: "json" | "card",
   imgSrc: string,
-  character: Character
+  character: Character,
+  author: Author
 ) => {
   const tavernJson = Exporter.Tavern(character);
 
   if (type === "json") {
-    return Exporter.Json(tavernJson);
+    return Exporter.Json(tavernJson, author);
   }
 
-  return Exporter.Png(imgSrc, tavernJson);
+  return Exporter.Png(imgSrc, tavernJson, author);
 };
 
 export const searchCharacter = async (params: SearchCharactersParams) => {

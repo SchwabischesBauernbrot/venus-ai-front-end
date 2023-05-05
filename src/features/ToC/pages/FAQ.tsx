@@ -56,8 +56,16 @@ export const FAQ: React.FC = () => {
           </span>
         </Descriptions.Item>
         <Descriptions.Item label="Are the bot and my chat private?" span={3}>
-          Chat is private by default unless you share and make it public. Bot can be private/public
-          and toggle between them.
+          <span>
+            Chats are private by default unless you share and make it public. Bots can be
+            private/public and toggle between them.
+          </span>
+          <br />
+          <span>
+            You can import any bot you want and start a chat. If you use a bot that you don't own,
+            please <strong>kindly set it to Private</strong> so the bot creator can post the public
+            one.
+          </span>
         </Descriptions.Item>
         <Descriptions.Item label="I found some bug/feedbacks?" span={3}>
           Please create a ticket{" "}
@@ -84,8 +92,10 @@ export const FAQ: React.FC = () => {
           label="My bots are stolen and posted here without my permission. Help me remove please?"
           span={3}
         >
+          <span>Sure, I would love to help. We take bot authorship seriously.</span>
+          <br />
           <span>
-            Sure, I would love to help. Please send me an email to{" "}
+            Please send me an email to{" "}
             <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>, with some evidences that
             you are the original creator (link in booru, 4chan, discord, chracterhub...). You can
             also{" "}
@@ -95,10 +105,8 @@ export const FAQ: React.FC = () => {
             to send me an anonymous chat massage.
           </span>
           <br />
-          <span>
-            The stolen bots will then be set to privated and remove from our main page. We will
-            create a tool to report invalid/stolen bot later.
-          </span>
+          <br />
+          <span>The stolen bots will then be set to private and removed from our main page.</span>
 
           <br />
           <span>
