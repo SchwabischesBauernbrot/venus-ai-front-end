@@ -282,7 +282,6 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         <Form.Item
           label="Type"
           name="is_public"
-          className="pb-4"
           help={
             mode === "create" ? (
               <div>
@@ -295,10 +294,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
                   We will need to set your bot to private if the bot's original creator request it.
                 </span>
               </div>
-            ) : undefined
-          }
-          extra={
-            values.is_force_remove ? (
+            ) : values.is_force_remove ? (
               <Alert
                 message="Bot set to private!"
                 description="Your bot was set to private due to original's creator request. You can still chat or modify it."
@@ -313,7 +309,8 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
             <Radio value={false}>🔒 Private Bot (only you can see it)</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item label="Rating" name="is_nsfw" className="mb-4">
+
+        <Form.Item label="Rating" name="is_nsfw" className="pt-2 mb-4">
           <Radio.Group>
             <Radio value={false}>👪 SFW </Radio>
             <Radio value={true}>🔞 NSFW</Radio>

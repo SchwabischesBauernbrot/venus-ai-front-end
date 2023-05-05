@@ -174,7 +174,7 @@ export const ViewCharacter: React.FC = () => {
                 to={`/profiles/${data.creator_id}_profile-of-${toSlug(data.creator_name)}`}
               >
                 <p>
-                  @{data.creator_name} <VerifiedMark size="small" />
+                  @{data.creator_name} {data.creator_verified && <VerifiedMark size="medium" />}
                 </p>
               </Link>
               <p>{data.description}</p>

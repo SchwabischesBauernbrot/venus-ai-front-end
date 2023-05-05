@@ -68,7 +68,7 @@ export const PublicProfile: React.FC = () => {
             )}
 
             <Title level={3} className="my-2">
-              @{data.user_name || data.name} {data.is_verified && <VerifiedMark />}
+              @{data.user_name || data.name} {data.is_verified && <VerifiedMark size="large" />}
             </Title>
             {data.about_me && <MultiLineMarkdown>{data.about_me}</MultiLineMarkdown>}
           </Col>

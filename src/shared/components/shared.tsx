@@ -5,9 +5,9 @@ import { Tooltip } from "antd";
 import { SafetyCertificateTwoTone } from "@ant-design/icons";
 import { memo } from "react";
 
-export const VerifiedMark: React.FC<{ size?: "small" | "normal" | "large" }> = memo(
-  ({ size = "normal" }) => {
-    const sizeToFontSize = { small: "1rem", normal: "1.5rem", large: "2rem" };
+export const VerifiedMark: React.FC<{ size?: "small" | "medium" | "large" }> = memo(
+  ({ size = "medium" }) => {
+    const sizeToFontSize = { small: "0.9rem", medium: "1.2rem", large: "1.5rem" };
 
     return (
       <Tooltip title="Verified Creator Account">
