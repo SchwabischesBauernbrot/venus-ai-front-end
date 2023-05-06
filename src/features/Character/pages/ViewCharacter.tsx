@@ -23,23 +23,28 @@ import {
   UserOutlined,
   WechatOutlined,
 } from "@ant-design/icons";
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { PageContainer, VerifiedMark } from "../../../shared/components/shared";
-import { axiosInstance, supabase } from "../../../config";
+import { supabase } from "../../../config";
 import { getBotAvatarUrl, getRealId, toSlug } from "../../../shared/services/utils";
-import { ChatEntityWithCharacter, FullCharacterView } from "../../../types/backend-alias";
+import { ChatEntityWithCharacter } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
-import { MultiLine } from "../../../shared/components/MultiLine";
 import { AppContext } from "../../../appContext";
 import { PrivateIndicator } from "../../../shared/components/PrivateIndicator";
 import { chatService } from "../../Chat/services/chat-service";
-import { Helmet } from "react-helmet";
-import { ChatList } from "../../../shared/components";
-import { exportCharacter } from "../services/character-service";
+
+import {
+  ChatList,
+  TagLink,
+  MultiLine,
+  PageContainer,
+  VerifiedMark,
+} from "../../../shared/components";
+import { exportCharacter, getCharacter, getCharacterReviews } from "../services/character-service";
 import { Character } from "../services/character-parse/character";
-import { TagLink } from "../../../shared/components/TagLink";
+import { Dislike, Like, ReviewPanel } from "../components/ReviewPanel";
 
 const { Title } = Typography;
 
@@ -52,17 +57,25 @@ export const ViewCharacter: React.FC = () => {
   const [isStartingChat, setIsStartingChat] = useState(false);
   const { profile } = useContext(AppContext);
 
-  // Get character
-  const { data, isLoading } = useQuery(
+  const { data: character, isLoading } = useQuery(
     ["view_character", characterId],
     async () => {
-      const response = await axiosInstance.get<FullCharacterView>(`/characters/${characterId}`);
-      return response.data;
+      const character = await getCharacter(characterId!);
+      return character;
     },
     { enabled: !!characterId, retry: 1 }
   );
 
-  const { data: chatData, isLoading: isChatLoading } = useQuery(
+  const { data: reviews, refetch: refetchReviews } = useQuery(
+    ["view_character_reviews", characterId],
+    async () => {
+      const reviews = await getCharacterReviews(characterId!);
+      return reviews;
+    },
+    { enabled: Boolean(characterId && character) }
+  );
+
+  const { data: chatData } = useQuery(
     ["public_chats", characterId],
     async () => {
       const responses = await supabase
@@ -77,7 +90,7 @@ export const ViewCharacter: React.FC = () => {
       const chats = responses.data;
       return chats;
     },
-    { enabled: !!characterId }
+    { enabled: Boolean(characterId && character) }
   );
 
   const startChat = useCallback(async () => {
@@ -122,68 +135,74 @@ export const ViewCharacter: React.FC = () => {
   return (
     <PageContainer>
       {isLoading && <Spin />}
-      {!isLoading && !data && (
+      {!isLoading && !character && (
         <p>Can not find this character. It might be deleted or set to private.</p>
       )}
 
-      {data && (
+      {character && (
         <Helmet>
           <title>
-            {`Chat with ${data.name} - Total: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+            {`Chat with ${character.name} - Total: ${character.stats?.chat} chats, ${character.stats?.message} messages`}
           </title>
           <meta
             property="og:title"
-            content={`Chat with ${data.name} - Total: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+            content={`Chat with ${character.name} - Total: ${character.stats?.chat} chats, ${character.stats?.message} messages`}
           />
           <meta
             property="og:description"
-            content={`Chat with ${data.name} - ${data.description}`}
+            content={`Chat with ${character.name} - ${character.description}`}
           />
-          <meta property="og:image" content={getBotAvatarUrl(data.avatar)} />
-          <meta name="description" content={`Chat with ${data.name} - ${data.description}`} />
+          <meta property="og:image" content={getBotAvatarUrl(character.avatar)} />
+          <meta
+            name="description"
+            content={`Chat with ${character.name} - ${character.description}`}
+          />
         </Helmet>
       )}
-      {data && (
+      {character && (
         <Row gutter={16}>
           <Col lg={6} xs={24} className="text-left pt-2 pb-2 mb-2">
             <Title level={3}>
-              <PrivateIndicator isPublic={data.is_public} /> {data.name}
+              <PrivateIndicator isPublic={character.is_public} /> {character.name}
             </Title>
 
             <Badge.Ribbon
               text={
-                data.stats && (
+                character.stats && (
                   <Tooltip
-                    title={`Total: ${data.stats?.chat} chats, ${data.stats?.message} messages`}
+                    title={`Total: ${character.stats?.chat} chats, ${character.stats?.message} messages`}
                   >
                     <span>
                       <BookOutlined />
-                      {data.stats?.chat} <WechatOutlined />
-                      {data.stats?.message}
+                      {character.stats?.chat} <WechatOutlined />
+                      {character.stats?.message}
                     </span>
                   </Tooltip>
                 )
               }
             >
-              <Image src={getBotAvatarUrl(data.avatar)} />
+              <Image src={getBotAvatarUrl(character.avatar)} />
             </Badge.Ribbon>
 
             <div className="mt-2">
               <Link
                 target="_blank"
-                to={`/profiles/${data.creator_id}_profile-of-${toSlug(data.creator_name)}`}
+                to={`/profiles/${character.creator_id}_profile-of-${toSlug(
+                  character.creator_name
+                )}`}
               >
                 <p>
-                  @{data.creator_name} {data.creator_verified && <VerifiedMark size="medium" />}
+                  @{character.creator_name}{" "}
+                  {character.creator_verified && <VerifiedMark size="medium" />}
                 </p>
               </Link>
-              <p>{data.description}</p>
+              <p>{character.description}</p>
             </div>
 
-            {data.is_nsfw || data.tags?.length ? (
+            {character.is_nsfw || character.tags?.length ? (
               <Space size={[0, 8]} wrap>
-                {data.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-                {data.tags?.map((tag) => (
+                {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
+                {character.tags?.map((tag) => (
                   <TagLink tag={tag} />
                 ))}
               </Space>
@@ -197,7 +216,8 @@ export const ViewCharacter: React.FC = () => {
                 style={{ whiteSpace: "normal", height: "auto" }}
                 disabled={isStartingChat}
               >
-                {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with {data.name} 🔒
+                {isStartingChat ? <LoadingOutlined /> : <WechatOutlined />} Chat with{" "}
+                {character.name} 🔒
               </Button>
 
               <Dropdown
@@ -217,16 +237,16 @@ export const ViewCharacter: React.FC = () => {
                     },
                   ],
                   onClick: (e) => {
-                    const imgSrc = getBotAvatarUrl(data.avatar);
-                    const character = Character.fromCharacterView(data);
+                    const imgSrc = getBotAvatarUrl(character.avatar);
+                    const charToExport = Character.fromCharacterView(character);
                     const author = {
-                      id: data.creator_id,
-                      username: data.creator_name,
+                      id: character.creator_id,
+                      username: character.creator_name,
                       link: `https://venusai.chat/profiles/${data.creator_id}_profile-of-${toSlug(
-                        data.creator_name
+                        character.creator_name
                       )}`,
                     };
-                    exportCharacter(e.key as "card" | "json", imgSrc, character, author);
+                    exportCharacter(e.key as "card" | "json", imgSrc, charToExport, author);
                   },
                 }}
               >
@@ -239,47 +259,71 @@ export const ViewCharacter: React.FC = () => {
           </Col>
 
           <Col lg={18} xs={24} className="text-left">
-            <Collapse>
+            <Collapse defaultActiveKey={["reviews", "chats"]}>
               <Collapse.Panel
                 header={`Character definition - May contains spoiler (Total ${Tokenizer.tokenCountFormat(
-                  data.personality + data.first_message + data.scenario + data.example_dialogs
-                )}. Permanent: ${Tokenizer.tokenCountFormat(data.personality + data.scenario)})`}
-                key="1"
+                  character.personality +
+                    character.first_message +
+                    character.scenario +
+                    character.example_dialogs
+                )}. Permanent: ${Tokenizer.tokenCountFormat(
+                  character.personality + character.scenario
+                )})`}
+                key="definition"
               >
                 <Descriptions bordered size="small" layout="vertical">
                   <Descriptions.Item
-                    label={`Personality (${Tokenizer.tokenCountFormat(data.personality)})`}
+                    label={`Personality (${Tokenizer.tokenCountFormat(character.personality)})`}
                     span={3}
                   >
-                    <MultiLine>{data.personality}</MultiLine>
+                    <MultiLine>{character.personality}</MultiLine>
                   </Descriptions.Item>
                   <Descriptions.Item
-                    label={`First Message (${Tokenizer.tokenCountFormat(data.first_message)})`}
+                    label={`First Message (${Tokenizer.tokenCountFormat(character.first_message)})`}
                     span={3}
                   >
-                    <MultiLine>{data.first_message}</MultiLine>
+                    <MultiLine>{character.first_message}</MultiLine>
                   </Descriptions.Item>
                   <Descriptions.Item
-                    label={`Scenario (${Tokenizer.tokenCountFormat(data.scenario)})`}
+                    label={`Scenario (${Tokenizer.tokenCountFormat(character.scenario)})`}
                     span={3}
                   >
-                    <MultiLine>{data.scenario}</MultiLine>
+                    <MultiLine>{character.scenario}</MultiLine>
                   </Descriptions.Item>
                   <Descriptions.Item
-                    label={`Example Dialogs (${Tokenizer.tokenCountFormat(data.example_dialogs)})`}
+                    label={`Example Dialogs (${Tokenizer.tokenCountFormat(
+                      character.example_dialogs
+                    )})`}
                     span={3}
                   >
-                    <MultiLine>{data.example_dialogs}</MultiLine>
+                    <MultiLine>{character.example_dialogs}</MultiLine>
                   </Descriptions.Item>
                 </Descriptions>
               </Collapse.Panel>
-              {chatData && (
-                <Collapse.Panel header={`Shared Public chats - ${chatData.length} chats`} key="2">
-                  <Title level={3} className="my-2">
-                    <ChatList chats={chatData} size="small" mode="view" />
-                  </Title>
-                </Collapse.Panel>
-              )}
+
+              <Collapse.Panel
+                key="reviews"
+                header={
+                  reviews ? (
+                    <span>
+                      {reviews.length} reviews ({reviews.filter((review) => review.is_like).length}{" "}
+                      {Like}, {reviews.filter((review) => !review.is_like).length} {Dislike})
+                    </span>
+                  ) : (
+                    <span>0 review</span>
+                  )
+                }
+              >
+                <ReviewPanel
+                  reviews={reviews}
+                  characterId={characterId}
+                  refetch={() => refetchReviews()}
+                />
+              </Collapse.Panel>
+
+              <Collapse.Panel header={`${chatData?.length || 0} shared public chats`} key="chats">
+                {chatData && <ChatList chats={chatData} size="small" mode="view" />}
+              </Collapse.Panel>
             </Collapse>
           </Col>
         </Row>

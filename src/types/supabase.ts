@@ -137,6 +137,29 @@ export interface Database {
           user_id?: string
         }
       }
+      reviews: {
+        Row: {
+          character_id: string
+          content: string | null
+          created_at: string
+          is_like: boolean
+          user_id: string
+        }
+        Insert: {
+          character_id: string
+          content?: string | null
+          created_at?: string
+          is_like?: boolean
+          user_id: string
+        }
+        Update: {
+          character_id?: string
+          content?: string | null
+          created_at?: string
+          is_like?: boolean
+          user_id?: string
+        }
+      }
       tags: {
         Row: {
           created_at: string

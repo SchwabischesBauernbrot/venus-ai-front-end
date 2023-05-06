@@ -4,11 +4,12 @@ import { UploadOutlined } from "@ant-design/icons";
 
 import { compressImage } from "../../../shared/services/image-utils";
 import { AxiosError } from "axios";
-import { FormContainer } from "../../../shared/components/shared";
+import { FormContainer, VerifiedMark } from "../../../shared/components/shared";
 import { useQueryClient } from "react-query";
 import { getAvatarUrl, randomID } from "../../../shared/services/utils";
 import { profileService } from "../services/profile-service";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface FormValues {
   id: string;
@@ -18,6 +19,7 @@ interface FormValues {
   about_me: string;
   profile: string;
   user_name: string | null;
+  is_verified: boolean;
 }
 
 export const ProfileForm = ({ values }: { values: FormValues }) => {
@@ -134,11 +136,28 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           className="pb-4"
           name="user_name"
           label="Username"
-          help="This can only be set once and can't be changed"
+          help={
+            <div>
+              <span>This can only be set once and can't be changed.</span>
+              {values.is_verified && (
+                <>
+                  <br />
+                  <span>
+                    If you are a bot maker and want get a verified mark, please check the{" "}
+                    <Link to="/faq" target="_blank">
+                      FAQs.
+                    </Link>
+                  </span>
+                </>
+              )}
+            </div>
+          }
           rules={[{ required: true, message: "Please enter a Username!" }]}
         >
           {values.user_name ? (
-            <strong>{values.user_name}</strong>
+            <strong>
+              {values.user_name} {values.is_verified && <VerifiedMark />}
+            </strong>
           ) : (
             <Input placeholder="Username" disabled={!!values.user_name} />
           )}

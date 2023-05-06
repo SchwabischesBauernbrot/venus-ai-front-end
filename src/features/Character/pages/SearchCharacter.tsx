@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Helmet } from "react-helmet";
-import { Typography, Space, Input, Select, Tag, Tooltip, Row, Col, Radio } from "antd";
+import { Typography, Space, Input, Select, Tag, Tooltip, Radio, Form } from "antd";
 
 import { PageContainer } from "../../../shared/components/shared";
 import { useTags } from "../../../hooks/useTags";
@@ -67,7 +67,45 @@ export const SearchCharacter: React.FC = () => {
         {title}
       </Title>
 
-      <Row gutter={[0, 16]}>
+      <Form layout="inline">
+        <Form.Item>
+          <Radio.Group
+            defaultValue={searchParams.mode}
+            onChange={(e) => updateSearchParams({ mode: e.target.value })}
+          >
+            <Radio.Button value="all">
+              <EyeFilled /> All
+            </Radio.Button>
+            <Radio.Button value="sfw">
+              <EyeInvisibleFilled /> SFW Only
+            </Radio.Button>
+            <Radio.Button value="nsfw">
+              <HeartFilled /> NSFW Only
+            </Radio.Button>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item className="mb-py" style={{ flexGrow: 3 }}>
+          <Input.Search
+            defaultValue=""
+            value={search}
+            placeholder="Enter or click to search"
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={(value) => updateSearchParams({ search: value })}
+          />
+        </Form.Item>
+        <Form.Item className="flex-grow-1">
+          <Select
+            style={{ width: "100%", minWidth: "10rem" }}
+            value={searchParams.sort}
+            onChange={(value) => updateSearchParams({ sort: value })}
+          >
+            <Select.Option value="latest">Sort by latest</Select.Option>
+            <Select.Option value="popular">Sort by most popular</Select.Option>
+          </Select>
+        </Form.Item>
+      </Form>
+
+      {/* <Row gutter={[0, 16]}>
         <Col xs={24} lg={7} className="text-left">
           <Radio.Group
             defaultValue={searchParams.mode}
@@ -104,7 +142,7 @@ export const SearchCharacter: React.FC = () => {
             <Select.Option value="popular">Sort by most popular</Select.Option>
           </Select>
         </Col>
-      </Row>
+      </Row> */}
 
       {tags && (
         <TagContainer>

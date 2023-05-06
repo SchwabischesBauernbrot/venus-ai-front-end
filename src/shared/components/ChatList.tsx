@@ -24,15 +24,17 @@ const BotAvatar = styled.img`
 `;
 
 const ChatListContainer = styled.div<{ size: "small" | "medium" }>`
-  margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  grid-gap: ${(props) => (props.size === "small" ? "1rem" : "2rem")};
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  grid-gap: 1.25rem;
   align-items: stretch;
 
   ${(props) =>
     props.size === "small" &&
     css`
+      grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+      grid-gap: 1rem;
+
       .ant-card-body,
       .ant-card-meta-title {
         font-size: 0.8rem;

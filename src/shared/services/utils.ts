@@ -60,6 +60,7 @@ export const getRealId = (seoFriendlyId?: string) => {
   return seoFriendlyId.substring(0, underscoreIndex);
 };
 
-export const toSlug = (input: string) => {
+export const toSlug = (input?: string) => {
+  if (!input) return "";
   return kebabCase(input).trim();
 };

@@ -1,5 +1,5 @@
-import { Typography, Spin, Col, Row, Avatar, Tooltip } from "antd";
-import { SafetyCertificateTwoTone, UserOutlined } from "@ant-design/icons";
+import { Typography, Spin, Col, Row, Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -21,9 +21,7 @@ export const PublicProfile: React.FC = () => {
   const { data, isLoading } = useQuery(
     ["profile", profileId],
     async () => {
-      const [profileResponse] = await Promise.all([
-        axiosInstance.get<ProfileResponse>(`profiles/${profileId}`),
-      ]);
+      const profileResponse = await axiosInstance.get<ProfileResponse>(`/profiles/${profileId}`);
 
       const profile = profileResponse.data;
       return profile;

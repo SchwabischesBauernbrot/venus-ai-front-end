@@ -114,10 +114,21 @@ export const FAQ: React.FC = () => {
             We also suggest you create an account here and post your own bots. We will check when
             the bot is created, so you don't have to report stolen one anymore ( ͡° ͜ʖ ͡°).
           </span>
+        </Descriptions.Item>
+        <Descriptions.Item label="I am a bot maker. How can I get verify mark?" span={3}>
+          <span>
+            Just send me an email to <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>{" "}
+            and include your <strong>rentry/booru/characterhub/discord</strong> link.
+          </span>
           <br />
           <span>
-            After you verified using chracterhub or booru.plus, you can get the verify mark next to
-            your name in your profile page. <VerifiedMark />
+            After you are verified, you can get the verify mark next to your name in your profile
+            page. <VerifiedMark />
+          </span>
+          <br />
+          <span>
+            Our admin team will also do some auto-verify if your username and character match your
+            name on booru/characterhub.
           </span>
         </Descriptions.Item>
         <Descriptions.Item label="Roadmap? Plan for new features?" span={3}>

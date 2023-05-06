@@ -14,6 +14,12 @@ export interface paths {
   "/sitemap/sitemap.xml": {
     get: operations["SitemapController_getSitemap"];
   };
+  "/reviews/{id}": {
+    get: operations["ReviewController_get"];
+  };
+  "/reviews": {
+    post: operations["ReviewController_create"];
+  };
   "/characters": {
     get: operations["CharacterController_searchCharacters"];
     post: operations["CharacterController_createCharacter"];
@@ -54,6 +60,30 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    ReviewView: {
+      user_profiles: {
+        avatar?: string;
+        name?: string;
+        user_name?: string;
+      };
+      character_id: string;
+      content: string | null;
+      created_at: string;
+      is_like: boolean;
+      user_id: string;
+    };
+    CreateReviewDto: {
+      character_id: string;
+      is_like: boolean;
+      content?: string;
+    };
+    Review: {
+      character_id: string;
+      content: string | null;
+      created_at: string;
+      is_like: boolean;
+      user_id: string;
+    };
     Paginated: {
       data: (string)[];
       total: number;
@@ -243,6 +273,40 @@ export interface operations {
   SitemapController_getSitemap: {
     responses: {
       200: never;
+    };
+  };
+  ReviewController_get: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": (components["schemas"]["ReviewView"])[];
+        };
+      };
+      default: {
+        content: {
+          "application/json": (components["schemas"]["ReviewView"])[];
+        };
+      };
+    };
+  };
+  ReviewController_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateReviewDto"];
+      };
+    };
+    responses: {
+      201: never;
+      default: {
+        content: {
+          "application/json": components["schemas"]["Review"];
+        };
+      };
     };
   };
   CharacterController_searchCharacters: {
