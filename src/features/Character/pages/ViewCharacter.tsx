@@ -99,8 +99,8 @@ export const ViewCharacter: React.FC = () => {
         title: "Login to start chat!",
         content: (
           <span>
-            Please <a href="/login">Login</a> or <a href="/register">Regsiter</a> so that your chats
-            and setting can be saved!
+            Please <a href="/login">Login</a> or <a href="/register">Register</a> so that your chats
+            and settings can be saved!
           </span>
         ),
       });
