@@ -242,9 +242,9 @@ export const ViewCharacter: React.FC = () => {
                     const author = {
                       id: character.creator_id,
                       username: character.creator_name,
-                      link: `https://venusai.chat/profiles/${data.creator_id}_profile-of-${toSlug(
-                        character.creator_name
-                      )}`,
+                      link: `https://venusai.chat/profiles/${
+                        character.creator_id
+                      }_profile-of-${toSlug(character.creator_name)}`,
                     };
                     exportCharacter(e.key as "card" | "json", imgSrc, charToExport, author);
                   },

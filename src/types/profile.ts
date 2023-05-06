@@ -5,4 +5,5 @@ export interface Profile {
   name: string;
   profile: string;
   user_name: string | null;
+  is_verified?: boolean;
 }

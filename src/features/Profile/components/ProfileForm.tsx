@@ -19,7 +19,7 @@ interface FormValues {
   about_me: string;
   profile: string;
   user_name: string | null;
-  is_verified: boolean;
+  is_verified?: boolean;
 }
 
 export const ProfileForm = ({ values }: { values: FormValues }) => {
