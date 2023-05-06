@@ -33,7 +33,9 @@ export const ReviewPanel: React.FC<ReviewPanelProps> = ({ reviews, characterId, 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canWriteReview = Boolean(
-    profile && reviews && reviews.every((review) => review.user_id !== profile.id)
+    profile &&
+      reviews &&
+      (reviews.length === 0 || reviews.every((review) => review.user_id !== profile.id))
   );
 
   const deleteReview = async () => {
