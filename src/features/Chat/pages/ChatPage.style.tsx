@@ -1,6 +1,6 @@
 import { Divider, Layout } from "antd";
 import styled, { css } from "styled-components";
-import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
+import { IPAD_BREAKPOINT_CSS } from "../../../css-const";
 
 export const ChatLayout = styled(Layout)`
   height: 100vh;
@@ -26,7 +26,7 @@ export const ChatContainer = styled.div`
     font-size: 1.05rem !important;
   }
 
-  ${MOBILE_BREAKPOINT_CSS} {
+  ${IPAD_BREAKPOINT_CSS} {
     .ant-list-item-meta-description {
       font-size: 0.95rem !important; // Chat font smaller on web
     }
@@ -77,7 +77,7 @@ export const BotChoicesOverlay = styled.div<{ index: number }>`
   .ant-list-item-meta-avatar {
     margin-inline-end: 1rem;
 
-    ${MOBILE_BREAKPOINT_CSS} {
+    ${IPAD_BREAKPOINT_CSS} {
       margin-inline-end: 0.75rem;
     }
   }
@@ -114,7 +114,7 @@ export const CustomDivider = styled(Divider)`
       overflow: hidden;
       text-overflow: ellipsis;
 
-      ${MOBILE_BREAKPOINT_CSS} {
+      ${IPAD_BREAKPOINT_CSS} {
         min-width: 80%;
       }
     }

@@ -9,7 +9,7 @@ import {
   CharacterListWrapper,
   SearchParams,
 } from "../../../shared/components/CharacterListWrapper";
-import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
+import { IPAD_BREAKPOINT_CSS } from "../../../css-const";
 import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
 import { AppContext } from "../../../appContext";
 import { SITE_NAME } from "../../../config";
@@ -23,7 +23,7 @@ const TagContainer = styled.div`
     font-size: 1.25rem;
     line-height: 2rem;
 
-    ${MOBILE_BREAKPOINT_CSS} {
+    ${IPAD_BREAKPOINT_CSS} {
       font-size: 0.8rem;
       line-height: 1.25rem;
     }
@@ -84,7 +84,7 @@ export const SearchCharacter: React.FC = () => {
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
-        <Form.Item className="mb-py" style={{ flexGrow: 3 }}>
+        <Form.Item className="mb-xs-py" style={{ flexGrow: 3 }}>
           <Input.Search
             defaultValue=""
             value={search}

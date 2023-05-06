@@ -17,7 +17,7 @@ import { EyeFilled, EyeInvisibleFilled, HeartFilled } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
 import { useTags } from "../../../hooks/useTags";
 import { TagLink } from "../../../shared/components/TagLink";
-import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
+import { IPAD_BREAKPOINT_CSS } from "../../../css-const";
 
 const { Title } = Typography;
 
@@ -39,7 +39,7 @@ const TagContainer = styled.div`
     font-size: 1.25rem;
     line-height: 2rem;
 
-    ${MOBILE_BREAKPOINT_CSS} {
+    ${IPAD_BREAKPOINT_CSS} {
       font-size: 0.8rem;
       line-height: 1.25rem;
     }

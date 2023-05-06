@@ -86,13 +86,13 @@ export const ReviewPanel: React.FC<ReviewPanelProps> = ({ reviews, characterId, 
             <Form.Item className="flex-grow-1" name="content">
               <Input placeholder="Write something (optional)" />
             </Form.Item>
-            <Form.Item className="mb-py" name="is_like">
+            <Form.Item className="mb-xs-py" name="is_like">
               <Radio.Group>
                 <Radio.Button value={true}>{Like} Like</Radio.Button>
                 <Radio.Button value={false}>{Dislike} Dislike</Radio.Button>
               </Radio.Group>
             </Form.Item>
-            <Form.Item className="mr-0">
+            <Form.Item className="mr-0 mb-xs-py">
               <Button
                 type="primary"
                 block

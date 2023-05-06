@@ -40,6 +40,7 @@
     margin-top: auto;
   }
 
+  // Ipad + big mobile - md
   @media only screen and (max-width: 767px) {
     .ant-layout-header {
       padding-inline: 1rem;
@@ -49,7 +50,15 @@
       padding: 0 1rem;
     }
 
-    .mb-py {
+    .mb-md-py {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  // mobile only - xs
+  @media only screen and (max-width: 480px) {
+    .mb-xs-py {
       margin-top: 1rem;
       margin-bottom: 1rem;
     }
