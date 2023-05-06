@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { SupaCharacter } from "../../../types/backend-alias";
 import { AppContext } from "../../../appContext";
 import { Tokenizer } from "../services/character-parse/tokenizer";
+import { characterUrl } from "../../../shared/services/url-utils";
 
 const { Title } = Typography;
 
@@ -114,8 +115,9 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         });
         message.success("Character created successfully!");
         queryClient.invalidateQueries(["characters", profile?.id]);
+        const character = result.data;
 
-        navigate(`/characters/${result.data.id}`);
+        navigate(characterUrl(character.id, character.name));
       } else if (mode === "edit") {
         const result = await axiosInstance.patch<SupaCharacter>("/characters/" + id, {
           ...postData,
@@ -377,7 +379,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
           name="example_dialogs"
           label="Example dialogs"
           extra={countToken(exampleDialogWatch)}
-          help="Example chat between you and the character. This section is very important for teaching your character should speak."
+          help="Example chat between you and the character. This section is very important for teaching your character how they should speak."
         >
           <Input.TextArea rows={4} autoSize placeholder="Example dialogs" />
         </Form.Item>

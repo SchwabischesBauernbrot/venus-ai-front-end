@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { SITE_NAME } from "../../../config";
 import { toSlug } from "../../../shared/services/utils";
+import { profileUrl } from "../../../shared/services/url-utils";
 const { Title } = Typography;
 
 export const Profile = () => {
@@ -21,7 +22,7 @@ export const Profile = () => {
 
       <Title level={2}>
         My Profile{" "}
-        <Link to={`/profiles/${profile?.id}_${toSlug(profile?.user_name || profile?.name)}`}>
+        <Link to={profile ? profileUrl(profile.id, profile.user_name || profile.name) : "/"}>
           (Public Profile)
         </Link>
       </Title>

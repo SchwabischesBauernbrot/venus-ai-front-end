@@ -45,6 +45,7 @@ import {
 import { exportCharacter, getCharacter, getCharacterReviews } from "../services/character-service";
 import { Character } from "../services/character-parse/character";
 import { Dislike, Like, ReviewPanel } from "../components/ReviewPanel";
+import { profileUrl } from "../../../shared/services/url-utils";
 
 const { Title } = Typography;
 
@@ -185,12 +186,7 @@ export const ViewCharacter: React.FC = () => {
             </Badge.Ribbon>
 
             <div className="mt-2">
-              <Link
-                target="_blank"
-                to={`/profiles/${character.creator_id}_profile-of-${toSlug(
-                  character.creator_name
-                )}`}
-              >
+              <Link target="_blank" to={profileUrl(character.creator_id, character.creator_name)}>
                 <p>
                   @{character.creator_name}{" "}
                   {character.creator_verified && <VerifiedMark size="medium" />}
@@ -242,9 +238,7 @@ export const ViewCharacter: React.FC = () => {
                     const author = {
                       id: character.creator_id,
                       username: character.creator_name,
-                      link: `https://venusai.chat/profiles/${
-                        character.creator_id
-                      }_profile-of-${toSlug(character.creator_name)}`,
+                      link: profileUrl(character.creator_id, character.creator_name),
                     };
                     exportCharacter(e.key as "card" | "json", imgSrc, charToExport, author);
                   },

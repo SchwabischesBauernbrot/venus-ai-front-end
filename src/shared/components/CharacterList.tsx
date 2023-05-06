@@ -10,6 +10,7 @@ import { CharacterView } from "../../types/backend-alias";
 import { PrivateIndicator } from "./PrivateIndicator";
 import { TagLink } from "./TagLink";
 import { VerifiedMark } from "./shared";
+import { characterUrl, profileUrl } from "../services/url-utils";
 
 interface CharacterListProps {
   characters: CharacterView[];
@@ -106,7 +107,7 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
       }
     >
       {!editable && (
-        <Link to={`/profiles/${character.creator_id}_profile-of-${toSlug(character.creator_name)}`}>
+        <Link to={profileUrl(character.creator_id, character.creator_name)}>
           <CreatorName>
             @{character.creator_name} {character.creator_verified && <VerifiedMark size="small" />}
           </CreatorName>
@@ -141,10 +142,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   return (
     <CharacterContainer size={size}>
       {characters.map((character) => (
-        <Link
-          key={character.id}
-          to={`/characters/${character.id}_character-${toSlug(character.name)}`}
-        >
+        <Link key={character.id} to={characterUrl(character.id, character.name)}>
           {character.stats ? (
             <Badge.Ribbon
               text={

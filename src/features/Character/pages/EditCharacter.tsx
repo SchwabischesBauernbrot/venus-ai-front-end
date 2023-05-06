@@ -7,6 +7,7 @@ import { SITE_NAME, supabase } from "../../../config";
 import { PageContainer } from "../../../shared/components/shared";
 import { CharacterForm } from "../components/CharacterForm";
 import { Helmet } from "react-helmet";
+import { characterUrl } from "../../../shared/services/url-utils";
 
 const { Title } = Typography;
 
@@ -45,8 +46,12 @@ export const EditCharacter: React.FC = () => {
         <title>{SITE_NAME} - Edit character</title>
       </Helmet>
       <Title level={2}>
-        Edit Character <Link to={`/characters/${characterId}`}>(View Character)</Link>
+        Edit Character{" "}
+        <Link to={editData ? characterUrl(editData?.id, editData?.name) : "/"}>
+          (View Character)
+        </Link>
       </Title>
+
       {isLoading && <Spin />}
       {editData && <CharacterForm id={editData.id} values={editData} />}
     </PageContainer>

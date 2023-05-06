@@ -27,6 +27,7 @@ import { koboldGenerateInstance } from "../services/generate/kobold-generate";
 import { ChatInput } from "../components/ChatInput";
 import { Helmet } from "react-helmet";
 import { getBotAvatarUrl } from "../../../shared/services/utils";
+import { characterUrl } from "../../../shared/services/url-utils";
 
 interface ChatState {
   messages: SupaChatMessage[]; // All server-side messages
@@ -443,7 +444,7 @@ export const ChatPage: React.FC = () => {
 
           <Row justify="center">
             <Col {...CHAT_COLUMN_PROPS} className="d-flex justify-space-between align-center">
-              <Link to={`/characters/${data.chat.characters.id}`}>
+              <Link to={characterUrl(data.chat.characters.id!, data.chat.characters.name!)}>
                 <Button type="text" size="large">
                   <LeftCircleFilled /> Back
                 </Button>
