@@ -74,9 +74,9 @@ export const MainLayout: React.FC = () => {
         <p>Venus AI - Chat with your waifu/husbando. Uncensored, No Ad, Forever Free.</p>
 
         <p>
-          {/* <a target="_blank" href="https://www.reddit.com/r/PygmalionAI">
+          <a target="_blank" href="https://www.reddit.com/r/VenusAI_Official">
             <img src="https://img.icons8.com/bubbles/50/null/reddit.png" />
-          </a> */}
+          </a>
           <a target="_blank" href="https://discord.gg/wFPemXeEUf">
             <img src="https://img.icons8.com/bubbles/50/null/discord-logo.png" />
           </a>
