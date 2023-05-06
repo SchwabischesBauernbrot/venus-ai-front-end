@@ -117,8 +117,9 @@ export const ChatList: React.FC<ChatListProps> = ({
                 ) : (
                   <p>
                     {truncate(
-                      chat.characters?.description ||
-                        "This character is private or removed. You can still continue your chat.",
+                      chat.characters
+                        ? chat.characters.description
+                        : "This character is private or removed. You can still continue your chat.",
                       { length: 150 }
                     )}
                   </p>
