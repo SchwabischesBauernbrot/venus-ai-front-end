@@ -269,12 +269,13 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                     rules={[{ required: true, message: "Enter reverse proxy url." }]}
                     help={
                       <span>
-                        These proxies are contributed by communities. Might be slow or unstable.{" "}
+                        These proxies are contributed by communities. Might be slow, unstable, or
+                        log your request.
                         <br />
                         <strong>Does NOT support text streaming.</strong>
                         <br />
-                        If you are using Toddbot, set <strong>OpenAI Model to gpt-4.</strong>
-                        <br />
+                        {/* If you are using Toddbot, set <strong>OpenAI Model to gpt-4.</strong>
+                        <br /> */}
                         See{" "}
                         <a href="https://rentry.co/Tavern4Retards#proxy-gpt-setup" target="_blank">
                           this guide
