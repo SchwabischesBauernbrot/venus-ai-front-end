@@ -48,7 +48,7 @@ const TagContainer = styled.div`
 
 export const Home: React.FC = () => {
   const { profile, localData, updateLocalData } = useContext(AppContext);
-  const [segment, setSegment] = useState<Segment>("popular");
+  const [segment, setSegment] = useState<Segment>("latest");
   const tags = useTags();
 
   const params: SearchParams | undefined = useMemo(() => {
