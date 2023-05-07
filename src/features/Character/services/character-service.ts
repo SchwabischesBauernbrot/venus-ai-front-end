@@ -46,6 +46,11 @@ export const getCharacter = async (characterId: string) => {
   return result.data;
 };
 
+export const deleteCharacter = async (characterId: string) => {
+  const result = await axiosInstance.delete(`/characters/${characterId}`);
+  return result.data;
+};
+
 export const searchCharacter = async (params: SearchCharactersParams) => {
   const result = await axiosInstance.get<Paginated<CharacterView>>("/characters", {
     params,

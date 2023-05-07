@@ -1,5 +1,5 @@
-import { BookOutlined, EditOutlined, WechatOutlined } from "@ant-design/icons";
-import { Card, Space, Tooltip, Tag, Badge } from "antd";
+import { BookOutlined, DeleteOutlined, EditOutlined, WechatOutlined } from "@ant-design/icons";
+import { Card, Space, Tooltip, Tag, Badge, Button, Popconfirm } from "antd";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
@@ -11,11 +11,13 @@ import { PrivateIndicator } from "./PrivateIndicator";
 import { TagLink } from "./TagLink";
 import { VerifiedMark } from "./shared";
 import { characterUrl, profileUrl } from "../services/url-utils";
+import { deleteCharacter } from "../../features/Character/services/character-service";
 
 interface CharacterListProps {
   characters: CharacterView[];
   editable?: boolean;
   size?: "small" | "medium";
+  onCharacterDeleted?: () => void;
 }
 
 const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
@@ -78,10 +80,11 @@ const CreatorName = styled.p`
   text-overflow: ellipsis;
 `;
 
-const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> = ({
-  character,
-  editable,
-}) => {
+const CharacterCard: React.FC<{
+  character: CharacterView;
+  editable?: boolean;
+  onDelete?: (character: CharacterView) => void;
+}> = ({ character, editable, onDelete }) => {
   return (
     <Card
       hoverable
@@ -100,8 +103,31 @@ const CharacterCard: React.FC<{ character: CharacterView; editable?: boolean }> 
         editable
           ? [
               <Link to={`/edit_character/${character.id}`}>
-                <EditOutlined /> Edit Character
+                <EditOutlined /> Edit
               </Link>,
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+              >
+                <Popconfirm
+                  title="Delete this character?"
+                  description={
+                    <div>
+                      Are you sure to delete this character? <br /> All your chats will be lost
+                      forever!
+                    </div>
+                  }
+                  onConfirm={() => {
+                    onDelete?.(character);
+                  }}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <DeleteOutlined /> Delete
+                </Popconfirm>
+              </span>,
             ]
           : undefined
       }
@@ -134,10 +160,16 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   characters,
   editable,
   size = "medium",
+  onCharacterDeleted,
 }) => {
   if (characters.length === 0) {
     return <p>No characters</p>;
   }
+
+  const removeCharacter = async (character: CharacterView) => {
+    await deleteCharacter(character.id);
+    onCharacterDeleted?.();
+  };
 
   return (
     <CharacterContainer size={size}>
@@ -159,10 +191,10 @@ export const CharacterList: React.FC<CharacterListProps> = ({
                 )
               }
             >
-              <CharacterCard character={character} editable={editable} />
+              <CharacterCard character={character} editable={editable} onDelete={removeCharacter} />
             </Badge.Ribbon>
           ) : (
-            <CharacterCard character={character} editable={editable} />
+            <CharacterCard character={character} editable={editable} onDelete={removeCharacter} />
           )}
         </Link>
       ))}

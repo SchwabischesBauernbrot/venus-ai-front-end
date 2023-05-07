@@ -6,6 +6,7 @@ import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
 import { AppContext } from "../appContext";
 
 import { UserAvatar } from "./components/UserAvatar";
+import { EnvIndicator } from "./components/EnvIndicator";
 
 const { Header, Content, Footer } = Layout;
 
@@ -18,6 +19,7 @@ export const MainLayout: React.FC = () => {
         <Menu selectable={false} theme="dark" mode="horizontal">
           <Menu.Item className="no-padding" key="home">
             <Link to="/">
+              <EnvIndicator />
               <img
                 style={{ width: "100px", position: "relative", top: "-1px" }}
                 src="/logo_small.png"

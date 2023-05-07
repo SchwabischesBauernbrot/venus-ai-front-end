@@ -1,27 +1,23 @@
-import { Typography, Spin, Button } from "antd";
-import { PageContainer } from "../../../shared/components/shared";
-import { useQuery } from "react-query";
-import { SITE_NAME, supabase } from "../../../config";
 import { useContext } from "react";
-import { AppContext } from "../../../appContext";
-import {
-  CharacterView,
-  TagEntity,
-  SupaUserProfile,
-  CharacterWithProfileAndTag,
-} from "../../../types/backend-alias";
-import { CharacterList } from "../../../shared/components/CharacterList";
+import { Typography, Spin, Button, App } from "antd";
 import { Link } from "react-router-dom";
 import { UserAddOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
+import { useQuery } from "react-query";
+
+import { PageContainer, CharacterList } from "../../../shared/components";
+import { SITE_NAME, supabase } from "../../../config";
+import { AppContext } from "../../../appContext";
+import { CharacterView, CharacterWithProfileAndTag } from "../../../types/backend-alias";
 
 const { Title } = Typography;
 
 export const MyCharacters: React.FC = () => {
   const { profile } = useContext(AppContext);
+  const { message } = App.useApp();
 
   // Get character
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ["characters", profile?.id],
     async () => {
       const responses = await supabase
@@ -79,7 +75,16 @@ export const MyCharacters: React.FC = () => {
 
       <div className="mt-4">
         {isLoading && <Spin />}
-        {data && <CharacterList characters={data} editable />}
+        {data && (
+          <CharacterList
+            characters={data}
+            editable
+            onCharacterDeleted={() => {
+              message.success("Character deleted!");
+              refetch();
+            }}
+          />
+        )}
       </div>
     </PageContainer>
   );
