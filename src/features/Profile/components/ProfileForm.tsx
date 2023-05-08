@@ -42,7 +42,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
         const result = await supabase.storage
           .from("avatars")
           .upload(`${values.id}_${randomID()}.${extension}`, compressedImage, {
-            cacheControl: "3600",
+            cacheControl: "1209600", // 2 weeks
             upsert: true,
           });
         newAvatar = result.data && result.data.path;

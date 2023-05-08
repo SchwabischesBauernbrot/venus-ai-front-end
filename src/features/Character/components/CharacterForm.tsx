@@ -97,7 +97,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
         const uploadedAvatar = await supabase.storage
           .from("bot-avatars")
           .upload(`${crypto.randomUUID()}.${extension}`, compressedImage, {
-            cacheControl: "3600",
+            cacheControl: "1209600", // 2 weeks
             upsert: true,
           });
         if (uploadedAvatar?.data?.path) {
