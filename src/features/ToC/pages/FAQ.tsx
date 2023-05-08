@@ -85,9 +85,15 @@ export const FAQ: React.FC = () => {
           Ain't nobody got time for reading that.
         </Descriptions.Item>
         <Descriptions.Item label="Where does the cards/character come from?" span={3}>
-          We respect the bot maker so we don't scrape the card from any source, and wait for the bot
-          makers to upload themselves (or maybe give us permission to do it for them). You can use
-          the card you download from anywhere, just make it a private bot.
+          <span>
+            We respect the bot maker so we don't scrape the card from any source, and wait for the
+            bot makers to upload themselves (or maybe give us permission to do it for them).
+          </span>{" "}
+          <br />
+          <span>
+            You can use the card you download from anywhere, just{" "}
+            <strong>make it a private bot</strong>.
+          </span>
         </Descriptions.Item>
         <Descriptions.Item
           label="My bots are stolen and posted here without my permission. Help me remove please?"
@@ -96,23 +102,28 @@ export const FAQ: React.FC = () => {
           <span>Sure, I would love to help. We take bot authorship seriously.</span>
           <br />
           <span>
-            Please send me an email to{" "}
-            <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>, with some evidences that
-            you are the original creator (link in booru, 4chan, discord, chracterhub...). You can
-            also{" "}
-            <a href="https://tawk.to/chat/64545dc4ad80445890eb347b/1gvkosibs" target="blank">
-              use this link
-            </a>{" "}
-            to send me an anonymous chat massage.
-          </span>
+            You can click the <strong>Report this character!</strong> to report the bot, with some
+            evidences that you or other are the original creator (link in booru, 4chan, discord,
+            chracterhub...).
+          </span>{" "}
           <br />
+          <span> The stolen bots will then be set to private and removed from our main page.</span>
           <br />
-          <span>The stolen bots will then be set to private and removed from our main page.</span>
-
           <br />
           <span>
-            We also suggest you create an account here and post your own bots. We will check when
-            the bot is created, so you don't have to report stolen one anymore ( ͡° ͜ʖ ͡°).
+            You can also send me an email to{" "}
+            <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a>, with some evidences that
+            you are the original creator and your account in our site.
+          </span>
+          <br />
+          <span>
+            {" "}
+            We can transfer the bot to your account and give you verified status. <VerifiedMark />
+          </span>
+          <span>
+            <br />
+            For verified creators, we will help them check when copy/stole bot is created, so you
+            don't have to report stolen one anymore ( ͡° ͜ʖ ͡°).
           </span>
         </Descriptions.Item>
         <Descriptions.Item label="I am a bot maker. How can I get verify mark?" span={3}>
@@ -128,7 +139,7 @@ export const FAQ: React.FC = () => {
           <br />
           <span>
             Our admin team will also do some auto-verify if your username and character match your
-            name on booru/characterhub.
+            name on booru/characterhub. Or if you create consistent bot and tag them properly ^__^.
           </span>
         </Descriptions.Item>
         <Descriptions.Item label="Roadmap? Plan for new features?" span={3}>

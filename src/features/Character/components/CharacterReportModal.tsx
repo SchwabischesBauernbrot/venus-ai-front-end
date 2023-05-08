@@ -70,7 +70,7 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
               <Space direction="vertical">
                 <Radio value="spam">This bot is a spam or duplicated one.</Radio>
                 <Radio value="stolen">
-                  This bot is a mine. It's posted here without my permission.
+                  This bot is mine. It's posted here without my permission.
                 </Radio>
                 <Radio value="illegal">This bot or its content is illegal or harmful.</Radio>
                 <Radio value="other">Others (Please specify)</Radio>
