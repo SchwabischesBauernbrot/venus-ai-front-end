@@ -10,6 +10,7 @@ import { getAvatarUrl, getRealId } from "../../../shared/services/utils";
 import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 import { Helmet } from "react-helmet";
+import { profileUrl } from "../../../shared/services/url-utils";
 
 const { Title } = Typography;
 
@@ -53,6 +54,10 @@ export const PublicProfile: React.FC = () => {
             content={`Creator Profile @${data.user_name || data.name} - ${data.about_me}`}
           />
           <meta property="og:image" content={getAvatarUrl(data.avatar)} />
+          <link
+            rel="canonical"
+            href={`${location.origin}${profileUrl(data.id, data.user_name || data.name)}`}
+          />
         </Helmet>
       )}
 

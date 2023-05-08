@@ -45,7 +45,7 @@ import {
 import { exportCharacter, getCharacter, getCharacterReviews } from "../services/character-service";
 import { Character } from "../services/character-parse/character";
 import { Dislike, Like, ReviewPanel } from "../components/ReviewPanel";
-import { profileUrl } from "../../../shared/services/url-utils";
+import { characterUrl, profileUrl } from "../../../shared/services/url-utils";
 
 const { Title } = Typography;
 
@@ -157,6 +157,10 @@ export const ViewCharacter: React.FC = () => {
           <meta
             name="description"
             content={`Chat with ${character.name} - ${character.description}`}
+          />
+          <link
+            rel="canonical"
+            href={`${location.origin}${characterUrl(character.id, character.name)}`}
           />
         </Helmet>
       )}

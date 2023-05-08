@@ -15,6 +15,7 @@ import { AppContext } from "../../../appContext";
 import { SITE_NAME } from "../../../config";
 import { useParams } from "react-router-dom";
 import { getRealId } from "../../../shared/services/utils";
+import { tagUrl } from "../../../shared/services/url-utils";
 
 const { Title } = Typography;
 
@@ -51,8 +52,11 @@ export const SearchCharacter: React.FC = () => {
   const [search, setSearch] = useState("");
 
   let title = "Search for characters";
+  let canonial = `${location.origin}/search`;
   if (tags && tagId) {
-    title = `Characters with tag ${tags.find((tag) => tag.id === parseInt(tagId, 10))?.name}`;
+    const tag = tags.find((tag) => tag.id === parseInt(tagId, 10));
+    title = `Characters with tag ${tag?.name}`;
+    canonial = `${location.origin}${tagUrl(parseInt(tagId, 10), tag?.name || "")}`;
   }
 
   return (
