@@ -210,7 +210,7 @@ export const Home: React.FC = () => {
           {params?.special_mode === "hot_and_new" && (
             <p className="mt-4">
               ⭐ Hot & New shows <strong>popular characters with the most chat</strong>, created
-              this week.
+              recently.
             </p>
           )}
           <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
