@@ -8,7 +8,7 @@ export const EnvIndicator: React.FC = () => {
 
   useEffect(() => {
     const run = async () => {
-      if (location.hostname === "localhost") {
+      if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
         const response = await axiosInstance.get<{ env: string }>("/env");
         setEnv(response.data.env);
         setShow(true);

@@ -5,6 +5,9 @@
 
 
 export interface paths {
+  "/env": {
+    get: operations["AppController_getEnv"];
+  };
   "/test-profile": {
     get: operations["AppController_getProfile"];
   };
@@ -26,6 +29,7 @@ export interface paths {
   };
   "/characters/{id}": {
     get: operations["CharacterController_getCharacter"];
+    delete: operations["CharacterController_deleteMessages"];
     patch: operations["CharacterController_updateCharacter"];
   };
   "/profiles/{id}": {
@@ -252,6 +256,11 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  AppController_getEnv: {
+    responses: {
+      200: never;
+    };
+  };
   AppController_getProfile: {
     responses: {
       200: {
@@ -317,6 +326,7 @@ export interface operations {
         page: number;
         mode?: "sfw" | "all" | "nsfw";
         sort?: "latest" | "popular";
+        special_mode?: "hot_and_new";
         search?: string;
       };
     };
@@ -363,6 +373,21 @@ export interface operations {
       default: {
         content: {
           "application/json": components["schemas"]["FullCharacterView"];
+        };
+      };
+    };
+  };
+  CharacterController_deleteMessages: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      200: never;
+      default: {
+        content: {
+          "application/json": (components["schemas"]["FullCharacterView"])[];
         };
       };
     };

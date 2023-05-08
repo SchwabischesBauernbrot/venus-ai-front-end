@@ -1,4 +1,4 @@
-import { components } from "./backend";
+import { components, operations } from "./backend";
 import { Database } from "./supabase";
 
 export type CharacterView = components["schemas"]["CharacterView"];
@@ -12,6 +12,9 @@ export type TagEntity = components["schemas"]["TagEntity"];
 export type ChatEntityWithCharacter = components["schemas"]["ChatEntityWithCharacter"];
 
 export type ChatResponse = components["schemas"]["ChatResponse"];
+
+export type SearchCharParams =
+  operations["CharacterController_searchCharacters"]["parameters"]["query"];
 
 export type ProfileUpdateDto = components["schemas"]["ProfileUpdateDto"];
 export type UpdateChatDto = components["schemas"]["UpdateChatDto"];

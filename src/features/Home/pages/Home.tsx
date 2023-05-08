@@ -21,7 +21,16 @@ import { IPAD_BREAKPOINT_CSS } from "../../../css-const";
 
 const { Title } = Typography;
 
-type Segment = "latest" | "popular" | "nsfw" | "female" | "male" | "anime" | "game" | "tags";
+type Segment =
+  | "latest"
+  | "hot_n_new"
+  | "popular"
+  | "nsfw"
+  | "female"
+  | "male"
+  | "anime"
+  | "game"
+  | "tags";
 
 const SegmentContainer = styled.div`
   max-width: 100%;
@@ -57,6 +66,8 @@ export const Home: React.FC = () => {
     switch (segment) {
       case "latest":
         return modeParams;
+      case "hot_n_new":
+        return { special_mode: "hot_and_new", ...modeParams };
       case "popular":
         return { sort: "popular", ...modeParams };
       // Lol hard code for now
@@ -155,6 +166,10 @@ export const Home: React.FC = () => {
               value: "latest",
             },
             {
+              label: "⭐ Hot & New",
+              value: "hot_n_new",
+            },
+            {
               label: "🔥 Most Popular",
               value: "popular",
             },
@@ -191,7 +206,15 @@ export const Home: React.FC = () => {
           </Space>
         </TagContainer>
       ) : (
-        <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
+        <>
+          {params?.special_mode === "hot_and_new" && (
+            <p className="mt-4">
+              ⭐ Hot & New shows <strong>popular characters with the most chat</strong>, created
+              this week.
+            </p>
+          )}
+          <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
+        </>
       )}
     </PageContainer>
   );
