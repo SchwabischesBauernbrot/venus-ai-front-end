@@ -218,7 +218,13 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
 
         {mode === "create" && (
           <Form.Item wrapperCol={RESPONSIVE_WRAPPER_COL}>
-            <p>Select an image as bot avatar, or you can import Tavern PNG file.</p>
+            <p>
+              Select an image as bot avatar, or you can import Tavern PNG file. You can also{" "}
+              <a href="/search" target="_blank">
+                search for existing character
+              </a>{" "}
+              before importing a new one!
+            </p>
             <p>
               If you want to import CAI character, go to{" "}
               <a href="https://zoltanai.github.io/character-editor/" target="_blank">
