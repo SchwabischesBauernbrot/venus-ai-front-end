@@ -215,6 +215,29 @@ export interface Database {
           user_name?: string | null
         }
       }
+      user_reports: {
+        Row: {
+          created_at: string
+          id: number
+          other: string
+          reason: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          other?: string
+          reason?: string
+          url?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          other?: string
+          reason?: string
+          url?: string
+        }
+      }
     }
     Views: {
       character_search: {

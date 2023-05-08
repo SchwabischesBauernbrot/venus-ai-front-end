@@ -21,6 +21,7 @@ import {
   DownloadOutlined,
   LoadingOutlined,
   UserOutlined,
+  WarningOutlined,
   WechatOutlined,
 } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
@@ -46,6 +47,7 @@ import { exportCharacter, getCharacter, getCharacterReviews } from "../services/
 import { Character } from "../services/character-parse/character";
 import { Dislike, Like, ReviewPanel } from "../components/ReviewPanel";
 import { characterUrl, profileUrl } from "../../../shared/services/url-utils";
+import { CharacterReportModal } from "../components/CharacterReportModal";
 
 const { Title } = Typography;
 
@@ -55,6 +57,7 @@ export const ViewCharacter: React.FC = () => {
   const { modal } = App.useApp();
 
   const navigate = useNavigate();
+  const [openReportModal, setOpenReportModal] = useState(false);
   const [isStartingChat, setIsStartingChat] = useState(false);
   const { profile } = useContext(AppContext);
 
@@ -323,6 +326,19 @@ export const ViewCharacter: React.FC = () => {
                 {chatData && <ChatList chats={chatData} size="small" mode="view" />}
               </Collapse.Panel>
             </Collapse>
+
+            <div className="mt-4 text-right">
+              <Button icon={<WarningOutlined />} onClick={() => setOpenReportModal(true)} danger>
+                Report this character!
+              </Button>
+
+              {openReportModal && (
+                <CharacterReportModal
+                  open={openReportModal}
+                  onModalClose={() => setOpenReportModal(false)}
+                />
+              )}
+            </div>
           </Col>
         </Row>
       )}
