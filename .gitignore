@@ -13,6 +13,7 @@ stats.html
 .eslintcache
 
 .yarn
+.yarnrc.yml
 
 .DS_Store
 **/.DS_Store
