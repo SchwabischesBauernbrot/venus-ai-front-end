@@ -12,7 +12,8 @@ stats.html
 
 .eslintcache
 
-.yarn
+.yarn/cache
+.yarn/install-state.gz
 .yarnrc.yml
 
 .DS_Store
