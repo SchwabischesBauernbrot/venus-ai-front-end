@@ -12,7 +12,7 @@ interface ChatSettingsModalProps {
 }
 
 interface FormValues {
-  reason: "stolen" | "spam" | "illegal" | "other";
+  reason: "stolen" | "wrong_tag" | "spam" | "illegal" | "other";
   other: string;
 }
 
@@ -71,6 +71,9 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
               <Space direction="vertical">
                 <Radio value="stolen">
                   This bot is mine. It's posted here without my permission.
+                </Radio>
+                <Radio value="wrong_tag">
+                  This bot's tag is wrong. (Missing NSFW, missing tags)
                 </Radio>
                 <Radio value="spam">This bot is a spam or duplicated one.</Radio>
                 <Radio value="illegal">This bot or its content is illegal or harmful.</Radio>
