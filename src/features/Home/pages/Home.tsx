@@ -166,7 +166,7 @@ export const Home: React.FC = () => {
               value: "latest",
             },
             {
-              label: "⭐ Hot & New",
+              label: "⭐ Trending",
               value: "hot_n_new",
             },
             {
@@ -209,7 +209,7 @@ export const Home: React.FC = () => {
         <>
           {params?.special_mode === "hot_and_new" && (
             <p className="mt-4">
-              ⭐ Hot & New shows <strong>popular characters with the most chat</strong>, created
+              ⭐ Trending shows <strong>popular characters with the most chat</strong>, created
               recently.
             </p>
           )}
