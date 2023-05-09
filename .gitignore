@@ -13,6 +13,7 @@ stats.html
 .eslintcache
 
 .yarn/cache
+.yarn/sdks
 .yarn/install-state.gz
 .yarnrc.yml
 
