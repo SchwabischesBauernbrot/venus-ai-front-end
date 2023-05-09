@@ -1,7 +1,7 @@
-import { SaveOutlined, WarningOutlined } from "@ant-design/icons";
-import { App, Button, Form, Input, Modal, Radio, Slider, Space, Typography } from "antd";
+import { WarningOutlined } from "@ant-design/icons";
+import { App, Form, Input, Modal, Radio, Space, Typography } from "antd";
 
-import { useContext, useMemo, useState } from "react";
+import { useState } from "react";
 import { supabase } from "../../../config";
 
 const { Title } = Typography;
@@ -12,7 +12,7 @@ interface ChatSettingsModalProps {
 }
 
 interface FormValues {
-  reason: "spam" | "stolen" | "illegal" | "other";
+  reason: "stolen" | "spam" | "illegal" | "other";
   other: string;
 }
 
@@ -21,8 +21,9 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form] = Form.useForm<FormValues>();
 
+  const selectedReason = Form.useWatch("reason", form);
   const initialValues: FormValues = {
-    reason: "spam",
+    reason: "stolen",
     other: "",
   };
 
@@ -68,17 +69,32 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
           <Form.Item name="reason">
             <Radio.Group>
               <Space direction="vertical">
-                <Radio value="spam">This bot is a spam or duplicated one.</Radio>
                 <Radio value="stolen">
                   This bot is mine. It's posted here without my permission.
                 </Radio>
+                <Radio value="spam">This bot is a spam or duplicated one.</Radio>
                 <Radio value="illegal">This bot or its content is illegal or harmful.</Radio>
                 <Radio value="other">Others (Please specify)</Radio>
               </Space>
             </Radio.Group>
           </Form.Item>
-          <Form.Item name="other">
-            <Input.TextArea placeholder="Enter more details here. Please include the link to original bot on booru/discord/charhub." />
+          <Form.Item
+            name="other"
+            help={
+              selectedReason === "stolen" && (
+                <div className="pt-2">
+                  <span>Please include the link to original bot on booru/discord/charhub.</span>
+                  <br />
+                  <span>
+                    You can also include your venus.ai profile, the mods will{" "}
+                    <strong>transfer the bot to your accounts</strong> and help you monitor for
+                    duplicated/stolen bots.
+                  </span>
+                </div>
+              )
+            }
+          >
+            <Input.TextArea placeholder="Enter more details here." />
           </Form.Item>
         </Form>
       </div>
