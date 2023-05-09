@@ -1,8 +1,9 @@
 import { WarningOutlined } from "@ant-design/icons";
 import { App, Form, Input, Modal, Radio, Space, Typography } from "antd";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { supabase } from "../../../config";
+import { AppContext } from "../../../appContext";
 
 const { Title } = Typography;
 
@@ -17,6 +18,7 @@ interface FormValues {
 }
 
 export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, onModalClose }) => {
+  const { profile } = useContext(AppContext);
   const { message } = App.useApp();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form] = Form.useForm<FormValues>();
@@ -35,6 +37,7 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
         reason: formValues.reason,
         other: formValues.other,
         url: location.href,
+        profile_id: profile ? profile.id : null,
       });
 
       if (result.error) {

@@ -220,6 +220,7 @@ export interface Database {
           created_at: string
           id: number
           other: string
+          profile_id: string | null
           reason: string
           url: string
         }
@@ -227,6 +228,7 @@ export interface Database {
           created_at?: string
           id?: number
           other?: string
+          profile_id?: string | null
           reason?: string
           url?: string
         }
@@ -234,6 +236,7 @@ export interface Database {
           created_at?: string
           id?: number
           other?: string
+          profile_id?: string | null
           reason?: string
           url?: string
         }
