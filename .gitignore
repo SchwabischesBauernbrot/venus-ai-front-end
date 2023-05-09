@@ -12,10 +12,13 @@ stats.html
 
 .eslintcache
 
-.yarn/cache
-.yarn/sdks
-.yarn/install-state.gz
-.yarnrc.yml
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 .DS_Store
 **/.DS_Store
