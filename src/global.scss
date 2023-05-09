@@ -57,6 +57,11 @@
       margin-top: 1rem;
       margin-bottom: 1rem;
     }
+
+    .ant-pagination.ant-pagination-mini .ant-pagination-total-text {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
   }
 
   // mobile only - xs

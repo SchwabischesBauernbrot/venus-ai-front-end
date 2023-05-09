@@ -1,4 +1,5 @@
-import { Typography, Spin, Col, Row, Avatar } from "antd";
+import { Typography, Spin, Col, Row, Avatar, Select } from "antd";
+import styled from "styled-components";
 import { UserOutlined } from "@ant-design/icons";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -11,11 +12,26 @@ import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 import { Helmet } from "react-helmet";
 import { profileUrl } from "../../../shared/services/url-utils";
+import { useState } from "react";
+import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
 
 const { Title } = Typography;
 
+const SortContainer = styled.div`
+  text-align: right;
+  display: block;
+  position: relative;
+  top: 0.75rem;
+  height: 0;
+
+  ${MOBILE_BREAKPOINT_CSS} {
+    top: 4.75rem;
+  }
+`;
+
 export const PublicProfile: React.FC = () => {
   const { profileId: seoFriendlyId } = useParams();
+  const [sortValue, setSortValue] = useState<"latest" | "popular">("latest");
   const profileId = getRealId(seoFriendlyId || "");
 
   // Get character
@@ -81,10 +97,21 @@ export const PublicProfile: React.FC = () => {
               Public characters
             </Title>
 
+            <SortContainer>
+              <Select
+                style={{ minWidth: "10rem" }}
+                value={sortValue}
+                onChange={(value) => setSortValue(value)}
+              >
+                <Select.Option value="latest">Sort by latest</Select.Option>
+                <Select.Option value="popular">Sort by most popular</Select.Option>
+              </Select>
+            </SortContainer>
+
             <CharacterListWrapper
               size="medium"
               cacheKey={`profile_chars_${profileId}`}
-              additionalParams={{ user_id: profileId }}
+              additionalParams={{ user_id: profileId, sort: sortValue }}
             />
           </Col>
         </Row>
