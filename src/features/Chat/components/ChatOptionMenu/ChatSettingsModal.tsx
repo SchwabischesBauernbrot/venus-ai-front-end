@@ -225,20 +225,31 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                   label="OpenAI Key"
                   rules={[{ required: true, message: "Enter OpenAI API key." }]}
                   help={
-                    <span>
-                      Sign up at{" "}
-                      <a href="https://platform.openai.com/" target="_blank">
-                        platform.openai.com
-                      </a>{" "}
-                      and get this at{" "}
-                      <a href="https://beta.openai.com/account/api-keys" target="_blank">
-                        beta.openai.com/account/api-keys
-                      </a>
-                      .
-                      <br />
+                    <div>
+                      <p>
+                        Sign up at{" "}
+                        <a href="https://platform.openai.com/" target="_blank">
+                          platform.openai.com
+                        </a>{" "}
+                        and get this at{" "}
+                        <a href="https://platform.openai.com/account/api-keys" target="_blank">
+                          account/api-keys
+                        </a>
+                        .
+                      </p>
+                      <p>
+                        If you see an error <strong>about quota or billing</strong>, it means you
+                        used up OpenAI free 5$ credit. Go to{" "}
+                        <a href="https://platform.openai.com/account/billing" target="_blank">
+                          account/billing
+                        </a>{" "}
+                        to update your billing information.
+                      </p>
                       This key is <strong>only stored locally in your device</strong> and never sent
                       to server.
-                    </span>
+                      <br />
+                      <span></span>
+                    </div>
                   }
                 >
                   <Space.Compact style={{ width: "100%" }}>
