@@ -77,7 +77,7 @@ export const ViewCharacter: React.FC = () => {
       const reviews = await getCharacterReviews(characterId!);
       return reviews;
     },
-    { enabled: Boolean(characterId && character) }
+    { enabled: Boolean(characterId && character && character.is_public) }
   );
 
   const canEdit = Boolean(profile && profile.id === character?.creator_id);
@@ -97,7 +97,7 @@ export const ViewCharacter: React.FC = () => {
       const chats = responses.data;
       return chats;
     },
-    { enabled: Boolean(characterId && character) }
+    { enabled: Boolean(characterId && character && character.is_public) }
   );
 
   const startChat = useCallback(async () => {
