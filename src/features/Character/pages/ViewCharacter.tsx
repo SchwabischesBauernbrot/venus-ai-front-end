@@ -19,6 +19,7 @@ import { useCallback, useContext, useState } from "react";
 import {
   BookOutlined,
   DownloadOutlined,
+  EditOutlined,
   LoadingOutlined,
   UserOutlined,
   WarningOutlined,
@@ -78,6 +79,8 @@ export const ViewCharacter: React.FC = () => {
     },
     { enabled: Boolean(characterId && character) }
   );
+
+  const canEdit = Boolean(profile && profile.id === character?.creator_id);
 
   const { data: chatData } = useQuery(
     ["public_chats", characterId],
@@ -328,15 +331,29 @@ export const ViewCharacter: React.FC = () => {
             </Collapse>
 
             <div className="mt-4 text-right">
-              <Button icon={<WarningOutlined />} onClick={() => setOpenReportModal(true)} danger>
-                Report this character!
-              </Button>
+              {canEdit ? (
+                <Link to={`/edit_character/${character.id}`}>
+                  <Button size="large" icon={<EditOutlined />}>
+                    Edit character
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Button
+                    icon={<WarningOutlined />}
+                    onClick={() => setOpenReportModal(true)}
+                    danger
+                  >
+                    Report this character!
+                  </Button>
 
-              {openReportModal && (
-                <CharacterReportModal
-                  open={openReportModal}
-                  onModalClose={() => setOpenReportModal(false)}
-                />
+                  {openReportModal && (
+                    <CharacterReportModal
+                      open={openReportModal}
+                      onModalClose={() => setOpenReportModal(false)}
+                    />
+                  )}
+                </>
               )}
             </div>
           </Col>

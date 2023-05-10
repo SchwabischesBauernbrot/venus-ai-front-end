@@ -99,7 +99,7 @@ export const PublicProfile: React.FC = () => {
 
             <SortContainer>
               <Select
-                style={{ minWidth: "10rem" }}
+                style={{ minWidth: "12rem", textAlign: "left" }}
                 value={sortValue}
                 onChange={(value) => setSortValue(value)}
               >
