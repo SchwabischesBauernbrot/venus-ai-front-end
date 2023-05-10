@@ -202,7 +202,7 @@ export const ViewCharacter: React.FC = () => {
                   {character.creator_verified && <VerifiedMark size="medium" />}
                 </p>
               </Link>
-              <p>{character.description}</p>
+              <MultiLine>{character.description}</MultiLine>
             </div>
 
             {character.is_nsfw || character.tags?.length ? (
