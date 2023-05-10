@@ -78,7 +78,7 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
                 <Radio value="wrong_tag">
                   This bot's tag is wrong. (Missing NSFW, missing tags)
                 </Radio>
-                <Radio value="spam">This bot is a spam or duplicated one.</Radio>
+                <Radio value="spam">This bot is a spam, low-quality, or duplicated one.</Radio>
                 <Radio value="illegal">This bot or its content is illegal or harmful.</Radio>
                 <Radio value="other">Others (Please specify)</Radio>
               </Space>
