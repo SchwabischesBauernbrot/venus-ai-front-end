@@ -391,11 +391,11 @@ export const ChatPage: React.FC = () => {
   const editMessage = async (item: SupaChatMessage, messageId: number, newMessage: string) => {
     item.message = newMessage; // Local edit
 
-    // Server edit
-    const editedMessage = await chatService.updateMassage(chatId, messageId, {
+    // Server edit, just ignore if it failed
+    chatService.updateMassage(chatId, messageId, {
       message: newMessage,
     });
-    dispatch({ type: "message_edited", message: editedMessage });
+    dispatch({ type: "message_edited", message: item });
   };
 
   if (!isLoading && error) {

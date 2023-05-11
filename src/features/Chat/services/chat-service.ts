@@ -41,7 +41,7 @@ const getChatById = async (chatId: ChatID) => {
 };
 
 const deleteMessages = async (chatId: ChatID, messageIDs: number[]) => {
-  return await axiosInstance.delete(`/chats/${chatId}/messages`, {
+  return await axiosInstance.delete<{ success: boolean }>(`/chats/${chatId}/messages`, {
     data: {
       message_ids: messageIDs,
     },
@@ -65,7 +65,7 @@ const updateMassage = async (
   messageId: number,
   { message, is_main }: UpdateChatMessageDto
 ) => {
-  const messageResponse = await axiosInstance.patch<ChatMessageEntity>(
+  const messageResponse = await axiosInstance.patch<{ success: boolean }>(
     `/chats/${chatId}/messages/${messageId}`,
     {
       message: message,
