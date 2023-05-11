@@ -22,7 +22,7 @@ export const MyCharacters: React.FC = () => {
     async () => {
       const responses = await supabase
         .from("characters")
-        .select("*, tags(*), user_profiles!characters_creator_id_fkey(*)")
+        .select("id, name, avatar, description, is_nsfw, is_public, tags(id, name, description)")
         .eq("creator_id", profile?.id)
         .order("updated_at", { ascending: false })
         .order("created_at", { ascending: false })
@@ -35,13 +35,13 @@ export const MyCharacters: React.FC = () => {
       }
 
       const convertedCharacters: CharacterView[] = characters.map((character) => {
-        const { user_profiles, tags } = character;
+        const { tags } = character;
 
         return {
           ...character,
-          creator_id: user_profiles.id,
-          creator_name: user_profiles.user_name || user_profiles.name,
-          creator_verified: user_profiles.is_verified,
+          creator_id: profile!.id,
+          creator_name: profile!.user_name || profile!.name,
+          creator_verified: profile!.is_verified || false,
           tags,
         };
       });
