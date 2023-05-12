@@ -261,12 +261,21 @@ export const ChatPage: React.FC = () => {
         }
 
         if (streamingText.length > 0) {
-          const botMessage = await chatService.createMessage(chatId, {
-            message: streamingText,
-            is_bot: true,
-            is_main: false,
-          });
-          dispatch({ type: "new_server_messages", messages: [botMessage] });
+          // const botMessage = await chatService.createMessage(chatId, {
+          //   message: streamingText,
+          //   is_bot: true,
+          //   is_main: false,
+          // });
+
+          chatService
+            .createMessage(chatId, {
+              message: streamingText,
+              is_bot: true,
+              is_main: false,
+            })
+            .then((botMessage) => {
+              dispatch({ type: "new_server_messages", messages: [botMessage] });
+            });
         } else {
           dispatch({
             type: "new_server_messages",
@@ -369,8 +378,15 @@ export const ChatPage: React.FC = () => {
 
       // If failed to create bot message, no need to save
       if (streamingText !== "") {
-        const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
-        dispatch({ type: "new_server_messages", messages: [serverUserMassage, serverBotMassage] });
+        // const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
+
+        // No awaiting this, so we can chat faster lol
+        chatService.createMessage(chatId, localBotMessage).then((serverBotMassage) => {
+          dispatch({
+            type: "new_server_messages",
+            messages: [serverUserMassage, serverBotMassage],
+          });
+        });
       } else {
         dispatch({
           type: "new_server_messages",
