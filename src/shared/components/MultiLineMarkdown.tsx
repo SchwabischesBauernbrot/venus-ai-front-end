@@ -10,6 +10,11 @@ const MarkdownContainer = styled.div<{ theme: "light" | "dark" }>`
     word-wrap: break-word;
   }
 
+  img {
+    max-height: 40vh;
+    max-width: 40vw;
+  }
+
   code {
     font-size: 0.9rem;
     letter-spacing: -0.5px;

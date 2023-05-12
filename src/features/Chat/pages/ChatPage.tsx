@@ -223,7 +223,7 @@ export const ChatPage: React.FC = () => {
       }
 
       // Simulate regenrate the massage
-      const lastMessage = findLast(chatState.messages, (m) => !m.is_bot);
+      const lastMessage = findLast(chatState.messagesToDisplay, (m) => !m.is_bot);
       const historyWithoutLastMessage = chatState.messages.filter(
         (massage) => massage.id < lastMessage!.id
       );
@@ -351,7 +351,10 @@ export const ChatPage: React.FC = () => {
       dispatch({ type: "set_index", newIndex: 0 });
       scrollToBottom();
 
-      const serverUserMassage = await chatService.createMessage(chatId, localUserMessage);
+      const insertUserMessagePromise = chatService.createMessage(chatId, localUserMessage);
+      insertUserMessagePromise.then().catch((err) => {
+        throw err;
+      }); // Call this first, get result later, ignore error lol
 
       // Generate prompt back-end to get generated message
       const prompt = generateInstance.buildPrompt(
@@ -376,17 +379,24 @@ export const ChatPage: React.FC = () => {
         scrollToBottom();
       }
 
+      // This should have been runned before, now we just await for result
+      const serverUserMassage = await insertUserMessagePromise;
+
       // If failed to create bot message, no need to save
       if (streamingText !== "") {
         // const serverBotMassage = await chatService.createMessage(chatId, localBotMessage);
-
         // No awaiting this, so we can chat faster lol
-        chatService.createMessage(chatId, localBotMessage).then((serverBotMassage) => {
-          dispatch({
-            type: "new_server_messages",
-            messages: [serverUserMassage, serverBotMassage],
+        chatService
+          .createMessage(chatId, localBotMessage)
+          .then((serverBotMassage) => {
+            dispatch({
+              type: "new_server_messages",
+              messages: [serverUserMassage, serverBotMassage],
+            });
+          })
+          .catch((err) => {
+            throw err;
           });
-        });
       } else {
         dispatch({
           type: "new_server_messages",
