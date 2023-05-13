@@ -64,3 +64,7 @@ export const toSlug = (input?: string) => {
   if (!input) return "";
   return kebabCase(input).trim();
 };
+
+export const getPage = (page: string | null) => {
+  return parseInt(page || "1") || 1;
+};

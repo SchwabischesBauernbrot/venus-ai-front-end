@@ -285,13 +285,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         <br />
                         <strong>Does NOT support text streaming.</strong>
                         <br />
-                        {/* If you are using Toddbot, set <strong>OpenAI Model to gpt-4.</strong>
-                        <br /> */}
                         See{" "}
-                        <a href="https://rentry.co/Tavern4Retards#proxy-gpt-setup" target="_blank">
-                          this guide
+                        <a href="https://alwaysfindtheway.github.io/" target="_blank">
+                          this page
                         </a>{" "}
-                        on more details about where to find proxy.
+                        or{" "}
+                        <a href="https://alwaysfindtheway.github.io/" target="_blank">
+                          visit our Discord
+                        </a>{" "}
+                        to see where to find and how to use proxy.
                       </span>
                     }
                   >

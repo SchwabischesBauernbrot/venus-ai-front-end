@@ -5,10 +5,10 @@ import { Typography, Spin, Segmented, Radio, Space } from "antd";
 import { PageContainer } from "../../../shared/components/shared";
 import { supabase } from "../../../config";
 import { ChatEntityWithCharacter } from "../../../types/backend-alias";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { AppContext } from "../../../appContext";
 import { ChatList } from "../../../shared/components";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   CharacterListWrapper,
   SearchParams,
@@ -18,6 +18,7 @@ import { Helmet } from "react-helmet";
 import { useTags } from "../../../hooks/useTags";
 import { TagLink } from "../../../shared/components/TagLink";
 import { IPAD_BREAKPOINT_CSS } from "../../../css-const";
+import { getPage } from "../../../shared/services/utils";
 
 const { Title } = Typography;
 
@@ -57,8 +58,24 @@ const TagContainer = styled.div`
 
 export const Home: React.FC = () => {
   const { profile, localData, updateLocalData } = useContext(AppContext);
-  const [segment, setSegment] = useState<Segment>("latest");
   const tags = useTags();
+
+  const [searchParams, setSearchParams] = useSearchParams({
+    segment: "latest",
+    page: "1",
+  });
+
+  // Use search params as source of truth lol
+  const [segment, setSegment] = useState<Segment>(searchParams.get("segment") as Segment);
+  const [page, setPage] = useState(getPage(searchParams.get("page")));
+
+  useEffect(() => {
+    setSegment(searchParams.get("segment") as Segment);
+    setPage(getPage(searchParams.get("page")));
+  }, [searchParams]);
+  const updateSearchParams = (newSearchParams: { segment: string; page: string }) => {
+    setSearchParams(newSearchParams);
+  };
 
   const params: SearchParams | undefined = useMemo(() => {
     const modeParams = { mode: localData.character_view || "sfw" };
@@ -156,10 +173,13 @@ export const Home: React.FC = () => {
           <HeartFilled /> NSFW Only
         </Radio.Button>
       </Radio.Group>
+
       <SegmentContainer>
         <Segmented
           value={segment}
-          onChange={(value) => setSegment(value as Segment)}
+          onChange={(value) => {
+            updateSearchParams({ segment: String(value), page: "1" });
+          }}
           options={[
             {
               label: "⚡️ Latest",
@@ -213,7 +233,15 @@ export const Home: React.FC = () => {
               recently.
             </p>
           )}
-          <CharacterListWrapper size="small" cacheKey="main_page" additionalParams={params} />
+          <CharacterListWrapper
+            page={page}
+            onPageChange={(newPage) => {
+              updateSearchParams({ segment, page: String(newPage) });
+            }}
+            size="small"
+            cacheKey="main_page"
+            additionalParams={params}
+          />
         </>
       )}
     </PageContainer>

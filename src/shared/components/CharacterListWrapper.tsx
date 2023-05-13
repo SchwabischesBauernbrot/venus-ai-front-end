@@ -2,7 +2,7 @@ import { Spin, Pagination } from "antd";
 
 import { useQuery } from "react-query";
 import { CharacterList } from "./CharacterList";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   searchCharacter,
   SearchCharactersParams,
@@ -14,23 +14,39 @@ interface CharacterListWrapperProps {
   size: "small" | "medium";
   cacheKey: string;
   additionalParams?: SearchParams;
+
+  // If there is no onPageChange, component manage page state itself
+  page?: number;
+  onPageChange?: (page: number) => void;
 }
 
 export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
   cacheKey,
   size,
+  page: initialPage,
+  onPageChange,
   additionalParams,
 }) => {
-  const [page, setPage] = useState(1);
+  // If there is no onPageChange, component manage page state itself
+  const shouldManagePageState = useMemo(() => Boolean(!onPageChange), [onPageChange]);
+
+  const [page, setPage] = useState(initialPage || 1);
+  useEffect(() => {
+    if (initialPage && initialPage !== page) {
+      setPage(initialPage);
+    }
+  }, [initialPage]);
 
   const { data } = useQuery([cacheKey, additionalParams, page], async () => {
-    const response = await searchCharacter({ page, ...additionalParams });
+    const response = await searchCharacter({ page: page || 1, ...additionalParams });
     return response;
   });
 
   useEffect(() => {
-    setPage(1);
-  }, [additionalParams]);
+    if (shouldManagePageState) {
+      setPage(1);
+    }
+  }, [shouldManagePageState, additionalParams]);
 
   if (!data) {
     return <Spin className="mt-4" />;
@@ -53,7 +69,10 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
       showQuickJumper
       showSizeChanger={false} // Hide this as it will mess with the caching lol
       onChange={(newPage) => {
-        setPage(newPage);
+        onPageChange?.(newPage);
+        if (shouldManagePageState) {
+          setPage(newPage);
+        }
       }}
     />
   );
