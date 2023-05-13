@@ -43,6 +43,7 @@ import {
   MultiLine,
   PageContainer,
   VerifiedMark,
+  MultiLineMarkdown,
 } from "../../../shared/components";
 import { exportCharacter, getCharacter, getCharacterReviews } from "../services/character-service";
 import { Character } from "../services/character-parse/character";
@@ -202,7 +203,7 @@ export const ViewCharacter: React.FC = () => {
                   {character.creator_verified && <VerifiedMark size="medium" />}
                 </p>
               </Link>
-              <MultiLine>{character.description}</MultiLine>
+              <MultiLineMarkdown>{character.description}</MultiLineMarkdown>
             </div>
 
             {character.is_nsfw || character.tags?.length ? (
