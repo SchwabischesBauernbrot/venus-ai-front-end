@@ -72,6 +72,23 @@ export const TermOfUse: React.FC = () => {
         backup copies of your User Content if you desire.
       </p>
       <p>
+        <span>
+          These kinds of content is not acceptable on our site and will be removed immediately
+        </span>
+        <ul>
+          <li>Child pornography</li>
+          <li>Sexualized depictions of minors</li>
+          <li>Heavy gore</li>
+          <li>Bestiality</li>
+          <li>Sexual violence</li>
+        </ul>
+        <span>
+          This rules apply to <strong>real pictures or 3D-rendered picture</strong>. <br />
+          The rules for <strong>hentai and drawn pictures</strong> is looser because they are
+          fiction and not real people.
+        </span>
+      </p>
+      <p>
         <strong>Acceptable Use Policy.</strong> The following terms constitute our "Acceptable Use
         Policy": You agree not to use the Site to collect, upload, transmit, display, or distribute
         any User Content (i) that violates any third-party right or any intellectual property or

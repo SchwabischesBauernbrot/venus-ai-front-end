@@ -26,7 +26,7 @@ export const FAQ: React.FC = () => {
         <Descriptions.Item label="Will there be a donation/paid option?" span={3}>
           <span>
             For now, the cost of running this site is minimal (10-30$/month at most) so I won't need
-            any donations in the near term :D.
+            any donations in the near term :D. I will setup a Patreon later.
           </span>
           <br />
           <span>
@@ -35,6 +35,30 @@ export const FAQ: React.FC = () => {
             $200 free credit, and I will have some credit to cover server cost.
           </span>
         </Descriptions.Item>
+
+        <Descriptions.Item label="What kind of content is banned?" span={3}>
+          <span>
+            We respect people's taste and fetishes.
+            <br />
+            However, there are some kind of contents that is{" "}
+            <strong>not acceptable and will be removed immediately</strong> on this site, that we
+            will remove to ensure the site follows hosting requirements.
+          </span>
+          <ul>
+            <li>Child pornography</li>
+            <li>Sexualized depictions of minors</li>
+            <li>Heavy gore</li>
+            <li>Bestiality</li>
+            <li>Sexual violence</li>
+          </ul>
+          <span>
+            Please help us report the content if you see it. This apply to{" "}
+            <strong>real pictures or 3D-rendered picture</strong>. <br />
+            The rules for <strong>hentai and drawn pictures</strong> is looser because they are
+            fiction and not real people.
+          </span>
+        </Descriptions.Item>
+
         <Descriptions.Item label="What will you do with my keys?" span={3}>
           <span>
             Keys are stored in your device only (So you will need to enter your keys again when you

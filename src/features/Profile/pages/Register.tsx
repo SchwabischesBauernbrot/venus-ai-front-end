@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { Typography, Input, Button, Form, Space, App } from "antd";
+import { Typography, Input, Button, Form, Space, App, Alert } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -92,6 +92,13 @@ export const Register = () => {
           <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
         </Form.Item>
 
+        <Alert
+          className="mb-4"
+          message="We do not confirm your email. Feel free to just use a burner email or something, lol."
+          type="info"
+          showIcon
+        />
+
         <p>
           {" "}
           By registering, you agree with our{" "}
@@ -104,7 +111,12 @@ export const Register = () => {
           </a>
         </p>
 
-        <p>We do not confirm your email. Feel free to just use a burner email or something, lol.</p>
+        <Alert
+          className="mb-4"
+          message="This site is not for minor. Please do not register if you are less than 18 years old."
+          type="warning"
+          showIcon
+        />
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
