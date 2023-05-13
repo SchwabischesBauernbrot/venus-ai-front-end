@@ -22,9 +22,16 @@ const CharacterImage = styled.img`
   object-position: top;
 `;
 const CreatorName = styled.p`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 0.8rem;
+  margin-top: 2px;
+
+  span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 85%;
+  }
 `;
 
 export const CharacterCard: React.FC<CharacterCardProps> = ({ character, editable, onDelete }) => {
@@ -79,7 +86,8 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, editabl
       {!editable && (
         <Link to={profileUrl(character.creator_id, character.creator_name)}>
           <CreatorName>
-            @{character.creator_name} {character.creator_verified && <VerifiedMark size="small" />}
+            <span>@{character.creator_name}</span>{" "}
+            {character.creator_verified && <VerifiedMark size="small" />}
           </CreatorName>
         </Link>
       )}
