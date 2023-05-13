@@ -1,17 +1,12 @@
-import { BookOutlined, DeleteOutlined, EditOutlined, WechatOutlined } from "@ant-design/icons";
-import { Card, Space, Tooltip, Tag, Badge, Button, Popconfirm } from "antd";
-import Meta from "antd/es/card/Meta";
+import { BookOutlined, WechatOutlined } from "@ant-design/icons";
+import { Tooltip, Badge } from "antd";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
-import { truncate } from "lodash-es";
 
-import { getBotAvatarUrl, toSlug } from "../services/utils";
 import { CharacterView } from "../../types/backend-alias";
-import { PrivateIndicator } from "./PrivateIndicator";
-import { TagLink } from "./TagLink";
-import { VerifiedMark } from "./shared";
-import { characterUrl, profileUrl } from "../services/url-utils";
+import { characterUrl } from "../services/url-utils";
 import { deleteCharacter } from "../../features/Character/services/character-service";
+import { CharacterCard } from "./CharacterCard";
 
 interface CharacterListProps {
   characters: CharacterView[];
@@ -64,97 +59,9 @@ const CharacterContainer = styled.div<{ size: "small" | "medium" }>`
     `}
 `;
 
-const CharacterImage = styled.img`
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  object-position: top;
-`;
-
 const CharacterStats = styled.span`
   font-size: 0.8rem;
 `;
-
-const CreatorName = styled.p`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`;
-
-const CharacterCard: React.FC<{
-  character: CharacterView;
-  editable?: boolean;
-  onDelete?: (character: CharacterView) => void;
-}> = ({ character, editable, onDelete }) => {
-  return (
-    <Card
-      hoverable
-      size="small"
-      style={{ height: "100%" }}
-      className="d-flex flex-column"
-      key={character.id}
-      title={
-        <span>
-          <PrivateIndicator isPublic={character.is_public} /> {character.name}
-        </span>
-      }
-      // Add bot statistics in cover here
-      cover={<CharacterImage alt={character.name} src={getBotAvatarUrl(character.avatar)} />}
-      actions={
-        editable
-          ? [
-              <Link to={`/edit_character/${character.id}`}>
-                <EditOutlined /> Edit
-              </Link>,
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-              >
-                <Popconfirm
-                  title="Delete this character?"
-                  description={
-                    <div>
-                      Are you sure to delete this character? <br /> All your chats will be lost
-                      forever!
-                    </div>
-                  }
-                  onConfirm={() => {
-                    onDelete?.(character);
-                  }}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <DeleteOutlined /> Delete
-                </Popconfirm>
-              </span>,
-            ]
-          : undefined
-      }
-    >
-      {!editable && (
-        <Link to={profileUrl(character.creator_id, character.creator_name)}>
-          <CreatorName>
-            @{character.creator_name} {character.creator_verified && <VerifiedMark size="small" />}
-          </CreatorName>
-        </Link>
-      )}
-      <Meta
-        description={
-          <Tooltip title={character.description}>
-            {truncate(character.description, { length: 100 })}
-          </Tooltip>
-        }
-      />
-      <Space className="mt-4 " size={[0, 4]} wrap>
-        {character.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-        {character.tags?.slice(0, 4).map((tag) => (
-          <TagLink tag={tag} />
-        ))}
-      </Space>
-    </Card>
-  );
-};
 
 export const CharacterList: React.FC<CharacterListProps> = ({
   characters,
@@ -166,8 +73,8 @@ export const CharacterList: React.FC<CharacterListProps> = ({
     return <p>No characters</p>;
   }
 
-  const removeCharacter = async (character: CharacterView) => {
-    await deleteCharacter(character.id);
+  const removeCharacter = async (characterId: string) => {
+    await deleteCharacter(characterId);
     onCharacterDeleted?.();
   };
 

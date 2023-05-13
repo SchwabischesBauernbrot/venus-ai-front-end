@@ -32,6 +32,9 @@ export interface paths {
     delete: operations["CharacterController_deleteMessages"];
     patch: operations["CharacterController_updateCharacter"];
   };
+  "/characters/check": {
+    post: operations["CharacterController_checkCharacter"];
+  };
   "/profiles/{id}": {
     get: operations["ProfileController_getProfile"];
   };
@@ -163,6 +166,21 @@ export interface components {
       first_message: string;
       personality: string;
       scenario: string;
+    };
+    CheckCharacterParams: {
+      name: string;
+      personality: string;
+    };
+    CharacterLite: {
+      id: string;
+      name: string;
+      avatar: string;
+      description: string;
+      personality: string;
+      creator_id: string;
+      creator_name: string;
+      creator_verified: boolean;
+      is_nsfw: boolean;
     };
     ProfileResponse: {
       id: string;
@@ -416,6 +434,25 @@ export interface operations {
       };
     };
   };
+  CharacterController_checkCharacter: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CheckCharacterParams"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": (components["schemas"]["CharacterLite"])[];
+        };
+      };
+      default: {
+        content: {
+          "application/json": (components["schemas"]["CharacterLite"])[];
+        };
+      };
+    };
+  };
   ProfileController_getProfile: {
     parameters: {
       path: {
@@ -545,11 +582,6 @@ export interface operations {
     };
     responses: {
       200: never;
-      default: {
-        content: {
-          "application/json": (components["schemas"]["ChatMessageEntity"])[];
-        };
-      };
     };
   };
   ChatController_updateMessage: {
@@ -565,16 +597,7 @@ export interface operations {
       };
     };
     responses: {
-      200: {
-        content: {
-          "application/json": Record<string, never>;
-        };
-      };
-      default: {
-        content: {
-          "application/json": components["schemas"]["ChatMessageEntity"];
-        };
-      };
+      200: never;
     };
   };
   TagController_findAll: {

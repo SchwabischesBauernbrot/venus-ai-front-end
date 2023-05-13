@@ -4,6 +4,7 @@ import { Database } from "./supabase";
 export type CharacterView = components["schemas"]["CharacterView"];
 export type FullCharacterView = components["schemas"]["FullCharacterView"];
 export type ReviewView = components["schemas"]["ReviewView"];
+export type CharacterLite = components["schemas"]["CharacterLite"];
 
 export type ProfileResponse = components["schemas"]["ProfileResponse"];
 export type ChatEntity = components["schemas"]["ChatEntity"];

@@ -6,6 +6,7 @@ import {
   FullCharacterView,
   CreateReviewDto,
   SearchCharParams,
+  CharacterLite,
 } from "../../../types/backend-alias";
 import { Character } from "./character-parse/character";
 import { Author, Exporter } from "./character-parse/exporter";
@@ -48,6 +49,12 @@ export const searchCharacter = async (params: SearchCharactersParams) => {
   const result = await axiosInstance.get<Paginated<CharacterView>>("/characters", {
     params,
   });
+
+  return result.data;
+};
+
+export const checkCharacter = async (payload: { name: string; personality: string }) => {
+  const result = await axiosInstance.post<CharacterLite[]>("/characters/check", payload);
 
   return result.data;
 };

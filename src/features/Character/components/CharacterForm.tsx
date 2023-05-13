@@ -10,11 +10,13 @@ import {
   Radio,
   ColProps,
   Alert,
+  Row,
+  Col,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { axiosInstance, supabase } from "../../../config";
-import { parseCharacter } from "../services/character-service";
+import { checkCharacter, parseCharacter } from "../services/character-service";
 import { compressImage } from "../../../shared/services/image-utils";
 import { useTags } from "../../../hooks/useTags";
 import { getBotAvatarUrl } from "../../../shared/services/utils";
@@ -22,11 +24,12 @@ import { getBotAvatarUrl } from "../../../shared/services/utils";
 import { FormContainer } from "../../../shared/components/shared";
 import { AxiosError } from "axios";
 import { useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
-import { SupaCharacter } from "../../../types/backend-alias";
+import { Link, useNavigate } from "react-router-dom";
+import { CharacterLite, SupaCharacter } from "../../../types/backend-alias";
 import { AppContext } from "../../../appContext";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { characterUrl } from "../../../shared/services/url-utils";
+import { CharacterCard } from "../../../shared/components/CharacterCard";
 
 const { Title } = Typography;
 
@@ -63,6 +66,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
   const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [existedCharacters, setExistedCharacters] = useState<CharacterLite[]>([]);
   const [form] = Form.useForm<FormValues>();
   const [botAvatar, setBotAvatar] = useState<string | undefined>();
 
@@ -166,6 +170,15 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
     );
   };
 
+  const checkCharacterExist = async (name: string, personality: string) => {
+    if (mode === "edit") {
+      return;
+    }
+
+    const result = await checkCharacter({ name, personality: personality.substring(0, 200) });
+    setExistedCharacters(result);
+  };
+
   return (
     <FormContainer>
       <Form
@@ -204,6 +217,8 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
                     example_dialogs: character.example_dialogs,
                     scenario: character.scenario,
                   });
+
+                  checkCharacterExist(character.name, character.personality);
                 }
               } catch (ex) {
                 message.error(JSON.stringify(ex, null, 2));
@@ -239,6 +254,36 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
               </a>
               . Otherwise we will be forced to remove it.
             </span>
+          </Form.Item>
+        )}
+
+        {existedCharacters.length > 0 && (
+          <Form.Item wrapperCol={RESPONSIVE_WRAPPER_COL}>
+            <Alert
+              className="mb-4"
+              message="This character seems to already existed in our system!"
+              description={
+                <div>
+                  <Row className="mt-4">
+                    {existedCharacters.map((character) => (
+                      <Col xs={24} lg={12}>
+                        <Link to={characterUrl(character.id, character.name)} target="_blank">
+                          <CharacterCard key={character.id} character={character} />
+                        </Link>
+                      </Col>
+                    ))}
+                  </Row>
+
+                  <p className="mt-4 mb-0">
+                    If this character is originally made by you, please click to view it and click{" "}
+                    <strong>Report this character</strong>.
+                    <br />
+                    We will help to transfer it back to your account.
+                  </p>
+                </div>
+              }
+              type="warning"
+            />
           </Form.Item>
         )}
 
@@ -299,7 +344,9 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
                 </span>{" "}
                 <br />
                 <span>
-                  We will need to set your bot to private if the bot's original creator request it.
+                  We will need to{" "}
+                  <strong>set your bot to private or transfer it to the original creator</strong> if
+                  they request it.
                 </span>
               </div>
             ) : values.is_force_remove ? (
