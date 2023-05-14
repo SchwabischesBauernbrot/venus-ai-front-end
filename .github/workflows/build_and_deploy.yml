@@ -23,6 +23,6 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
       - name: connect and deploy
-        run: ssh root@${{ secrets.SSH_HOST_NEW }} "cd front-end/ ; bash ./deploy.sh ; exit"
+        run: ssh root@${{ secrets.SSH_HOST }} "cd front-end/ ; bash ./deploy.sh ; exit"
       - name: cleanup
         run: rm -rf ~/.ssh
