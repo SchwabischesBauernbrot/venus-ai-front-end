@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon/favicon.ico" />
+    <title>Venus AI - Weeb Chat (for degenerate, and normal people too)</title>
 
-  <link rel="icon" href="/favicon/favicon.ico" />
-  <title>Venus AI - Weeb Chat (for degenerate, and normal people too)</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_EN" />
+    <meta property="og:site_name" content="VenusAI" />
+  </head>
 
-  <meta name="description" content="Venus AI - Weeb Chat (for degenerate, and normal people too) at venusai.chat" />
-  <meta property="og:title" content="Venus AI - Weeb Chat (for degenerate, and normal people too) at venusai.chat" />
-  <meta property="og:description"
-    content="Venus AI - Weeb Chat (for degenerate, and normal people too) at venusai.chat" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://venusai.chat" />
-  <meta property="og:image" content="https://venusai.chat/logo.png" />
-  <meta property="og:locale" content="en_EN" />
-  <meta property="og:site_name" content="VenusAI" />
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 
-</head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-184HP71YWC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-184HP71YWC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag('js', new Date());
-
-  gtag('config', 'G-184HP71YWC');
-</script>
-
+    gtag("config", "G-184HP71YWC");
+  </script>
 </html>
