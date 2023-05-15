@@ -286,8 +286,11 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         <strong>Does NOT support text streaming.</strong>
                         <br />
                         See{" "}
-                        <a href="https://alwaysfindtheway.github.io/" target="_blank">
-                          this page
+                        <a
+                          href="https://www.google.com/search?q=alwaysfindtheway.github"
+                          target="_blank"
+                        >
+                          the first result (NSFW/offensive content warning)
                         </a>{" "}
                         or{" "}
                         <a href="https://alwaysfindtheway.github.io/" target="_blank">
