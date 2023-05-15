@@ -7,6 +7,7 @@ import {
   searchCharacter,
   SearchCharactersParams,
 } from "../../features/Character/services/character-service";
+import { setPrerenderReady } from "../services/utils";
 
 export type SearchParams = Omit<SearchCharactersParams, "page">;
 
@@ -37,10 +38,18 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
     }
   }, [initialPage]);
 
-  const { data } = useQuery([cacheKey, additionalParams, page], async () => {
-    const response = await searchCharacter({ page: page || 1, ...additionalParams });
-    return response;
-  });
+  const { data } = useQuery(
+    [cacheKey, additionalParams, page],
+    async () => {
+      const response = await searchCharacter({ page: page || 1, ...additionalParams });
+      return response;
+    },
+    {
+      onSuccess() {
+        setPrerenderReady();
+      },
+    }
+  );
 
   useEffect(() => {
     if (shouldManagePageState) {

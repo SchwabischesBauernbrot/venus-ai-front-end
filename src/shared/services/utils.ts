@@ -68,3 +68,10 @@ export const toSlug = (input?: string) => {
 export const getPage = (page: string | null) => {
   return parseInt(page || "1") || 1;
 };
+
+export const setPrerenderReady = () => {
+  // Wait for DOM to render lol
+  setTimeout(() => {
+    (window as any).prerenderReady = true;
+  }, 100);
+};

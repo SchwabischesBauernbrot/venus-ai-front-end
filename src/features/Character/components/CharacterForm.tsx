@@ -21,7 +21,7 @@ import { compressImage } from "../../../shared/services/image-utils";
 import { useTags } from "../../../hooks/useTags";
 import { getBotAvatarUrl } from "../../../shared/services/utils";
 
-import { FormContainer } from "../../../shared/components/shared";
+import { FormContainer, VerifiedMark } from "../../../shared/components/shared";
 import { AxiosError } from "axios";
 import { useQueryClient } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -352,7 +352,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
             ) : values.is_force_remove ? (
               <Alert
                 message="Bot set to private!"
-                description="Your bot was set to private due to original's creator request. You can still chat or modify it."
+                description="Your bot was set to private due to original's creator request, or marked as duplicated/spam/harmful by admin. You can still chat or modify it."
                 type="warning"
                 showIcon
               />
@@ -443,10 +443,17 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
             {countToken(personalityWatch + firstMessageWatch + scenarioWatch + exampleDialogWatch)}.
             Permanent: {countToken(personalityWatch + scenarioWatch)}
           </p>
-          <p></p>
           <Button type="primary" htmlType="submit" block loading={isSubmitting}>
             {mode === "create" ? "Create Character" : "Update Character"}
           </Button>
+
+          {profile?.is_verified === false && (
+            <p className="mt-4">
+              If you create the bots yourselves, please send me an email at{" "}
+              <a href="mailto:anonydev96@proton.me">anonydev96@proton.me</a> or my Discord{" "}
+              <strong>codedao#9342</strong> to get your creator profile verified <VerifiedMark />.
+            </p>
+          )}
         </Form.Item>
       </Form>
     </FormContainer>
