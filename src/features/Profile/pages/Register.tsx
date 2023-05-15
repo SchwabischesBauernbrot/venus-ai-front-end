@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { Typography, Input, Button, Form, Space, App, Alert } from "antd";
@@ -31,30 +31,36 @@ const RegisterFormContainer = styled.div`
 
 export const Register = () => {
   const { setSession } = useContext(AppContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { message } = App.useApp();
   const navigate = useNavigate();
 
   const [form] = Form.useForm<FormValues>();
 
   const onSubmit = async ({ email, password }: FormValues) => {
-    const result = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      setIsSubmitting(true);
+      const result = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-    if (result.error) {
-      console.error(result.error);
-    } else {
-      const { user } = result.data; // Session is null, but can request lol
-      if (user) {
-        const sessionData = await supabase.auth.getSession();
-        if (sessionData.data.session) {
-          setSession(sessionData.data.session);
+      if (result.error) {
+        message.error(JSON.stringify(result.error, null, 2));
+      } else {
+        const { user } = result.data; // Session is null, but can request lol
+        if (user) {
+          const sessionData = await supabase.auth.getSession();
+          if (sessionData.data.session) {
+            setSession(sessionData.data.session);
+          }
+
+          message.success("Account created successfully. Please set your username.");
+          navigate("/profile");
         }
-
-        message.success("Account created successfully. Please set your username.");
-        navigate("/profile");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -119,7 +125,13 @@ export const Register = () => {
         />
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            disabled={isSubmitting}
+            loading={isSubmitting}
+          >
             Register
           </Button>
         </Form.Item>
