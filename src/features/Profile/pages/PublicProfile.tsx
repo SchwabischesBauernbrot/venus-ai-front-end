@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { axiosInstance } from "../../../config";
 import { ProfileResponse } from "../../../types/backend-alias";
 import { PageContainer, VerifiedMark } from "../../../shared/components/shared";
-import { getAvatarUrl, getRealId } from "../../../shared/services/utils";
+import { getAvatarUrl, getRealId, setPrerenderReady } from "../../../shared/services/utils";
 import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 import { Helmet } from "react-helmet";
@@ -43,7 +43,14 @@ export const PublicProfile: React.FC = () => {
       const profile = profileResponse.data;
       return profile;
     },
-    { enabled: !!profileId }
+    {
+      enabled: !!profileId,
+      onSuccess(data) {
+        if (data) {
+          setPrerenderReady();
+        }
+      },
+    }
   );
 
   return (

@@ -30,7 +30,12 @@ import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { supabase } from "../../../config";
-import { getBotAvatarUrl, getRealId, toSlug } from "../../../shared/services/utils";
+import {
+  getBotAvatarUrl,
+  getRealId,
+  setPrerenderReady,
+  toSlug,
+} from "../../../shared/services/utils";
 import { ChatEntityWithCharacter } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { AppContext } from "../../../appContext";
@@ -69,7 +74,15 @@ export const ViewCharacter: React.FC = () => {
       const character = await getCharacter(characterId!);
       return character;
     },
-    { enabled: !!characterId, retry: 1 }
+    {
+      enabled: !!characterId,
+      retry: 1,
+      onSuccess(data) {
+        if (data) {
+          setPrerenderReady();
+        }
+      },
+    }
   );
 
   const { data: reviews, refetch: refetchReviews } = useQuery(

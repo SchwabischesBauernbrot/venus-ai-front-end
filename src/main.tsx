@@ -8,6 +8,8 @@ import "antd-css-utilities/utility.min.css";
 import "./global.scss";
 import { QueryClient, QueryClientProvider } from "react-query";
 
+(window as any).prerenderReady = false;
+
 Sentry.init({
   dsn: "https://41424acd7c684f2583f8620ba35ffd35@o4505098397483008.ingest.sentry.io/4505098399121408",
   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
