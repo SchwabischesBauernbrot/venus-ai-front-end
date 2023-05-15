@@ -352,7 +352,7 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
             ) : values.is_force_remove ? (
               <Alert
                 message="Bot set to private!"
-                description="Your bot was set to private due to original's creator request. You can still chat or modify it."
+                description="Your bot was set to private due to original's creator request, or marked as duplicated/spam/harmful by admin. You can still chat or modify it."
                 type="warning"
                 showIcon
               />
