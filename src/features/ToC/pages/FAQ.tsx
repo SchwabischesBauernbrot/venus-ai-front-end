@@ -62,7 +62,7 @@ export const FAQ: React.FC = () => {
               </a>
             </li>
             <li>
-              If you need a VPN, use my link to register at Digital Ocean:{" "}
+              If you need a VPS, use my link to register at Digital Ocean:{" "}
               <a href="https://m.do.co/c/3978adf5a4fd" target="_blank">
                 m.do.co/c/3978adf5a4fd
               </a>
