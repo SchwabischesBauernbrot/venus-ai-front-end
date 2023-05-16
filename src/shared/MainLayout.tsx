@@ -73,7 +73,13 @@ export const MainLayout: React.FC = () => {
       </Content>
 
       <Footer style={{ textAlign: "center" }}>
-        <p>Venus AI - Chat with your waifu/husbando. Uncensored, No Ad, Forever Free.</p>
+        <p>
+          <strong>Venus AI</strong> - Chat with your waifu/husbando. Uncensored, No Ad, Forever
+          Free.{" "}
+          <a target="_blank" href="https://www.patreon.com/Venus_AI">
+            (Support us to keep this site running)
+          </a>
+        </p>
 
         <p>
           <a target="_blank" href="https://www.reddit.com/r/VenusAI_Official">
@@ -111,7 +117,7 @@ export const MainLayout: React.FC = () => {
           </a>
           <span> - </span>
           <a href="/faq" target="_blank">
-            🙋 FAQ - Support us
+            🙋 FAQ - Donation
           </a>
         </span>
       </Footer>
