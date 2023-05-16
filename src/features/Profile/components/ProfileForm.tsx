@@ -194,7 +194,7 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
             htmlType="submit"
             block
           >
-            Update profile
+            Update Profile
           </Button>
         </Form.Item>
       </Form>

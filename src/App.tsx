@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import * as Sentry from "@sentry/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ConfigProvider, App as AntdApp, theme, Spin } from "antd";
+import { ConfigProvider, App as AntdApp, theme, Spin, message } from "antd";
 import loadable from "@loadable/component";
 import { isEqual } from "lodash-es";
 import { Session } from "@supabase/supabase-js";
@@ -237,6 +237,11 @@ const App: React.FC = () => {
       enabled: !!session,
       onSuccess: (result) => {
         const profileData = result.data;
+
+        if (session && profileData == null) {
+          message.error("Profile not found! Please try login again!");
+          return;
+        }
 
         if (profileData) {
           setProfile(profileData);
