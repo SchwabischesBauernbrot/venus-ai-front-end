@@ -57,6 +57,10 @@ const ProfilePage = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Profile,
   fallback: <Spin />,
 });
+const ResetPassword = loadable(() => import("./features/Profile"), {
+  resolveComponent: (component) => component.ResetPassword,
+  fallback: <Spin />,
+});
 
 const MyChats = loadable(() => import("./features/Chat"), {
   resolveComponent: (component) => component.MyChats,
@@ -96,6 +100,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/reset_password",
+        element: <ResetPassword />,
       },
 
       // Profile and Public Profile

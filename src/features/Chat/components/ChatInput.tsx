@@ -2,6 +2,7 @@ import { SendOutlined } from "@ant-design/icons";
 import { Row, Col, Input, Button, InputRef } from "antd";
 import { memo, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { useMobileDetect } from "../../../hooks/useMobileDetect";
 
 // Separate this into its own component to prevent re-render on whole ChatPage, lol
 
@@ -29,6 +30,7 @@ const ChatInputInternal: React.FC<ChatInputProps> = ({
   onGenerateChat,
 }) => {
   const [inputMessage, setInputMessage] = useState<string>("");
+  const { isMobile } = useMobileDetect();
   const inputRef = useRef<InputRef>(null);
 
   useEffect(() => {
@@ -44,6 +46,10 @@ const ChatInputInternal: React.FC<ChatInputProps> = ({
 
   const canGenerateChat = !isGenerating && readyToChat && inputMessage.length > 0;
 
+  const placeholder = isMobile
+    ? "Press button to send chat. Enter for linebreak"
+    : "Enter to send chat. Shift + Enter for linebreak.";
+
   return (
     <ChatInputContainer>
       <Row justify="center">
@@ -55,12 +61,16 @@ const ChatInputInternal: React.FC<ChatInputProps> = ({
                 disabled={!readyToChat}
                 placeholder={
                   readyToChat
-                    ? "Enter to chat. Shift + Enter for linebreak."
+                    ? placeholder
                     : "Please setup the API on top right corner to start chating."
                 }
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onPressEnter={(event) => {
+                  if (isMobile) {
+                    return;
+                  }
+
                   if (event.key === "Enter" && !event.shiftKey) {
                     event.preventDefault(); // prevent the default line break behavior
                     generateChat();

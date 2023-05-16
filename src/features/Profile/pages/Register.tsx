@@ -100,7 +100,7 @@ export const Register = () => {
 
         <Alert
           className="mb-4"
-          message="We do not confirm your email. Feel free to just use a burner email or something, lol."
+          message="We do not confirm your email, but it will be used for password recovery. Feel free to use your real or temporary email"
           type="info"
           showIcon
         />

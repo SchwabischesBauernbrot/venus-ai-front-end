@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-import { Typography, Input, Button, Form, message, Space } from "antd";
+import { Typography, Input, Button, Form, Space, Modal, App } from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -33,6 +33,9 @@ const LoginFormContainer = styled.div`
 
 export const Login = () => {
   const [form] = Form.useForm<FormValues>();
+  const { message } = App.useApp();
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
@@ -58,7 +61,7 @@ export const Login = () => {
     }
   };
 
-  const loginWithProvider = (provider: Provider) => {
+  const loginWithProvider = async (provider: Provider) => {
     return supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -84,11 +87,16 @@ export const Login = () => {
         <Form.Item
           name="password"
           rules={[{ required: true, message: "Please enter your password." }]}
+          help={
+            <a onClick={() => setShowModal(true)} href="#">
+              Forgot Password?
+            </a>
+          }
         >
           <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item className="pt-4">
           <Button type="primary" htmlType="submit" block loading={isSubmitting}>
             Login
           </Button>
@@ -111,6 +119,40 @@ export const Login = () => {
           Login with Github
         </Button>
       </Space.Compact>
+
+      <Modal
+        title="Please enter your email"
+        open={showModal}
+        onCancel={() => setShowModal(false)}
+        onOk={async () => {
+          try {
+            setIsSubmitting(true);
+            const result = await supabase.auth.resetPasswordForEmail(email, {
+              redirectTo: `${location.origin}/reset_password`,
+            });
+            if (result.error) {
+              message.error(JSON.stringify(result.error, null, 2));
+            } else {
+              message.info(
+                "If your email exists in our system, you will receive an email to reset password soon!"
+              );
+              setShowModal(false);
+            }
+
+            return result;
+          } finally {
+            setIsSubmitting(false);
+          }
+        }}
+        okText="Reset Password"
+        okButtonProps={{ disabled: email.length === 0 || isSubmitting, loading: isSubmitting }}
+      >
+        <Input
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </Modal>
     </LoginFormContainer>
   );
 };
