@@ -77,13 +77,16 @@ export const MainLayout: React.FC = () => {
 
         <p>
           <a target="_blank" href="https://www.reddit.com/r/VenusAI_Official">
-            <img src="https://img.icons8.com/bubbles/50/null/reddit.png" />
+            <img src="https://img.icons8.com/bubbles/50/null/reddit.png" alt="reddit" />
           </a>
           <a target="_blank" href="https://discord.gg/wFPemXeEUf">
-            <img src="https://img.icons8.com/bubbles/50/null/discord-logo.png" />
+            <img src="https://img.icons8.com/bubbles/50/null/discord-logo.png" alt="discord" />
           </a>
           <a target="_blank" href="https://github.com/venus-ai-team">
-            <img src="https://img.icons8.com/bubbles/50/null/github.png" />
+            <img src="https://img.icons8.com/bubbles/50/null/github.png" alt="github" />
+          </a>
+          <a target="_blank" href="https://www.patreon.com/Venus_AI">
+            <img src="https://img.icons8.com/bubbles/50/patreon.png" alt="patreon" />
           </a>
         </p>
 
