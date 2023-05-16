@@ -111,7 +111,7 @@ export const MainLayout: React.FC = () => {
           </a>
           <span> - </span>
           <a href="/faq" target="_blank">
-            🙋 FAQ
+            🙋 FAQ - Support us
           </a>
         </span>
       </Footer>
