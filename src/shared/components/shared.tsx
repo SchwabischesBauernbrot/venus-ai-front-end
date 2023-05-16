@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { IPAD_BREAKPOINT_CSS } from "../../css-const";
 import { Tooltip } from "antd";
-import { SafetyCertificateTwoTone } from "@ant-design/icons";
+import { SafetyCertificateTwoTone, StarTwoTone, TrophyTwoTone } from "@ant-design/icons";
 import { memo } from "react";
 
 export const VerifiedMark: React.FC<{ size?: "small" | "medium" | "large" }> = memo(
@@ -15,6 +15,18 @@ export const VerifiedMark: React.FC<{ size?: "small" | "medium" | "large" }> = m
           twoToneColor="#3498db"
           style={{ fontSize: sizeToFontSize[size] }}
         />
+      </Tooltip>
+    );
+  }
+);
+
+export const DonatorMark: React.FC<{ size?: "small" | "medium" | "large" }> = memo(
+  ({ size = "medium" }) => {
+    const sizeToFontSize = { small: "0.9rem", medium: "1.2rem", large: "1.5rem" };
+
+    return (
+      <Tooltip title="Generous Donator">
+        <StarTwoTone twoToneColor="#f1c40f" style={{ fontSize: sizeToFontSize[size] }} />
       </Tooltip>
     );
   }

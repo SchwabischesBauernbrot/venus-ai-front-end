@@ -2,6 +2,7 @@ import { Descriptions, Typography } from "antd";
 import { Helmet } from "react-helmet";
 import { SITE_NAME } from "../../../config";
 import { VerifiedMark } from "../../../shared/components";
+import { DonatorMark } from "../../../shared/components/shared";
 
 const { Title } = Typography;
 
@@ -25,14 +26,73 @@ export const FAQ: React.FC = () => {
         </Descriptions.Item>
         <Descriptions.Item label="Will there be a donation/paid option?" span={3}>
           <span>
-            For now, the cost of running this site is minimal (10-30$/month at most) so I won't need
-            any donations in the near term :D. I will setup a Patreon later.
+            Our site will be completely free, so there won't be any paid option in the future.
+          </span>{" "}
+          <br />
+          <span>
+            Initally, the cost of running this site is minimal (10-30$/month at most) so I assume
+            won't need any donations in the near term. I plan to run the page for 2-3 months before
+            asking for any donations from the community.
           </span>
           <br />
           <span>
-            If you need a VPN, maybe can use my link to register at Digital Ocean:{" "}
-            <a href="https://m.do.co/c/3978adf5a4fd">https://m.do.co/c/3978adf5a4fd</a>. You get
-            $200 free credit, and I will have some credit to cover server cost.
+            However, somehow the pages got a lot of traffic{" "}
+            <strong>(7000 users and 1.1 millions messages in 2 weeks)</strong>, so our old potato
+            server (20$/month) didn't make it. This is my hobby project, the characters come from
+            the community, so I don't want to commercialize it.
+          </span>
+          <br />
+          <br />
+          <span>
+            Therefore, I'm asking for community's help to maintain our{" "}
+            <strong>bigger potato server (70$/month)</strong>. You can give us some small donations
+            by:
+          </span>
+          <ul>
+            <li>
+              Visit our Patreon and become a Patron at{" "}
+              <a href="https://www.patreon.com/Venus_AI" target="_blank">
+                patreon.com/Venus_AI
+              </a>
+            </li>
+            <li>
+              Give a one time donation at{" "}
+              <a href="https://bmc.link/codedao" target="_blank">
+                bmc.link/codedao
+              </a>
+            </li>
+            <li>
+              If you need a VPN, use my link to register at Digital Ocean:{" "}
+              <a href="https://m.do.co/c/3978adf5a4fd" target="_blank">
+                m.do.co/c/3978adf5a4fd
+              </a>
+              . You get $200 free credit, and I will also receive some credit to cover server cost.
+            </li>
+          </ul>
+        </Descriptions.Item>
+
+        <Descriptions.Item label="What will I get from donating?" span={3}>
+          <span>
+            We don't have anything to offer back for donators (yet), aside from some small perks:
+          </span>
+          <ul>
+            <li>
+              Some roles with color on{" "}
+              <a href="https://discord.gg/wFPemXeEUf" target="_blank">
+                our Discord.
+              </a>
+            </li>
+            <li>
+              A donator badge on our site <DonatorMark />.
+            </li>
+            <li>
+              Your name in our <strong>Hall of Fame for donators</strong> (You can also opt-out if
+              you want).
+            </li>
+          </ul>
+
+          <span>
+            We might add some merch/store in the future, if we have more resource for that.
           </span>
         </Descriptions.Item>
 
