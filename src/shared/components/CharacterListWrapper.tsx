@@ -89,7 +89,7 @@ export const CharacterListWrapper: React.FC<CharacterListWrapperProps> = ({
   return (
     <div className="mt-4">
       <p>
-        Chats and messages count are updated <strong>every 1-2 hours.</strong>
+        Chats and messages count are updated <strong>every 30-60 minutes.</strong>
       </p>
 
       {pagination}
