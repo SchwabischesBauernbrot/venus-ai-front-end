@@ -150,7 +150,11 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       }
 
       if ("error" in checkResult) {
-        message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
+        if (typeof checkResult.error === "string") {
+          message.error(checkResult.error);
+        } else {
+          message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
+        }
       } else {
         const modelLoaded = checkResult.result;
 
