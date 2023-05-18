@@ -84,7 +84,10 @@ class OpenAIGenerate extends GenerateInterface {
       }
     }
 
-    const stream = result.headers.get("Content-Type") === "text/event-stream";
+    // Slaude return null Content-Type lol
+    const stream =
+      result.headers.get("Content-Type") === "text/event-stream" ||
+      result.headers.get("Content-Type") === null;
 
     if (!stream) {
       const response = await result.json();
@@ -119,7 +122,7 @@ class OpenAIGenerate extends GenerateInterface {
           for (const line of dataLines) {
             if (line === "data: [DONE]") {
               continueLoop = false;
-            } else {
+            } else if (line?.length > 0) {
               const data = JSON.parse(line.substring(6)) as any; // Remove "data: "
               // the first and last messages are undefined, protect against that
               const text = data.choices[0]["delta"]["content"] || "";
