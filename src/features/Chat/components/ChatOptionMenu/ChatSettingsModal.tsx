@@ -75,8 +75,8 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
 
     const newLocalData: Partial<UserLocalData> = {
       ...localData,
-      openAIKey: formValues.openAIKey || localData.openAIKey,
-      reverseProxyKey: formValues.reverseProxyKey || localData.reverseProxyKey,
+      openAIKey: formValues.openAIKey || "",
+      reverseProxyKey: formValues.reverseProxyKey || "",
     };
     updateLocalData(newLocalData);
 
