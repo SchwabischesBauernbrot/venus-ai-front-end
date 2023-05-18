@@ -1,7 +1,6 @@
 import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
 import {
-  shouldUseTextStreaming,
   chatToMessage,
   buildSystemInstruction,
   getTokenLength,
@@ -67,7 +66,6 @@ class OpenAIGenerate extends GenerateInterface {
     config: UserConfigAndLocalData
   ): AsyncGenerator<string, void, void> {
     const result = await callOpenAI(input.messages!, config);
-    let stream = shouldUseTextStreaming(config);
 
     if (result.status !== 200) {
       const response = await result.json();
@@ -76,6 +74,8 @@ class OpenAIGenerate extends GenerateInterface {
         throw new Error(error.error.message);
       }
     }
+
+    const stream = result.headers.get("Content-Type") === "text/event-stream";
 
     if (!stream) {
       const response = await result.json();

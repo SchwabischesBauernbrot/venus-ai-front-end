@@ -14,11 +14,11 @@ export const chatToMessage = (chatMes: SupaChatMessage): OpenAIInputMessage => {
 };
 
 export const shouldUseTextStreaming = (config: UserConfigAndLocalData) => {
-  if (config.open_ai_mode === "proxy") {
-    return false;
-  }
+  // if (config.open_ai_mode === "proxy") {
+  //   return false;
+  // }
 
-  return config.text_streaming;
+  return config.text_streaming || false;
 };
 
 export const buildSystemInstruction = (
