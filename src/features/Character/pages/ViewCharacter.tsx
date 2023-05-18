@@ -361,8 +361,9 @@ export const ViewCharacter: React.FC = () => {
                     Report this character!
                   </Button>
 
-                  {openReportModal && (
+                  {characterId && openReportModal && (
                     <CharacterReportModal
+                      characterId={characterId}
                       open={openReportModal}
                       onModalClose={() => setOpenReportModal(false)}
                     />

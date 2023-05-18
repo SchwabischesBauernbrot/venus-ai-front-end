@@ -217,6 +217,7 @@ export interface Database {
       }
       user_reports: {
         Row: {
+          character_id: string | null
           created_at: string
           id: number
           other: string
@@ -225,6 +226,7 @@ export interface Database {
           url: string
         }
         Insert: {
+          character_id?: string | null
           created_at?: string
           id?: number
           other?: string
@@ -233,6 +235,7 @@ export interface Database {
           url?: string
         }
         Update: {
+          character_id?: string | null
           created_at?: string
           id?: number
           other?: string
@@ -272,26 +275,6 @@ export interface Database {
           char_id: string | null
           total_chat: number | null
           total_message: number | null
-        }
-      }
-      character_tags_view: {
-        Row: {
-          avatar: string | null
-          created_at: string | null
-          creator_id: string | null
-          creator_name: string | null
-          description: string | null
-          example_dialogs: string | null
-          first_message: string | null
-          fts: unknown | null
-          id: string | null
-          is_nsfw: boolean | null
-          is_public: boolean | null
-          name: string | null
-          personality: string | null
-          scenario: string | null
-          tag_id: number | null
-          updated_at: string | null
         }
       }
       chat_message_count: {

@@ -5,10 +5,9 @@ import { useContext, useState } from "react";
 import { supabase } from "../../../config";
 import { AppContext } from "../../../appContext";
 
-const { Title } = Typography;
-
 interface ChatSettingsModalProps {
   open: boolean;
+  characterId: string;
   onModalClose: () => void;
 }
 
@@ -17,7 +16,11 @@ interface FormValues {
   other: string;
 }
 
-export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, onModalClose }) => {
+export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({
+  open,
+  characterId,
+  onModalClose,
+}) => {
   const { profile } = useContext(AppContext);
   const { message } = App.useApp();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +40,7 @@ export const CharacterReportModal: React.FC<ChatSettingsModalProps> = ({ open, o
         reason: formValues.reason,
         other: formValues.other,
         url: location.href,
+        character_id: characterId,
         profile_id: profile ? profile.id : null,
       });
 
