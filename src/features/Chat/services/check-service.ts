@@ -76,7 +76,7 @@ export const checkKoboldURL = async (url: string) => {
     );
     return response.data;
   } catch (err) {
-    const axiosError = err as AxiosError<{ error: OpenAIError }>;
+    const axiosError = err as AxiosError<{ error: OpenAIError | string }>;
     const error = axiosError.response?.data?.error;
     if (error) {
       return { error };

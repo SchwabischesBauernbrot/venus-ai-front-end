@@ -70,8 +70,17 @@ class OpenAIGenerate extends GenerateInterface {
     if (result.status !== 200) {
       const response = await result.json();
       if ("error" in response) {
-        const error = response as { error: OpenAIError | OpenAIProxyError };
-        throw new Error(error.error.message);
+        const error = response as { error: OpenAIError | OpenAIProxyError | string };
+        if (typeof error.error === "string") {
+          const errorString = error.error;
+          if (errorString === "Unauthorized") {
+            throw new Error("This proxy requires a proxy key. Contact proxy owner to get the key!");
+          } else {
+            throw new Error(errorString);
+          }
+        } else {
+          throw new Error(error.error.message);
+        }
       }
     }
 

@@ -118,7 +118,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       if ("error" in checkResult) {
         if (typeof checkResult.error === "string") {
           if (checkResult.error === "Unauthorized") {
-            message.error("This proxy requires a token. Contact proxy owner!");
+            message.error("This proxy requires a proxy key. Contact proxy owner to get the key!");
           } else {
             message.error(`${checkResult.error}`);
           }
@@ -290,8 +290,6 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                       <span>
                         These proxies are contributed by communities. Might be slow, unstable, or
                         log your request.
-                        <br />
-                        <strong>Does NOT support text streaming.</strong>
                         <br />
                         See{" "}
                         <a href="https://navigatethecoom.github.io/navigate" target="_blank">
