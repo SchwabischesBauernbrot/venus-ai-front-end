@@ -78,7 +78,7 @@ export const callOpenAI = async (
     method: "POST",
     headers: {
       "content-type": "application/json",
-      ...(authorizationHeader && { Authorization: authorizationHeader }),
+      ...(authorizationHeader.length > 0 && { Authorization: authorizationHeader }),
     },
   });
 

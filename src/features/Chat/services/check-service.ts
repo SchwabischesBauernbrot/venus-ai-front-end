@@ -45,7 +45,7 @@ export const checkOpenAIKeyOrProxy = async ({
       },
       {
         headers: {
-          Authorization: authorizationHeader,
+          ...(authorizationHeader.length > 0 && { Authorization: authorizationHeader }),
         },
       }
     );

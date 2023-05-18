@@ -116,7 +116,15 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
       }
 
       if ("error" in checkResult) {
-        message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
+        if (typeof checkResult.error === "string") {
+          if (checkResult.error === "Unauthorized") {
+            message.error("This proxy requires a token. Contact proxy owner!");
+          } else {
+            message.error(`${checkResult.error}`);
+          }
+        } else {
+          message.error(`${checkResult.error.code} - ${checkResult.error.message}`);
+        }
       } else if (
         "choices" in checkResult &&
         checkResult.choices[0].message.content.includes("TEST")
@@ -286,7 +294,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         <strong>Does NOT support text streaming.</strong>
                         <br />
                         See{" "}
-                        <a href="https://worldsoupkitchen.github.io" target="_blank">
+                        <a href="https://navigatethecoom.github.io/navigate" target="_blank">
                           this page for proxy checking
                         </a>{" "}
                         or{" "}
