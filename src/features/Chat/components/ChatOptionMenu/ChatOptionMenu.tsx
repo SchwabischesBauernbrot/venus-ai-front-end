@@ -241,7 +241,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, 
                     <Switch
                       className="mr-2"
                       defaultChecked={config.immersive_mode}
-                      onChange={(checked) => updateConfig({ immersive_mode: checked })}
+                      onChange={(checked) => updateConfig({ ...config, immersive_mode: checked })}
                     />
                     Immersive mode
                   </div>
@@ -256,7 +256,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, 
                     <Switch
                       className="mr-2"
                       defaultChecked={config.text_streaming}
-                      onChange={(checked) => updateConfig({ text_streaming: checked })}
+                      onChange={(checked) => updateConfig({ ...config, text_streaming: checked })}
                     />
                     Text streaming
                   </div>
