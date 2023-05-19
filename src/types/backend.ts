@@ -344,7 +344,7 @@ export interface operations {
         page: number;
         mode?: "sfw" | "all" | "nsfw";
         sort?: "latest" | "popular";
-        special_mode?: "hot_and_new";
+        special_mode?: "trending" | "newcomer";
         search?: string;
       };
     };

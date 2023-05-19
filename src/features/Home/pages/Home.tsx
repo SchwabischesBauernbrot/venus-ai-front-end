@@ -24,7 +24,8 @@ const { Title } = Typography;
 
 type Segment =
   | "latest"
-  | "hot_n_new"
+  | "trending"
+  | "newcomer"
   | "popular"
   | "nsfw"
   | "female"
@@ -83,8 +84,10 @@ export const Home: React.FC = () => {
     switch (segment) {
       case "latest":
         return modeParams;
-      case "hot_n_new":
-        return { special_mode: "hot_and_new", ...modeParams };
+      case "trending":
+        return { special_mode: segment, ...modeParams };
+      case "newcomer":
+        return { special_mode: segment, ...modeParams };
       case "popular":
         return { sort: "popular", ...modeParams };
       // Lol hard code for now
@@ -186,8 +189,12 @@ export const Home: React.FC = () => {
               value: "latest",
             },
             {
+              label: "✨ Newcomer",
+              value: "newcomer",
+            },
+            {
               label: "⭐ Trending",
-              value: "hot_n_new",
+              value: "trending",
             },
             {
               label: "🔥 Most Popular",
@@ -227,10 +234,17 @@ export const Home: React.FC = () => {
         </TagContainer>
       ) : (
         <>
-          {params?.special_mode === "hot_and_new" && (
+          {params?.special_mode === "trending" && (
             <p className="mt-4">
               ⭐ Trending shows <strong>popular characters with the most chat</strong>, created
               recently.
+            </p>
+          )}
+
+          {params?.special_mode === "newcomer" && (
+            <p className="mt-4">
+              ⭐ Newcomer shows <strong>popular characters with the most chat</strong>, created
+              daily.
             </p>
           )}
           <CharacterListWrapper
