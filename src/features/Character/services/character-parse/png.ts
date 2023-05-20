@@ -127,7 +127,7 @@ export class Png {
     const chunks = Png.#readChunks(new Uint8Array(arrayBuffer));
 
     const text = chunks.filter((c) => c.type === "tEXt").map((c) => Png.#decodeText(c.data));
-    if (text.length < 1) throw new PngMissingCharacterError("No PNG text fields found in file");
+    if (text.length < 1) return "{}";
 
     const character = text.find((t) => t.keyword === "chara");
     if (character === undefined)

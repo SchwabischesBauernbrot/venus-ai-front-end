@@ -78,7 +78,8 @@ export class Source {
     if (this.json) {
       this.#detectFormats(this.json);
 
-      if (!this.format) throw new JsonUnknownFormatError("Format not recognised", this.json);
+      if (!this.format && Object.keys(this.json).length > 0)
+        throw new JsonUnknownFormatError("Format not recognised", this.json);
 
       if (this.image) this.format = JsonFormat.CharacterCard;
     }
