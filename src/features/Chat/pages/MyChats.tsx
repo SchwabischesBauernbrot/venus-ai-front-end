@@ -20,7 +20,9 @@ export const MyChats: React.FC = () => {
     async () => {
       const responses = await supabase
         .from("chats")
-        .select("id, is_public, summary, updated_at, characters(name, description, avatar)")
+        .select(
+          "id, is_public, summary, updated_at, character_id, characters(name, description, avatar)"
+        )
         .order("updated_at", { ascending: false })
         .order("created_at", { ascending: false })
         .eq("user_id", profile?.id)
