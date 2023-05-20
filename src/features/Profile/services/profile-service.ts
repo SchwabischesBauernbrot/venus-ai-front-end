@@ -1,5 +1,11 @@
 import { axiosInstance } from "../../../config";
 import { ProfileResponse, ProfileUpdateDto } from "../../../types/backend-alias";
+import { Profile } from "../../../types/profile";
+
+const getOwnProfile = async () => {
+  const response = await axiosInstance.get<Profile>("/profiles/mine");
+  return response.data;
+};
 
 const updateProfile = async ({
   about_me,
@@ -23,5 +29,6 @@ const updateProfile = async ({
 };
 
 export const profileService = {
+  getOwnProfile,
   updateProfile,
 };

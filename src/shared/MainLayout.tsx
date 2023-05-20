@@ -1,17 +1,19 @@
 import { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Spin } from "antd";
 import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
 
 import { AppContext } from "../appContext";
 
 import { UserAvatar } from "./components/UserAvatar";
 import { EnvIndicator } from "./components/EnvIndicator";
+import { useMobileDetect } from "../hooks/useMobileDetect";
 
 const { Header, Content, Footer } = Layout;
 
 export const MainLayout: React.FC = () => {
-  const { session, profile } = useContext(AppContext);
+  const { session, profile, isProfileLoading } = useContext(AppContext);
+  const { isMobile } = useMobileDetect();
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -33,38 +35,54 @@ export const MainLayout: React.FC = () => {
             </Link>
           </Menu.Item>
 
-          {session && profile ? (
-            <>
-              <Menu.Item key="create" style={{ marginLeft: "auto" }}>
-                <Link to="/create_character">
-                  <UserAddOutlined /> Create Character
-                </Link>
-              </Menu.Item>
+          {(() => {
+            if (!session) {
+              return (
+                <>
+                  <Menu.Item style={{ marginLeft: "auto" }} key="login">
+                    <Link to="/login">Login</Link>
+                  </Menu.Item>
+                  <Menu.Item className="no-padding" key="register">
+                    <Link to="/register">Register</Link>
+                  </Menu.Item>
+                </>
+              );
+            }
 
-              {/* <Menu.Item
-                key="theme"
-                style={{ marginLeft: "auto" }}
-                onClick={() => {
-                  updateLocalData({ theme: localData.theme === "dark" ? "light" : "dark" });
-                }}
-              >
-                <Tooltip title="Toggle Dark mode">
-                  <BulbOutlined />
-                </Tooltip>
-              </Menu.Item> */}
+            if (isProfileLoading) {
+              return (
+                <Menu.Item>
+                  <Spin />
+                </Menu.Item>
+              );
+            } else if (profile) {
+              return (
+                <>
+                  {!isMobile && (
+                    <Menu.Item key="create" style={{ marginLeft: "auto" }}>
+                      <Link to="/create_character">
+                        <UserAddOutlined /> Create Character
+                      </Link>
+                    </Menu.Item>
+                  )}
 
-              <UserAvatar />
-            </>
-          ) : (
-            <>
-              <Menu.Item style={{ marginLeft: "auto" }} key="login">
-                <Link to="/login">Login</Link>
-              </Menu.Item>
-              <Menu.Item className="no-padding" key="register">
-                <Link to="/register">Register</Link>
-              </Menu.Item>
-            </>
-          )}
+                  {/* <Menu.Item
+                  key="theme"
+                  style={{ marginLeft: "auto" }}
+                  onClick={() => {
+                    updateLocalData({ theme: localData.theme === "dark" ? "light" : "dark" });
+                  }}
+                >
+                  <Tooltip title="Toggle Dark mode">
+                    <BulbOutlined />
+                  </Tooltip>
+                </Menu.Item> */}
+
+                  <UserAvatar />
+                </>
+              );
+            }
+          })()}
         </Menu>
       </Header>
 

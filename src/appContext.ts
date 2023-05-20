@@ -9,6 +9,7 @@ interface AppContextType {
   setSession: (session: Session | null) => void;
   profile?: Profile | null;
   setProfile: (profile: Profile | null) => void;
+  isProfileLoading: boolean;
   config?: UserConfig;
   updateConfig: (config: Partial<UserConfig>) => void;
   localData: UserLocalData;
@@ -19,6 +20,7 @@ export const AppContext = createContext<AppContextType>({
   setSession: (session) => {},
   setProfile: (profile) => {},
   localData: getLocalData(),
+  isProfileLoading: false,
   updateLocalData: (data) => {},
   updateConfig: (config) => {},
 });

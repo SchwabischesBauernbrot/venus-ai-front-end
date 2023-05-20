@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import * as Sentry from "@sentry/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ConfigProvider, App as AntdApp, theme, Spin, message } from "antd";
 import loadable from "@loadable/component";
@@ -14,6 +13,7 @@ import { Profile } from "./types/profile";
 import { getLocalData, UserLocalData, saveLocalData } from "./shared/services/user-local-data";
 import { getUserConfig, updateUserConfig, UserConfig } from "./shared/services/user-config";
 import { MainLayout } from "./shared/MainLayout";
+import { profileService } from "./features/Profile/services/profile-service";
 
 const Home = loadable(() => import("./features/Home/pages/Home"), {
   resolveComponent: (component) => component.Home,
@@ -223,20 +223,15 @@ const App: React.FC = () => {
   }, [session]);
 
   // Maybe just replace this with usePromise lol
-  const { data } = useQuery(
+  const { data, isLoading: isProfileLoading } = useQuery(
     "profile",
     async () => {
-      return await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("id", session?.user.id)
-        .limit(1)
-        .single();
+      return await profileService.getOwnProfile();
     },
     {
       enabled: !!session,
       onSuccess: (result) => {
-        const profileData = result.data;
+        const profileData = result;
 
         if (session && profileData == null) {
           message.error("Profile not found! Please try login again!");
@@ -245,7 +240,6 @@ const App: React.FC = () => {
 
         if (profileData) {
           setProfile(profileData);
-          Sentry.setUser(profileData);
           updateConfig(getUserConfig(profileData.config));
         }
       },
@@ -259,6 +253,7 @@ const App: React.FC = () => {
         setSession,
         profile,
         setProfile,
+        isProfileLoading,
         config,
         updateConfig,
         localData,

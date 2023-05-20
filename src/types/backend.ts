@@ -29,7 +29,7 @@ export interface paths {
   };
   "/characters/{id}": {
     get: operations["CharacterController_getCharacter"];
-    delete: operations["CharacterController_deleteMessages"];
+    delete: operations["CharacterController_deleteCharacter"];
     patch: operations["CharacterController_updateCharacter"];
   };
   "/characters/check": {
@@ -39,6 +39,7 @@ export interface paths {
     get: operations["ProfileController_getProfile"];
   };
   "/profiles/mine": {
+    get: operations["ProfileController_getMyProfile"];
     patch: operations["ProfileController_updateProfile"];
   };
   "/chats": {
@@ -187,9 +188,7 @@ export interface components {
       about_me: string;
       avatar: string;
       name: string;
-      profile: string;
       user_name: string;
-      config: Record<string, never>;
       is_verified: boolean;
     };
     ProfileUpdateDto: {
@@ -395,7 +394,7 @@ export interface operations {
       };
     };
   };
-  CharacterController_deleteMessages: {
+  CharacterController_deleteCharacter: {
     parameters: {
       path: {
         id: string;
@@ -472,6 +471,20 @@ export interface operations {
       };
     };
   };
+  ProfileController_getMyProfile: {
+    responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
+        };
+      };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+    };
+  };
   ProfileController_updateProfile: {
     requestBody: {
       content: {
@@ -481,7 +494,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          "application/json": Record<string, never>;
+          "application/json": boolean;
         };
       };
       default: {

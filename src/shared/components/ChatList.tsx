@@ -1,12 +1,14 @@
-import { ChatEntityWithCharacter } from "../../types/backend-alias";
 import styled, { css } from "styled-components";
+import { Link } from "react-router-dom";
 import { WechatOutlined, DeleteOutlined, ClockCircleOutlined, EyeFilled } from "@ant-design/icons";
 import { Card, Popconfirm, Tooltip } from "antd";
 import { truncate } from "lodash-es";
 
 import { getBotAvatarUrl, getTimeAgo } from "../services/utils";
 import { PrivateIndicator } from "./PrivateIndicator";
+import { ChatEntityWithCharacter } from "../../types/backend-alias";
 import { chatService, formatChat } from "../../features/Chat/services/chat-service";
+import { characterUrl } from "../services/url-utils";
 
 interface ChatListProps {
   chats: ChatEntityWithCharacter[];
@@ -95,10 +97,16 @@ export const ChatList: React.FC<ChatListProps> = ({
           <Card.Meta
             avatar={<BotAvatar alt="" src={getBotAvatarUrl(chat.characters?.avatar || "")} />}
             title={
-              <span>
+              <Link
+                to={
+                  chat.characters?.name
+                    ? characterUrl(chat.character_id, chat.characters.name)
+                    : "#"
+                }
+              >
                 <PrivateIndicator isPublic={chat.is_public} />{" "}
                 {chat.characters?.name || "Private bot"}
-              </span>
+              </Link>
             }
             // Change to summary later
             description={
