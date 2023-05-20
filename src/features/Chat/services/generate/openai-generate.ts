@@ -120,6 +120,10 @@ class OpenAIGenerate extends GenerateInterface {
           const dataLines = value.split("\n").filter((line) => line.startsWith("data: "));
 
           for (const line of dataLines) {
+            if (line.includes('"error":')) {
+              throw new Error(line);
+            }
+
             if (line === "data: [DONE]") {
               continueLoop = false;
             } else if (line?.length > 0) {

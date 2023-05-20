@@ -247,7 +247,12 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         <a href="https://platform.openai.com/account/api-keys" target="_blank">
                           account/api-keys
                         </a>
-                        .
+                        . This key is <strong>only stored locally in your device</strong> and never
+                        sent to server.
+                      </p>
+                      <p>
+                        OpenAI is <strong>NOT FREE</strong>. They will give you 5$ for trial (~500
+                        messages), after that you need to pay OpenAI to use their API.
                       </p>
                       <p>
                         If you see an error <strong>about quota or billing</strong>, it means you
@@ -257,10 +262,6 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                         </a>{" "}
                         to update your billing information.
                       </p>
-                      This key is <strong>only stored locally in your device</strong> and never sent
-                      to server.
-                      <br />
-                      <span></span>
                     </div>
                   }
                 >
