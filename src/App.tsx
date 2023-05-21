@@ -53,6 +53,10 @@ const PublicProfile = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.PublicProfile,
   fallback: <Spin />,
 });
+const Blocks = loadable(() => import("./features/Profile"), {
+  resolveComponent: (component) => component.Blocks,
+  fallback: <Spin />,
+});
 const ProfilePage = loadable(() => import("./features/Profile"), {
   resolveComponent: (component) => component.Profile,
   fallback: <Spin />,
@@ -114,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: "/profiles/:profileId",
         element: <PublicProfile />,
+      },
+      {
+        path: "/blocks",
+        element: <Blocks />,
       },
 
       // Characters

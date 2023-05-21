@@ -153,7 +153,10 @@ export const ChatPage: React.FC = () => {
       retry: 1,
     }
   );
-  const canEdit = Boolean(profile && profile.id === data?.chat.user_id);
+  const canEdit = useMemo(
+    () => Boolean(profile && profile.id === data?.chat.user_id),
+    [profile, data?.chat.user_id]
+  );
 
   const refreshChats = async () => {
     const newData = await refetch();
@@ -427,7 +430,7 @@ export const ChatPage: React.FC = () => {
 
   if (!isLoading && error) {
     return (
-      <ChatLayout>
+      <ChatLayout showControl={false}>
         <p>
           Can not view this chat. It might be deleted or private.{" "}
           <Link to="/">Back to home page!</Link>
@@ -437,7 +440,7 @@ export const ChatPage: React.FC = () => {
   }
 
   return (
-    <ChatLayout>
+    <ChatLayout showControl={canEdit}>
       {isLoading && (
         <div className="text-center mt-4">
           <Spin />

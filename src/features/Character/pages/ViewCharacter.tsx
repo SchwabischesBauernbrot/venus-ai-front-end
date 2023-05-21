@@ -11,13 +11,15 @@ import {
   Button,
   Collapse,
   Descriptions,
-  message,
   Badge,
   Dropdown,
+  Popconfirm,
 } from "antd";
 import { useCallback, useContext, useState } from "react";
 import {
   BookOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   DownloadOutlined,
   EditOutlined,
   LoadingOutlined,
@@ -26,16 +28,11 @@ import {
   WechatOutlined,
 } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { supabase } from "../../../config";
-import {
-  getBotAvatarUrl,
-  getRealId,
-  setPrerenderReady,
-  toSlug,
-} from "../../../shared/services/utils";
+import { getBotAvatarUrl, getRealId, setPrerenderReady } from "../../../shared/services/utils";
 import { ChatEntityWithCharacter } from "../../../types/backend-alias";
 import { Tokenizer } from "../services/character-parse/tokenizer";
 import { AppContext } from "../../../appContext";
@@ -55,13 +52,19 @@ import { Character } from "../services/character-parse/character";
 import { Dislike, Like, ReviewPanel } from "../components/ReviewPanel";
 import { characterUrl, profileUrl } from "../../../shared/services/url-utils";
 import { CharacterReportModal } from "../components/CharacterReportModal";
+import {
+  DEFAULT_BLOCK_LIST,
+  isBlocked,
+  updateBlockList,
+} from "../../Profile/services/profile-service";
 
 const { Title } = Typography;
 
 export const ViewCharacter: React.FC = () => {
+  const queryClient = useQueryClient();
   const { characterId: seoFriendlyId } = useParams();
   const characterId = getRealId(seoFriendlyId);
-  const { modal } = App.useApp();
+  const { modal, message } = App.useApp();
 
   const navigate = useNavigate();
   const [openReportModal, setOpenReportModal] = useState(false);
@@ -154,6 +157,28 @@ export const ViewCharacter: React.FC = () => {
       setIsStartingChat(false);
     }
   }, [profile]);
+
+  const blockChar = useCallback(
+    async (id: string) => {
+      const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
+      currentBlockList.bots.push(id);
+      await updateBlockList(currentBlockList, queryClient);
+
+      message.success("Character has been blocked!");
+    },
+    [profile]
+  );
+
+  const unblockChar = useCallback(
+    async (id: string) => {
+      const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
+      currentBlockList.bots = currentBlockList.bots.filter((botId) => botId !== id);
+      await updateBlockList(currentBlockList, queryClient);
+
+      message.success("Character has been unblocked!");
+    },
+    [profile]
+  );
 
   return (
     <PageContainer>
@@ -354,13 +379,35 @@ export const ViewCharacter: React.FC = () => {
                   </Button>
                 </Link>
               ) : (
-                <>
+                <div>
+                  {isBlocked(profile?.block_list, "bots", character.id) ? (
+                    <Button
+                      icon={<CheckCircleOutlined />}
+                      onClick={() => unblockChar(character.id)}
+                    >
+                      Unblock
+                    </Button>
+                  ) : (
+                    <Popconfirm
+                      title={
+                        <div>
+                          You will not see this character anymore! <br /> You can unblock it later
+                          in <Link to="/blocks">Blocks</Link> menu.
+                        </div>
+                      }
+                      onConfirm={() => blockChar(character.id)}
+                    >
+                      <Button icon={<CloseCircleOutlined />}>Block</Button>
+                    </Popconfirm>
+                  )}
+
                   <Button
+                    className="ml-2"
                     icon={<WarningOutlined />}
                     onClick={() => setOpenReportModal(true)}
                     danger
                   >
-                    Report this character!
+                    Report this!
                   </Button>
 
                   {characterId && openReportModal && (
@@ -370,7 +417,7 @@ export const ViewCharacter: React.FC = () => {
                       onModalClose={() => setOpenReportModal(false)}
                     />
                   )}
-                </>
+                </div>
               )}
             </div>
           </Col>

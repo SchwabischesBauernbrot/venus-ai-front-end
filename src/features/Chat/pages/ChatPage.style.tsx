@@ -2,12 +2,13 @@ import { Divider, Layout } from "antd";
 import styled, { css } from "styled-components";
 import { IPAD_BREAKPOINT_CSS } from "../../../css-const";
 
-export const ChatLayout = styled(Layout)`
+export const ChatLayout = styled(Layout)<{ showControl: boolean }>`
   height: 100vh;
   height: 100dvh;
   display: grid;
   padding-top: 0.25rem;
-  grid-template-rows: 3rem 1.75rem auto 6.5rem;
+  grid-template-rows: ${(p) =>
+    p.showControl ? "3rem 1.75rem auto 6.5rem" : "3rem 1.75rem auto 0.75rem"};
 `;
 
 export const ChatContainer = styled.div`

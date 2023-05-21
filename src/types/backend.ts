@@ -39,6 +39,9 @@ export interface paths {
     get: operations["ProfileController_getMyProfile"];
     patch: operations["ProfileController_updateProfile"];
   };
+  "/profiles/mine/blocked": {
+    get: operations["ProfileController_getBlockedContent"];
+  };
   "/profiles/{id}": {
     get: operations["ProfileController_getProfile"];
   };
@@ -183,6 +186,11 @@ export interface components {
       creator_verified: boolean;
       is_nsfw: boolean;
     };
+    BlockList: {
+      bots: (string)[];
+      creators: (string)[];
+      tags: (number)[];
+    };
     ProfileUpdateDto: {
       about_me?: string;
       avatar?: string;
@@ -190,6 +198,7 @@ export interface components {
       profile?: string;
       user_name?: string;
       config?: Record<string, never>;
+      block_list?: components["schemas"]["BlockList"];
     };
     ProfileResponse: {
       id: string;
@@ -198,6 +207,23 @@ export interface components {
       name: string;
       user_name: string;
       is_verified: boolean;
+    };
+    BlockedContentBot: {
+      id: string;
+      name: string;
+      description: string;
+      is_nsfw: boolean;
+    };
+    BlockedContentCreator: {
+      id: string;
+      name: string;
+      username: Record<string, never>;
+      avatar: string;
+    };
+    BlockedContent: {
+      bots: (components["schemas"]["BlockedContentBot"])[];
+      creators: (components["schemas"]["BlockedContentCreator"])[];
+      tags: (number)[];
     };
     CreateChatDto: {
       character_id: string;
@@ -481,6 +507,16 @@ export interface operations {
       default: {
         content: {
           "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+    };
+  };
+  ProfileController_getBlockedContent: {
+    responses: {
+      200: never;
+      default: {
+        content: {
+          "application/json": components["schemas"]["BlockedContent"];
         };
       };
     };

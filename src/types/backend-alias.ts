@@ -23,6 +23,9 @@ export type CreateChatMessageDto = components["schemas"]["CreateChatMessageDto"]
 export type UpdateChatMessageDto = components["schemas"]["UpdateChatMessageDto"];
 export type CreateReviewDto = components["schemas"]["CreateReviewDto"];
 
+export type BlockList = components["schemas"]["BlockList"];
+export type BlockedContent = components["schemas"]["BlockedContent"];
+
 export type SupaUserProfile = Database["public"]["Tables"]["user_profiles"]["Row"];
 export type SupaCharacter = Database["public"]["Tables"]["characters"]["Row"];
 export type SupaChat = Database["public"]["Tables"]["chats"]["Row"];
