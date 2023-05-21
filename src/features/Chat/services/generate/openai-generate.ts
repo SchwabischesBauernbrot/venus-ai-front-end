@@ -25,7 +25,7 @@ class OpenAIGenerate extends GenerateInterface {
     config: UserConfigAndLocalData
   ): Prompt {
     let chatCopy = chatHistory.filter((message) => message.is_main).map(chatToMessage);
-    const maxNewToken = config.generation_settings.max_new_token || 300;
+    const maxNewToken = config.generation_settings.max_new_token || 320;
     // Hack, otherwise the genrated message will be cut-off, lol
     const maxContentLength = (config.generation_settings.context_length || 4095) - maxNewToken;
 
@@ -133,7 +133,8 @@ class OpenAIGenerate extends GenerateInterface {
           const dataLines = value.split("\n").filter((line) => line.startsWith("data: "));
 
           for (const line of dataLines) {
-            if (line.includes('"error":')) {
+            console.log(line);
+            if (line.includes("chatcmpl-upstream error")) {
               throw new Error(line);
             }
 

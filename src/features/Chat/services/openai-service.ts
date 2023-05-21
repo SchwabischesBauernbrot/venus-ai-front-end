@@ -5,7 +5,7 @@ import { OpenAIInputMessage } from "./types/openai";
 
 // Estimate token length only, should divide by 4.4 but left some as buffer
 export const getTokenLength = (messages: OpenAIInputMessage[]) =>
-  JSON.stringify(messages).length / 4;
+  JSON.stringify(messages).length / 3.8;
 
 export const chatToMessage = (chatMes: SupaChatMessage): OpenAIInputMessage => {
   return {

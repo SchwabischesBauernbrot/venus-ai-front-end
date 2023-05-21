@@ -178,14 +178,14 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           help={
             <div>
               Describe yourself, to let the character know more about you in your chat. Try to keep
-              is short.
+              it short (1-2 sentence).
               <br />
             </div>
           }
         >
           <Input.TextArea
             rows={4}
-            placeholder="A horny 25 year old male, with short black hair and a beer belly."
+            placeholder="A horny 25 year old male, with short black hair and a big beer belly."
           />
         </Form.Item>
 
