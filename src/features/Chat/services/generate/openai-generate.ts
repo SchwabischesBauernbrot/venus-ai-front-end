@@ -133,7 +133,7 @@ class OpenAIGenerate extends GenerateInterface {
           const dataLines = value.split("\n").filter((line) => line.startsWith("data: "));
 
           for (const line of dataLines) {
-            console.log(line);
+            // Upstream error for reverse proxy lol
             if (line.includes("chatcmpl-upstream error")) {
               throw new Error(line);
             }
