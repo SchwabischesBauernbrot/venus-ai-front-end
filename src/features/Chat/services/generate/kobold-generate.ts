@@ -125,7 +125,7 @@ class KoboldGenerate extends GenerateInterface {
     });
     const data = (await response.json()) as KoboldResponse | KoboldError;
 
-    const stopToken = config.use_pygmalion_format ? "You:" : `${this.userName}:`;
+    const stopToken = config.use_pygmalion_format ? "You:" : `${this.profile?.name}:`;
 
     if ("detail" in data) {
       throw new Error(JSON.stringify(data.detail));
@@ -154,18 +154,19 @@ class KoboldGenerate extends GenerateInterface {
       const normalizedExampleDialogs = format(example_dialogs, name);
 
       const basePrompt = `${name}'s Persona: ${personality}.
+    ${this.profile?.profile ? `About ${this.profile?.name}: ${this.profile.profile}.` : ""}
     ${scenario || summary ? `Scenario: ${scenario}.${summary}.` : ""}
 <START>
 [DIALOGUE HISTORY]
 ${includeExampleDialog && normalizedExampleDialogs ? normalizedExampleDialogs : ""}
 <START>
 `
-        .replace("\t", "")
-        .replace("    ", "");
+        .replaceAll("\t", "")
+        .replaceAll("    ", "");
 
       return basePrompt;
     } else {
-      const normalizedExampleDialogs = format(example_dialogs, name, this.userName);
+      const normalizedExampleDialogs = format(example_dialogs, name, this.profile?.name);
 
       let processedExampleDialogs = normalizedExampleDialogs
         .split(/<START>/gi)
@@ -176,15 +177,16 @@ ${includeExampleDialog && normalizedExampleDialogs ? normalizedExampleDialogs : 
     ${
       scenario || summary ? `Circumstances and context of the dialogue: ${scenario}${summary}.` : ""
     }
+    ${this.profile?.profile ? `About ${this.profile?.name}: ${this.profile.profile}.` : ""}
     ${
       includeExampleDialog && processedExampleDialogs.length > 0
         ? processedExampleDialogs.join("\n")
         : ""
     }
-    Then the roleplay chat between ${name} and ${this.userName} begins.
+    Then the roleplay chat between ${name} and ${this.profile?.name} begins.
     `
-        .replace("\t", "")
-        .replace("    ", "");
+        .replaceAll("\t", "")
+        .replaceAll("    ", "");
 
       return basePrompt;
     }
