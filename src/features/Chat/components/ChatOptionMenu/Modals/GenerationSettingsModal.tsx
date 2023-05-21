@@ -2,13 +2,13 @@ import { SaveOutlined } from "@ant-design/icons";
 import { App, Button, Form, Modal, Slider, Space, Typography } from "antd";
 
 import { useContext, useMemo } from "react";
-import { AppContext } from "../../../../appContext";
+import { AppContext } from "../../../../../appContext";
 import {
   GenerationSetting,
   KOBOLD_AI_DEFAULT_GENERATION_SETTING,
   OPEN_AI_DEFAULT_GENERATION_SETTINGS,
-} from "../../../../shared/services/generation-setting";
-import { UserConfig } from "../../../../shared/services/user-config";
+} from "../../../../../shared/services/generation-setting";
+import { UserConfig } from "../../../../../shared/services/user-config";
 
 const { Title } = Typography;
 

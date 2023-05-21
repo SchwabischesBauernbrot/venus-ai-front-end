@@ -1,9 +1,16 @@
 import delay from "delay";
 import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
+import { Profile } from "../../../../types/profile";
 import { GenerateInterface, Prompt } from "./generate-interface";
 
 export class MockGenerate extends GenerateInterface {
+  private profile: Profile | undefined;
+
+  setProfile(profile: Profile) {
+    this.profile = profile;
+  }
+
   async *generate({ text }: Prompt, config: UserConfigAndLocalData) {
     const finalResult = `ID: ${Math.random()}. Prompt: ${text}!`;
     const words = finalResult.split(" ");

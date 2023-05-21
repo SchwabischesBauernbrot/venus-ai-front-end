@@ -172,13 +172,22 @@ export const ProfileForm = ({ values }: { values: FormValues }) => {
           <Input.TextArea rows={4} />
         </Form.Item>
 
-        {/* <Form.Item
+        <Form.Item
           name="profile"
-          label="User profile"
-          help="This will be included in the prompt to let the bot know about you"
+          label="Appearance"
+          help={
+            <div>
+              Describe yourself, to let the character know more about you in your chat. Try to keep
+              is short.
+              <br />
+            </div>
+          }
         >
-          <Input.TextArea rows={4} placeholder='name("Harry") age("29") gender("male")' />
-        </Form.Item> */}
+          <Input.TextArea
+            rows={4}
+            placeholder="A horny 25 year old male, with short black hair and a beer belly."
+          />
+        </Form.Item>
 
         <Form.Item
           wrapperCol={{

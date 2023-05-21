@@ -18,10 +18,10 @@ import { useQueryClient } from "react-query";
 import { AppContext } from "../../../../appContext";
 import { chatService } from "../../services/chat-service";
 import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
-import { ChatHistoryModal } from "./ChatHistoryModal";
-import { ChatSettingsModal } from "./ChatSettingsModal";
-import { ChatSummaryModal } from "./ChatSummaryModal";
-import { GenerationSettingsModal } from "./GenerationSettingsModal";
+import { ChatHistoryModal } from "./Modals/ChatHistoryModal";
+import { ChatSettingsModal } from "./Modals/ChatSettingsModal";
+import { ChatSummaryModal } from "./Modals/ChatSummaryModal";
+import { GenerationSettingsModal } from "./Modals/GenerationSettingsModal";
 import { copyToClipboard } from "../../../../shared/services/utils";
 
 interface ChatOptionMenuProps {
@@ -161,7 +161,7 @@ export const ChatOptionMenu: React.FC<ChatOptionMenuProps> = ({ chat, onReload, 
               ),
             },
             {
-              key: "my_bot",
+              key: "chat_summary",
               label: (
                 <Tooltip
                   title="Generate/Edit a summary of the chat (Only support OpenAI for now)"

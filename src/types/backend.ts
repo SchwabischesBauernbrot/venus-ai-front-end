@@ -35,12 +35,12 @@ export interface paths {
   "/characters/check": {
     post: operations["CharacterController_checkCharacter"];
   };
-  "/profiles/{id}": {
-    get: operations["ProfileController_getProfile"];
-  };
   "/profiles/mine": {
     get: operations["ProfileController_getMyProfile"];
     patch: operations["ProfileController_updateProfile"];
+  };
+  "/profiles/{id}": {
+    get: operations["ProfileController_getProfile"];
   };
   "/chats": {
     post: operations["ChatController_create"];
@@ -183,14 +183,6 @@ export interface components {
       creator_verified: boolean;
       is_nsfw: boolean;
     };
-    ProfileResponse: {
-      id: string;
-      about_me: string;
-      avatar: string;
-      name: string;
-      user_name: string;
-      is_verified: boolean;
-    };
     ProfileUpdateDto: {
       about_me?: string;
       avatar?: string;
@@ -198,6 +190,14 @@ export interface components {
       profile?: string;
       user_name?: string;
       config?: Record<string, never>;
+    };
+    ProfileResponse: {
+      id: string;
+      about_me: string;
+      avatar: string;
+      name: string;
+      user_name: string;
+      is_verified: boolean;
     };
     CreateChatDto: {
       character_id: string;
@@ -452,25 +452,6 @@ export interface operations {
       };
     };
   };
-  ProfileController_getProfile: {
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": Record<string, never>;
-        };
-      };
-      default: {
-        content: {
-          "application/json": components["schemas"]["ProfileResponse"];
-        };
-      };
-    };
-  };
   ProfileController_getMyProfile: {
     responses: {
       200: {
@@ -495,6 +476,25 @@ export interface operations {
       200: {
         content: {
           "application/json": boolean;
+        };
+      };
+      default: {
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+    };
+  };
+  ProfileController_getProfile: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": Record<string, never>;
         };
       };
       default: {

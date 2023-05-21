@@ -1,5 +1,6 @@
 import { UserConfigAndLocalData } from "../../../shared/services/user-config";
 import { SupaChatMessage, ChatEntityWithCharacter } from "../../../types/backend-alias";
+import { Profile } from "../../../types/profile";
 import { OpenAIInputMessage } from "./types/openai";
 
 // Estimate token length only, should divide by 4.4 but left some as buffer
@@ -22,6 +23,7 @@ export const shouldUseTextStreaming = (config: UserConfigAndLocalData) => {
 };
 
 export const buildSystemInstruction = (
+  profile: Profile,
   chat: ChatEntityWithCharacter,
   config: UserConfigAndLocalData,
   includeExampleDialog = false
@@ -34,10 +36,13 @@ export const buildSystemInstruction = (
 
   // Remove linebreak and tab to save token lol
   const promptWithCharInfo = `${jailbreakPrompt}.
-  {{char}}'s name: ${name}. {{char}} calls {{user}} by {{user}} or any name introduced by {{user}}.
+    {{char}}'s name: ${name}. {{char}} calls {{user}} by {{user}} or any name introduced by {{user}}.
     ${personality ? `{{char}}'s personality: ${personality}.` : ""}
     ${scenario ? `Scenario of the roleplay: ${scenario}.` : ""}
-    ${summary ? `Summary of what happened: ${summary}` : ""}`.replace(/[\n\t]/g, "");
+    ${summary ? `Summary of what happened: ${summary}.` : ""}
+    ${profile.profile ? `About {{user}}: ${profile.profile}.` : ""}`
+    .replace(/[\n\t]/g, "")
+    .replaceAll("    ", "");
 
   const systemInstruction = `${promptWithCharInfo}.${
     includeExampleDialog && example_dialogs

@@ -104,9 +104,10 @@ export const ChatPage: React.FC = () => {
   }, [localData, config]);
   const generateInstance: GenerateInterface = useMemo(() => {
     if (fullConfig.api === "openai") {
+      profile && openAiGenerateInstance.setProfile(profile);
       return openAiGenerateInstance;
     } else if (fullConfig.api === "kobold") {
-      profile && koboldGenerateInstance.setName(profile.name);
+      profile && koboldGenerateInstance.setProfile(profile);
       return koboldGenerateInstance;
     }
 

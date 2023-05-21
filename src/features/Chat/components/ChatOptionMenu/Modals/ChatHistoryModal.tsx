@@ -1,10 +1,10 @@
 import { Modal, Spin } from "antd";
 import { useContext } from "react";
 import { useQuery } from "react-query";
-import { AppContext } from "../../../../appContext";
-import { ChatList } from "../../../../shared/components";
-import { supabase } from "../../../../config";
-import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
+import { AppContext } from "../../../../../appContext";
+import { ChatList } from "../../../../../shared/components";
+import { supabase } from "../../../../../config";
+import { ChatEntityWithCharacter } from "../../../../../types/backend-alias";
 
 interface ChatHistoryModalProps {
   character: ChatEntityWithCharacter["characters"];

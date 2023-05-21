@@ -1,12 +1,12 @@
 import { Modal, Input, Button, Tooltip, App, Space } from "antd";
 import { useContext, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { AppContext } from "../../../../appContext";
-import { ChatEntityWithCharacter } from "../../../../types/backend-alias";
+import { AppContext } from "../../../../../appContext";
+import { ChatEntityWithCharacter } from "../../../../../types/backend-alias";
 import React from "react";
 import { CopyOutlined, SaveOutlined } from "@ant-design/icons";
-import { chatService } from "../../services/chat-service";
-import { countMessagesToken, summaryUsingOpenAI } from "../../services/summary-service";
+import { chatService } from "../../../services/chat-service";
+import { countMessagesToken, summaryUsingOpenAI } from "../../../services/summary-service";
 import { last } from "lodash-es";
 
 interface ChatHistoryModalProps {

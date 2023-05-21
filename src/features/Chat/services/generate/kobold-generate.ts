@@ -1,5 +1,6 @@
 import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
+import { Profile } from "../../../../types/profile";
 import { Tokenizer } from "../../../Character/services/character-parse/tokenizer"; // Lol this is heavy, try to reduce size
 import { getValidKoboldUrlApi } from "../check-service";
 import { KoboldError, KoboldResponse } from "../types/kobold";
@@ -32,10 +33,10 @@ const KOBOLD_AI_SETTINGS = {
 const getTokenLength = (fullPrompt: string) => Tokenizer.count(JSON.stringify(fullPrompt));
 
 class KoboldGenerate extends GenerateInterface {
-  private userName: string | undefined;
+  private profile: Profile | undefined;
 
-  setName(name: string) {
-    this.userName = name;
+  setProfile(profile: Profile) {
+    this.profile = profile;
   }
 
   buildPrompt(
@@ -52,7 +53,7 @@ class KoboldGenerate extends GenerateInterface {
     // Need to -60 to fix fat token lol
     const maxContentLength = (config.generation_settings.context_length || 2048) - maxNewToken - 60;
 
-    const youAnchor = config.use_pygmalion_format ? "You" : this.userName || "You";
+    const youAnchor = config.use_pygmalion_format ? "You" : this.profile?.name || "You";
     const chatCopy = chatHistory.map((message) => {
       return `${message.is_bot ? name : youAnchor}: ${message.message}`;
     });

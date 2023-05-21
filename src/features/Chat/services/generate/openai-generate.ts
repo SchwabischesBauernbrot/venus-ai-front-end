@@ -1,5 +1,7 @@
 import { UserConfigAndLocalData } from "../../../../shared/services/user-config";
 import { ChatEntityWithCharacter, SupaChatMessage } from "../../../../types/backend-alias";
+import { Profile } from "../../../../types/profile";
+
 import {
   chatToMessage,
   buildSystemInstruction,
@@ -10,6 +12,12 @@ import { OpenAIError, OpenAIInputMessage, OpenAIProxyError, OpenAIResponse } fro
 import { GenerateInterface, Prompt } from "./generate-interface";
 
 class OpenAIGenerate extends GenerateInterface {
+  private profile: Profile;
+
+  setProfile(profile: Profile) {
+    this.profile = profile;
+  }
+
   buildPrompt(
     message: string,
     chat: ChatEntityWithCharacter,
@@ -24,7 +32,7 @@ class OpenAIGenerate extends GenerateInterface {
     const userMessage: OpenAIInputMessage = { role: "user", content: message };
 
     let messages: OpenAIInputMessage[] = [
-      { role: "system", content: buildSystemInstruction(chat, config, true) },
+      { role: "system", content: buildSystemInstruction(this.profile, chat, config, true) },
       // No need to add first message here, front-end should submit it
       ...chatCopy,
       userMessage,
@@ -37,7 +45,12 @@ class OpenAIGenerate extends GenerateInterface {
     }
 
     // When the conversation get too long, remove example conversations
-    const systemInstructionWithoutExample = buildSystemInstruction(chat, config, false);
+    const systemInstructionWithoutExample = buildSystemInstruction(
+      this.profile,
+      chat,
+      config,
+      false
+    );
     messages = [
       { role: "system", content: systemInstructionWithoutExample },
       ...chatCopy,

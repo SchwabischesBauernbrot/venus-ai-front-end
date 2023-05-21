@@ -51,7 +51,7 @@ export const MainLayout: React.FC = () => {
 
             if (isProfileLoading) {
               return (
-                <Menu.Item>
+                <Menu.Item style={{ marginLeft: "auto" }}>
                   <Spin />
                 </Menu.Item>
               );
@@ -65,18 +65,6 @@ export const MainLayout: React.FC = () => {
                       </Link>
                     </Menu.Item>
                   )}
-
-                  {/* <Menu.Item
-                  key="theme"
-                  style={{ marginLeft: "auto" }}
-                  onClick={() => {
-                    updateLocalData({ theme: localData.theme === "dark" ? "light" : "dark" });
-                  }}
-                >
-                  <Tooltip title="Toggle Dark mode">
-                    <BulbOutlined />
-                  </Tooltip>
-                </Menu.Item> */}
 
                   <UserAvatar />
                 </>
