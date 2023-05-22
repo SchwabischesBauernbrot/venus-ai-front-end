@@ -303,6 +303,9 @@ export const CharacterForm: React.FC<CharacterFormProps> = ({ id, values }) => {
             <div>
               <span>Tag your character, maximum 5 tags only.</span> <br />
               <span>
+                Please use <strong>Non English</strong> tag if your character don't speak English.
+              </span>
+              <span>
                 Don't see the tag you need? Visit{" "}
                 <a href="https://discord.gg/wFPemXeEUf" target="_blank">
                   our Discord
