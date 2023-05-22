@@ -14,6 +14,7 @@ export interface CharacterCardProps {
   character: CharacterView | CharacterLite;
   editable?: boolean;
   onDelete?: (characterId: string) => void;
+  hidden?: boolean;
 }
 
 const CharacterImage = styled.img`
@@ -34,7 +35,16 @@ const CreatorName = styled.p`
   }
 `;
 
-export const CharacterCard: React.FC<CharacterCardProps> = ({ character, editable, onDelete }) => {
+const BLOCK_BOT_URL = "5695c612-fcf0-472c-9111-74b2823bb677.jpg";
+
+export const CharacterCard: React.FC<CharacterCardProps> = ({
+  character,
+  editable,
+  hidden,
+  onDelete,
+}) => {
+  console.log({ hidden, character });
+
   return (
     <Card
       hoverable
@@ -45,11 +55,16 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, editabl
       title={
         <span>
           {"is_public" in character && <PrivateIndicator isPublic={character.is_public} />}{" "}
-          {character.name}
+          {hidden ? "Blocked" : character.name}
         </span>
       }
       // Add bot statistics in cover here
-      cover={<CharacterImage alt={character.name} src={getBotAvatarUrl(character.avatar)} />}
+      cover={
+        <CharacterImage
+          alt={character.name}
+          src={getBotAvatarUrl(hidden ? BLOCK_BOT_URL : character.avatar)}
+        />
+      }
       actions={
         editable
           ? [
@@ -94,7 +109,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, editabl
       <Card.Meta
         description={
           <Tooltip title={character.description}>
-            {truncate(character.description, { length: 100 })}
+            {hidden ? "" : truncate(character.description, { length: 100 })}
           </Tooltip>
         }
       />

@@ -7,6 +7,7 @@ import {
   ProfileUpdateDto,
 } from "../../../types/backend-alias";
 import { Profile } from "../../../types/profile";
+import { intersection } from "lodash-es";
 
 const getOwnProfile = async () => {
   const response = await axiosInstance.get<Profile>("/profiles/mine");
@@ -61,23 +62,31 @@ export const getBlockedContent = async () => {
 
 export const isBlocked = (
   blockList: Profile["block_list"],
-  type: keyof BlockList,
-  id: string | number
+  type: "bots" | "creators",
+  id: string
 ) => {
   if (!blockList) {
     return false;
   }
 
   const bList = blockList || DEFAULT_BLOCK_LIST;
-  if (type === "tags" && typeof id === "number") {
-    return bList["tags"].includes(id);
-  }
+  console.log({ blockList, type, id });
 
-  if ((type === "bots" || type === "creators") && typeof id === "string") {
+  if (type === "bots" || type === "creators") {
     return bList[type].includes(id);
   }
 
   return false;
+};
+
+export const isTagBlocked = (blockList: Profile["block_list"], tags?: number[]) => {
+  if (!blockList || !tags) {
+    return false;
+  }
+
+  const bList = blockList || DEFAULT_BLOCK_LIST;
+
+  return intersection(bList.tags, tags).length > 0;
 };
 
 export const profileService = {

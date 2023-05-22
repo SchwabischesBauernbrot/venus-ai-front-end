@@ -99,7 +99,9 @@ export const Blocks = () => {
               ))}
           </Select>
 
-          <Title level={4}>Blocked Creators ({data.creators.length})</Title>
+          <Title className="mt-4" level={4}>
+            Blocked Creators ({data.creators.length})
+          </Title>
           <List
             itemLayout="horizontal"
             dataSource={data.creators}
@@ -126,7 +128,9 @@ export const Blocks = () => {
             )}
           />
 
-          <Title level={4}>Blocked Characters ({data.bots.length})</Title>
+          <Title className="mt-4" level={4}>
+            Blocked Characters ({data.bots.length})
+          </Title>
           <List
             itemLayout="horizontal"
             dataSource={data.bots}
@@ -141,15 +145,10 @@ export const Blocks = () => {
                 <List.Item.Meta
                   title={
                     <Link to={characterUrl(item.id, item.name)} target="_blank">
-                      {item.name}
+                      {item.name} {item.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
                     </Link>
                   }
-                  description={
-                    <span>
-                      {item.is_nsfw ? <Tag color="error">🔞 NSFW</Tag> : ""}
-                      {item.description}
-                    </span>
-                  }
+                  description={<span>{item.description}</span>}
                 />
               </List.Item>
             )}
