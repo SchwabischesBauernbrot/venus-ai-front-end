@@ -295,8 +295,10 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
                     rules={[{ required: true, message: "Enter reverse proxy url." }]}
                     help={
                       <span>
-                        These proxies are contributed by communities. Might be slow, unstable, or
-                        log your request.
+                        These proxies are contributed by communities.
+                        <br />
+                        <strong>Might be slow, unstable or giving weird result.</strong> <br />
+                        <strong>Your IP and chat log might be logged.</strong>
                         <br />
                         See{" "}
                         <a href="https://navigatethecoom.github.io/navigate" target="_blank">
