@@ -64,6 +64,10 @@ export const isBlocked = (
   type: keyof BlockList,
   id: string | number
 ) => {
+  if (!blockList) {
+    return false;
+  }
+
   const bList = blockList || DEFAULT_BLOCK_LIST;
   if (type === "tags" && typeof id === "number") {
     return bList["tags"].includes(id);

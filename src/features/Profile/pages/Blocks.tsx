@@ -50,6 +50,18 @@ export const Blocks = () => {
     [profile]
   );
 
+  const tagChanged = useCallback(
+    async (tagIds: number[]) => {
+      const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
+      currentBlockList.tags = tagIds;
+
+      await updateBlockList(currentBlockList, queryClient);
+
+      message.success(`Blocked Tags has been updated!`);
+    },
+    [profile]
+  );
+
   console.log({ data, tags });
 
   return (
@@ -64,6 +76,29 @@ export const Blocks = () => {
 
       {data && (
         <div>
+          <Title level={4}>Blocked Tags ({data.tags.length})</Title>
+
+          <Select
+            style={{ minWidth: "30rem" }}
+            mode="multiple"
+            placeholder="Block a tag, or remove it from block list"
+            optionLabelProp="label"
+            value={data?.tags}
+            onChange={tagChanged}
+            filterOption={(input, option) =>
+              String(option?.label ?? "")
+                .toLocaleLowerCase()
+                .includes(input.toLocaleLowerCase())
+            }
+          >
+            {tags &&
+              tags.map((tag) => (
+                <Select.Option key={tag.id} value={tag.id} label={tag.name} target="_blank">
+                  {tag.name} ({tag.description})
+                </Select.Option>
+              ))}
+          </Select>
+
           <Title level={4}>Blocked Creators ({data.creators.length})</Title>
           <List
             itemLayout="horizontal"
@@ -90,28 +125,6 @@ export const Blocks = () => {
               </List.Item>
             )}
           />
-
-          <Title level={4}>Blocked Tags ({data.tags.length})</Title>
-
-          <Select
-            style={{ minWidth: "30rem" }}
-            mode="multiple"
-            placeholder="Block a tag, or remove it from block list"
-            optionLabelProp="label"
-            value={data?.tags}
-            filterOption={(input, option) =>
-              String(option?.label ?? "")
-                .toLocaleLowerCase()
-                .includes(input.toLocaleLowerCase())
-            }
-          >
-            {tags &&
-              tags.map((tag) => (
-                <Select.Option key={tag.id} value={tag.id} label={tag.name} target="_blank">
-                  {tag.name} ({tag.description})
-                </Select.Option>
-              ))}
-          </Select>
 
           <Title level={4}>Blocked Characters ({data.bots.length})</Title>
           <List
