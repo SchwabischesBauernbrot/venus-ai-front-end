@@ -59,7 +59,7 @@ export const PublicProfile: React.FC = () => {
     }
   );
 
-  const blockChar = useCallback(
+  const blockCreator = useCallback(
     async (id: string) => {
       const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
       currentBlockList.creators.push(id);
@@ -70,7 +70,7 @@ export const PublicProfile: React.FC = () => {
     [profile]
   );
 
-  const unblockChar = useCallback(
+  const unblockCreator = useCallback(
     async (id: string) => {
       const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
       currentBlockList.creators = currentBlockList.creators.filter((creatorId) => creatorId !== id);
@@ -127,7 +127,7 @@ export const PublicProfile: React.FC = () => {
             {data.about_me && <MultiLineMarkdown>{data.about_me}</MultiLineMarkdown>}
 
             {isBlocked(profile?.block_list, "creators", data.id) ? (
-              <Button icon={<CheckCircleOutlined />} onClick={() => unblockChar(data.id)}>
+              <Button icon={<CheckCircleOutlined />} onClick={() => unblockCreator(data.id)}>
                 Unblock
               </Button>
             ) : (
@@ -138,9 +138,9 @@ export const PublicProfile: React.FC = () => {
                     later in <Link to="/blocks">Blocks</Link> menu.
                   </div>
                 }
-                onConfirm={() => blockChar(data.id)}
+                onConfirm={() => blockCreator(data.id)}
               >
-                <Button icon={<CloseCircleOutlined />}>Block</Button>
+                <Button icon={<CloseCircleOutlined />}>Block this creator</Button>
               </Popconfirm>
             )}
           </Col>

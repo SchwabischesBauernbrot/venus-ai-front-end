@@ -217,7 +217,7 @@ export interface components {
     BlockedContentCreator: {
       id: string;
       name: string;
-      username: Record<string, never>;
+      user_name: string;
       avatar: string;
     };
     BlockedContent: {
