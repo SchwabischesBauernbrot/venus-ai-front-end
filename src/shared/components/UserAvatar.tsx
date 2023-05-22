@@ -1,4 +1,5 @@
 import {
+  CloseCircleOutlined,
   HomeFilled,
   TeamOutlined,
   UserAddOutlined,
@@ -34,7 +35,7 @@ export const UserAvatar: React.FC = () => {
             {
               key: "my_profile",
               icon: <HomeFilled />,
-              label: "My Profile",
+              label: "Profile",
               onClick: () => navigate("/profile"),
             },
             ...(isMobile
@@ -58,6 +59,12 @@ export const UserAvatar: React.FC = () => {
               icon: <WechatOutlined />,
               label: "My Chats",
               onClick: () => navigate("/my_chats"),
+            },
+            {
+              key: "my_block",
+              icon: <CloseCircleOutlined />,
+              label: "Blocks",
+              onClick: () => navigate("/blocks"),
             },
             { key: "logout", label: "Logout", onClick: () => logout() },
           ],

@@ -30,7 +30,7 @@ export const Profile = () => {
   return (
     <PageContainer>
       <Helmet>
-        <title>{SITE_NAME} - My Profile</title>
+        <title>{SITE_NAME} - Profile</title>
       </Helmet>
 
       <Title level={2}>

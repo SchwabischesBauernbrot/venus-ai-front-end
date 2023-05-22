@@ -7,6 +7,9 @@ import { CharacterView } from "../../types/backend-alias";
 import { characterUrl } from "../services/url-utils";
 import { deleteCharacter } from "../../features/Character/services/character-service";
 import { CharacterCard } from "./CharacterCard";
+import { useCallback, useContext } from "react";
+import { AppContext } from "../../appContext";
+import { isBlocked, isTagBlocked } from "../../features/Profile/services/profile-service";
 
 interface CharacterListProps {
   characters: CharacterView[];
@@ -69,6 +72,8 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   size = "medium",
   onCharacterDeleted,
 }) => {
+  const { profile } = useContext(AppContext);
+
   if (characters.length === 0) {
     return <p>No characters</p>;
   }
@@ -77,6 +82,24 @@ export const CharacterList: React.FC<CharacterListProps> = ({
     await deleteCharacter(characterId);
     onCharacterDeleted?.();
   };
+
+  const hideCard = useCallback(
+    (character: CharacterView) => {
+      if (!profile) {
+        return false;
+      }
+
+      return (
+        isBlocked(profile.block_list, "bots", character.id) ||
+        isBlocked(profile.block_list, "creators", character.creator_id) ||
+        isTagBlocked(
+          profile.block_list,
+          (character.tags || []).map((tag) => tag.id)
+        )
+      );
+    },
+    [profile]
+  );
 
   return (
     <CharacterContainer size={size}>
@@ -98,10 +121,20 @@ export const CharacterList: React.FC<CharacterListProps> = ({
                 )
               }
             >
-              <CharacterCard character={character} editable={editable} onDelete={removeCharacter} />
+              <CharacterCard
+                character={character}
+                editable={editable}
+                onDelete={removeCharacter}
+                hidden={hideCard(character)}
+              />
             </Badge.Ribbon>
           ) : (
-            <CharacterCard character={character} editable={editable} onDelete={removeCharacter} />
+            <CharacterCard
+              character={character}
+              editable={editable}
+              onDelete={removeCharacter}
+              hidden={hideCard(character)}
+            />
           )}
         </Link>
       ))}

@@ -123,7 +123,7 @@ export const ChatSummaryModal: React.FC<ChatHistoryModalProps> = ({
               You have updated the chat summary around{" "}
               <strong>
                 ~{massagesSinceLastSave.length} messages (
-                {countMessagesToken(massagesSinceLastSave)} tokens)
+                {countMessagesToken(massagesSinceLastSave).toFixed(1)} tokens)
               </strong>{" "}
               ago.
             </span>

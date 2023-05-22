@@ -73,6 +73,7 @@ export const callOpenAI = async (
   })();
 
   const response = await fetch(`${baseUrl}/chat/completions`, {
+    referrer: "",
     body: JSON.stringify({
       model: config.model,
       temperature: config.generation_settings.temperature,

@@ -1,8 +1,8 @@
-import { Typography, Spin, Col, Row, Avatar, Select } from "antd";
+import { Typography, Spin, Col, Row, Avatar, Select, Button, Popconfirm, App } from "antd";
 import styled from "styled-components";
-import { UserOutlined } from "@ant-design/icons";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { CheckCircleOutlined, CloseCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { useQuery, useQueryClient } from "react-query";
+import { Link, useParams } from "react-router-dom";
 
 import { axiosInstance } from "../../../config";
 import { ProfileResponse } from "../../../types/backend-alias";
@@ -12,8 +12,10 @@ import { MultiLineMarkdown } from "../../../shared/components";
 import { CharacterListWrapper } from "../../../shared/components/CharacterListWrapper";
 import { Helmet } from "react-helmet";
 import { profileUrl } from "../../../shared/services/url-utils";
-import { useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { MOBILE_BREAKPOINT_CSS } from "../../../css-const";
+import { DEFAULT_BLOCK_LIST, isBlocked, updateBlockList } from "../services/profile-service";
+import { AppContext } from "../../../appContext";
 
 const { Title } = Typography;
 
@@ -34,6 +36,10 @@ export const PublicProfile: React.FC = () => {
   const [sortValue, setSortValue] = useState<"latest" | "popular">("latest");
   const profileId = getRealId(seoFriendlyId || "");
 
+  const queryClient = useQueryClient();
+  const { profile } = useContext(AppContext);
+  const { message } = App.useApp();
+
   // Get character
   const { data, isLoading } = useQuery(
     ["profile", profileId],
@@ -51,6 +57,28 @@ export const PublicProfile: React.FC = () => {
         }
       },
     }
+  );
+
+  const blockCreator = useCallback(
+    async (id: string) => {
+      const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
+      currentBlockList.creators.push(id);
+      await updateBlockList(currentBlockList, queryClient);
+
+      message.success("This creator has been blocked!");
+    },
+    [profile]
+  );
+
+  const unblockCreator = useCallback(
+    async (id: string) => {
+      const currentBlockList = profile?.block_list || DEFAULT_BLOCK_LIST;
+      currentBlockList.creators = currentBlockList.creators.filter((creatorId) => creatorId !== id);
+      await updateBlockList(currentBlockList, queryClient);
+
+      message.success("This creator has been unblocked!");
+    },
+    [profile]
   );
 
   return (
@@ -97,6 +125,24 @@ export const PublicProfile: React.FC = () => {
               @{data.user_name || data.name} {data.is_verified && <VerifiedMark size="large" />}
             </Title>
             {data.about_me && <MultiLineMarkdown>{data.about_me}</MultiLineMarkdown>}
+
+            {isBlocked(profile?.block_list, "creators", data.id) ? (
+              <Button icon={<CheckCircleOutlined />} onClick={() => unblockCreator(data.id)}>
+                Unblock
+              </Button>
+            ) : (
+              <Popconfirm
+                title={
+                  <div>
+                    You will not see characters from this creator anymore! <br /> You can unblock it
+                    later in <Link to="/blocks">Blocks</Link> menu.
+                  </div>
+                }
+                onConfirm={() => blockCreator(data.id)}
+              >
+                <Button icon={<CloseCircleOutlined />}>Block this creator</Button>
+              </Popconfirm>
+            )}
           </Col>
 
           <Col lg={18} xs={24} className="text-left">

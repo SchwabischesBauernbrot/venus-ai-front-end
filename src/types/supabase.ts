@@ -187,6 +187,7 @@ export interface Database {
         Row: {
           about_me: string
           avatar: string
+          block_list: Json | null
           config: Json
           id: string
           is_verified: boolean
@@ -197,6 +198,7 @@ export interface Database {
         Insert: {
           about_me?: string
           avatar?: string
+          block_list?: Json | null
           config?: Json
           id: string
           is_verified?: boolean
@@ -207,6 +209,7 @@ export interface Database {
         Update: {
           about_me?: string
           avatar?: string
+          block_list?: Json | null
           config?: Json
           id?: string
           is_verified?: boolean

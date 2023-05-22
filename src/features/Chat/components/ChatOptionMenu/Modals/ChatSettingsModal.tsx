@@ -89,7 +89,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({ open, onMo
 
       model: formValues.model,
       open_ai_mode: formValues.open_ai_mode,
-      open_ai_reverse_proxy: formValues.open_ai_reverse_proxy || config.open_ai_reverse_proxy,
+      open_ai_reverse_proxy: formValues.open_ai_reverse_proxy,
       jailbreak_prompt: formValues.jailbreak_prompt,
 
       api_url: formValues.api_url || config.api_url,

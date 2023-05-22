@@ -1,3 +1,4 @@
+import { BlockList } from "./backend-alias";
 import { Json } from "./supabase";
 
 export interface Profile {
@@ -9,4 +10,6 @@ export interface Profile {
   user_name: string | null;
   is_verified?: boolean;
   config: Json;
+
+  block_list?: BlockList | null;
 }
